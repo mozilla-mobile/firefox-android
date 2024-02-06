@@ -18,6 +18,7 @@ import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.OAuthScopedKey
 import mozilla.components.concept.sync.SyncAuthInfo
+import mozilla.components.concept.sync.UserData
 import mozilla.appservices.fxaclient.DeviceCapability as RustDeviceCapability
 import mozilla.appservices.fxaclient.DevicePushSubscription as RustDevicePushSubscription
 import mozilla.appservices.sync15.DeviceType as RustDeviceType
@@ -103,6 +104,12 @@ fun Profile.into(): mozilla.components.concept.sync.Profile {
             )
         },
         displayName = this.displayName,
+    )
+}
+
+fun UserData.into(): mozilla.appservices.fxaclient.UserData {
+    return mozilla.appservices.fxaclient.UserData(
+        sessionToken, uid, email, verified
     )
 }
 

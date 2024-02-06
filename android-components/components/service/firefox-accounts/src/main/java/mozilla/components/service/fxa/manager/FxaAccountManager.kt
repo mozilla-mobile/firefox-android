@@ -26,6 +26,7 @@ import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.concept.sync.ServiceResult
+import mozilla.components.concept.sync.UserData
 import mozilla.components.service.fxa.AccessTokenUnexpectedlyWithoutKey
 import mozilla.components.service.fxa.AccountManagerException
 import mozilla.components.service.fxa.AccountOnDisk
@@ -343,13 +344,18 @@ open class FxaAccountManager(
      * user successfully goes through the authentication at the returned url.
      * @param pairingUrl Optional pairing URL in case a pairing flow is being initiated.
      * @param entrypoint an enum representing the feature entrypoint requesting the URL.
+     * @param authScopes [Set<String>]] The oAuth scopes being requested
      * the entrypoint is used in telemetry.
      * @return An authentication url which is to be presented to the user.
      */
     suspend fun beginAuthentication(
         pairingUrl: String? = null,
         entrypoint: FxAEntryPoint,
+        authScopes: Set<String> = emptySet(),
     ): String? = withContext(coroutineContext) {
+        val actualScopes = authScopes.ifEmpty {
+            scopes
+        }
         // It's possible that at this point authentication is considered to be "in-progress".
         // For example, if user started authentication flow, but cancelled it (closing a custom tab)
         // without finishing.
@@ -357,9 +363,9 @@ open class FxaAccountManager(
         processQueue(Event.Progress.CancelAuth)
 
         val event = if (pairingUrl != null) {
-            Event.Account.BeginPairingFlow(pairingUrl, entrypoint)
+            Event.Account.BeginPairingFlow(pairingUrl, entrypoint, actualScopes)
         } else {
-            Event.Account.BeginEmailFlow(entrypoint)
+            Event.Account.BeginEmailFlow(entrypoint, actualScopes)
         }
 
         // Process the event, then use the new state to check the result of the operation
@@ -372,6 +378,16 @@ open class FxaAccountManager(
                 logger.warn("beginAuthentication: error processing next state ($state)")
             }
         }
+    }
+
+    /**
+     * Sets the user's data received from the web content.
+     * **NOTE**: This is only useful for applications that are user agents, that
+     *           require the user's session token, and thus isn't a part of the state machine
+     * @param userData: The user's data as given by the web channel, including the session token
+     */
+    suspend fun setUserData(userData: UserData) = withContext(coroutineContext) {
+        account.setUserData(userData)
     }
 
     /**
@@ -580,10 +596,10 @@ open class FxaAccountManager(
                 } else {
                     null
                 }
-                val entrypoint = if (via is Event.Account.BeginEmailFlow) {
-                    via.entrypoint
+                val (entrypoint, authScopes) = if (via is Event.Account.BeginEmailFlow) {
+                    Pair(via.entrypoint, via.scopes)
                 } else if (via is Event.Account.BeginPairingFlow) {
-                    via.entrypoint
+                    Pair(via.entrypoint, via.scopes)
                 } else {
                     // This should be impossible, both `BeginPairingFlow` and `BeginEmailFlow`
                     // have a required `entrypoint` and we are matching against only instances
@@ -591,7 +607,7 @@ open class FxaAccountManager(
                     throw IllegalStateException("BeginningAuthentication with a flow that is neither email nor pairing")
                 }
                 val result = withRetries(logger, MAX_NETWORK_RETRIES) {
-                    pairingUrl.asAuthFlowUrl(account, scopes, entrypoint = entrypoint)
+                    pairingUrl.asAuthFlowUrl(account, authScopes, entrypoint = entrypoint)
                 }
                 when (result) {
                     is Result.Success -> {
