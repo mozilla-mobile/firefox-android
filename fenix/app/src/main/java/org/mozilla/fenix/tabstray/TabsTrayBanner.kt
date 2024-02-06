@@ -426,25 +426,37 @@ private fun MultiSelectBanner(
                 contentDescription = stringResource(
                     id = R.string.tab_tray_collection_button_multiselect_content_description,
                 ),
-                tint = FirefoxTheme.colors.iconOnColor,
+                tint = if (selectedTabCount > 0) {
+                    FirefoxTheme.colors.iconOnColor
+                } else {
+                    FirefoxTheme.colors.iconDisabled
+                },
             )
         }
 
-        IconButton(onClick = onShareSelectedTabs) {
+        IconButton(onClick = onShareSelectedTabs, enabled = selectedTabCount > 0) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_share),
                 contentDescription = stringResource(
                     id = R.string.tab_tray_multiselect_share_content_description,
                 ),
-                tint = FirefoxTheme.colors.iconOnColor,
+                tint = if (selectedTabCount > 0) {
+                    FirefoxTheme.colors.iconOnColor
+                } else {
+                    FirefoxTheme.colors.iconDisabled
+                },
             )
         }
 
-        IconButton(onClick = { showMenu = true }) {
+        IconButton(onClick = { showMenu = true }, enabled = selectedTabCount > 0) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_menu),
                 contentDescription = stringResource(id = R.string.tab_tray_multiselect_menu_content_description),
-                tint = FirefoxTheme.colors.iconOnColor,
+                tint = if (selectedTabCount > 0) {
+                    FirefoxTheme.colors.iconOnColor
+                } else {
+                    FirefoxTheme.colors.iconDisabled
+                },
             )
 
             ContextualMenu(
