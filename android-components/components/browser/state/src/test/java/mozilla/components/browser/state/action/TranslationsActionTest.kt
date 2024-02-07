@@ -183,7 +183,7 @@ class TranslationsActionTest {
     }
 
     @Test
-    fun `WHEN a TranslateSetLanguagesAction is dispatched AND successful THEN update supportedLanguages`() {
+    fun `WHEN a SetSupportedLanguagesAction is dispatched AND successful THEN update supportedLanguages`() {
         // Initial
         assertEquals(null, tabState().translationsState.supportedLanguages)
 
@@ -192,7 +192,7 @@ class TranslationsActionTest {
         val fromLanguage = Language("es", "Spanish")
         val supportedLanguages = TranslationSupport(listOf(fromLanguage), listOf(toLanguage))
         store.dispatch(
-            TranslationsAction.TranslateSetLanguagesAction(
+            TranslationsAction.SetSupportedLanguagesAction(
                 tabId = tab.id,
                 supportedLanguages = supportedLanguages,
             ),
@@ -201,6 +201,24 @@ class TranslationsActionTest {
 
         // Action success
         assertEquals(supportedLanguages, tabState().translationsState.supportedLanguages)
+    }
+
+    @Test
+    fun `WHEN a SetNeverTranslateSitesAction is dispatched AND successful THEN update neverTranslateSites`() {
+        // Initial
+        assertEquals(null, tabState().translationsState.neverTranslateSites)
+
+        // Action started
+        val neverTranslateSites = listOf("google.com")
+        store.dispatch(
+            TranslationsAction.SetNeverTranslateSitesAction(
+                tabId = tab.id,
+                neverTranslateSites = neverTranslateSites,
+            ),
+        ).joinBlocking()
+
+        // Action success
+        assertEquals(neverTranslateSites, tabState().translationsState.neverTranslateSites)
     }
 
     @Test
@@ -235,7 +253,7 @@ class TranslationsActionTest {
         store.dispatch(
             TranslationsAction.TranslateExceptionAction(
                 tabId = tab.id,
-                operation = TranslationOperation.FETCH_LANGUAGES,
+                operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
                 translationError = fetchError,
             ),
         ).joinBlocking()
@@ -275,7 +293,7 @@ class TranslationsActionTest {
         store.dispatch(
             TranslationsAction.TranslateSuccessAction(
                 tabId = tab.id,
-                operation = TranslationOperation.FETCH_LANGUAGES,
+                operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
             ),
         ).joinBlocking()
         assertEquals(null, tabState().translationsState.translationError)
@@ -306,7 +324,7 @@ class TranslationsActionTest {
     }
 
     @Test
-    fun `WHEN a OperationRequestedAction is dispatched THEN clear pageSettings`() {
+    fun `WHEN a OperationRequestedAction is dispatched for FETCH_PAGE_SETTINGS THEN clear pageSettings`() {
         // Setting first to have a more robust initial state
         assertNull(tabState().translationsState.pageSettings)
 
@@ -336,5 +354,36 @@ class TranslationsActionTest {
 
         // Action success
         assertNull(tabState().translationsState.pageSettings)
+    }
+
+    @Test
+    fun `WHEN a OperationRequestedAction is dispatched for FETCH_SUPPORTED_LANGUAGES THEN clear supportLanguages`() {
+        // Setting first to have a more robust initial state
+        assertNull(tabState().translationsState.supportedLanguages)
+
+        val supportLanguages = TranslationSupport(
+            fromLanguages = listOf(Language("en", "English")),
+            toLanguages = listOf(Language("en", "English")),
+        )
+
+        store.dispatch(
+            TranslationsAction.SetSupportedLanguagesAction(
+                tabId = tab.id,
+                supportedLanguages = supportLanguages,
+            ),
+        ).joinBlocking()
+
+        assertEquals(supportLanguages, tabState().translationsState.supportedLanguages)
+
+        // Action started
+        store.dispatch(
+            TranslationsAction.OperationRequestedAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
+            ),
+        ).joinBlocking()
+
+        // Action success
+        assertNull(tabState().translationsState.supportedLanguages)
     }
 }
