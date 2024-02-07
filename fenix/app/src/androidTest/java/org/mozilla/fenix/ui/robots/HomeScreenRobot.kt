@@ -114,7 +114,12 @@ class HomeScreenRobot {
     fun verifyHomeComponent() = assertHomeComponent()
 
     fun verifyTabCounter(numberOfOpenTabs: String) =
-        assertUIObjectExists(tabCounter(numberOfOpenTabs))
+        onView(
+            allOf(
+                withId(R.id.counter_text),
+                withText(numberOfOpenTabs),
+            ),
+        ).check(matches(isDisplayed()))
 
     fun verifyWallpaperImageApplied(isEnabled: Boolean) =
         assertUIObjectExists(itemWithResId("$packageName:id/wallpaperImageView"), exists = isEnabled)
