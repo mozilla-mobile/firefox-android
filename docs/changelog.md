@@ -14,12 +14,18 @@ permalink: /changelog/
   * Added `FileUploadsDirCleaner` deletes temporary stale uploaded files, see [Bug 1860472](https://bugzilla.mozilla.org/show_bug.cgi?id=1860472).
   * ⚠️ **This is a breaking change**: `PromptFeature` now requires a `FileUploadsDirCleaner` to be constructed
 
+* **browser-state**
+  * `BrowserStore` and the `TabListReducer` will no longer automatically select a normal tab when all private tabs are removed. [Bug 1861459](https://bugzilla.mozilla.org/show_bug.cgi?id=1861459)
+
 * **all components**
   * All new usages of the `concept-fetch` component to make fetch requests now have conservative-mode off by default. Current features will continue to use conservative mode until individually updated.
   
 * **browser-toolbar**
   * Add `showMenuButton` and `hideMenuButton` API to `BrowserToolbar` and `DisplayToolbar` to allow hiding and showing of the menu button in
   the `BrowserToolbar` [Bug 1864760](https://bugzilla.mozilla.org/show_bug.cgi?id=1864760)
+
+* **feature-customtabs**
+  * Fallback behaviour when failing to open a new window in custom tab will now be loading the URL directly in the same custom tab. [Bug 1832357](https://bugzilla.mozilla.org/show_bug.cgi?id=1832357)
 
 # 123.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..releases_v123)
@@ -28,7 +34,7 @@ permalink: /changelog/
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/.config.yml)
 
 * **feature-customtabs**
- * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
+  * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
 
 # 122.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)

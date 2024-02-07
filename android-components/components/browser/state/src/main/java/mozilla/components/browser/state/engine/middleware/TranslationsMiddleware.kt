@@ -5,12 +5,9 @@
 package mozilla.components.browser.state.engine.middleware
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.TranslationsAction
-import mozilla.components.browser.state.action.TranslationsAction.TranslateExpectedAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.concept.engine.Engine
@@ -42,20 +39,21 @@ class TranslationsMiddleware(
     ) {
         // Pre process actions
         when (action) {
-            is TranslateExpectedAction -> {
-                scope.launch {
-                    requestSupportedLanguages(context, action.tabId)
-                }
-            }
-
             is TranslationsAction.OperationRequestedAction -> {
                 when (action.operation) {
-                    TranslationOperation.FETCH_LANGUAGES -> {
-                        // Bug 1877205
+                    TranslationOperation.FETCH_SUPPORTED_LANGUAGES -> {
+                        scope.launch {
+                            requestSupportedLanguages(context, action.tabId)
+                        }
                     }
                     TranslationOperation.FETCH_PAGE_SETTINGS -> {
                         scope.launch {
                             requestTranslationPageSettings(context, action.tabId)
+                        }
+                    }
+                    TranslationOperation.FETCH_NEVER_TRANSLATE_SITES -> {
+                        scope.launch {
+                            getNeverTranslateSites(context, action.tabId)
                         }
                     }
                     TranslationOperation.TRANSLATE,
@@ -80,35 +78,69 @@ class TranslationsMiddleware(
      * @param context Context to use to dispatch to the store.
      * @param tabId Tab ID associated with the request.
      */
-    private suspend fun requestSupportedLanguages(
+    private fun requestSupportedLanguages(
         context: MiddlewareContext<BrowserState, BrowserAction>,
         tabId: String,
-    ) = withContext(Dispatchers.IO) {
-        scope.launch {
-            engine.getSupportedTranslationLanguages(
+    ) {
+        engine.getSupportedTranslationLanguages(
 
-                onSuccess = {
-                    context.store.dispatch(
-                        TranslationsAction.TranslateSetLanguagesAction(
-                            tabId = tabId,
-                            supportedLanguages = it,
-                        ),
-                    )
-                    logger.info("Success requesting supported languages.")
-                },
+            onSuccess = {
+                context.store.dispatch(
+                    TranslationsAction.SetSupportedLanguagesAction(
+                        tabId = tabId,
+                        supportedLanguages = it,
+                    ),
+                )
+                logger.info("Success requesting supported languages.")
+            },
 
-                onError = {
-                    context.store.dispatch(
-                        TranslationsAction.TranslateExceptionAction(
-                            tabId = tabId,
-                            operation = TranslationOperation.FETCH_LANGUAGES,
-                            translationError = TranslationError.CouldNotLoadLanguagesError(it),
-                        ),
-                    )
-                    logger.error("Error requesting supported languages: ", it)
-                },
-            )
-        }
+            onError = {
+                context.store.dispatch(
+                    TranslationsAction.TranslateExceptionAction(
+                        tabId = tabId,
+                        operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
+                        translationError = TranslationError.CouldNotLoadLanguagesError(it),
+                    ),
+                )
+                logger.error("Error requesting supported languages: ", it)
+            },
+        )
+    }
+
+    /**
+     * Retrieves the list of never translate sites using [scope] and dispatches the result to the
+     * store via [TranslationsAction.SetNeverTranslateSitesAction] or else dispatches the failure
+     * [TranslationsAction.TranslateExceptionAction].
+     *
+     * @param context Context to use to dispatch to the store.
+     * @param tabId Tab ID associated with the request.
+     */
+    private fun getNeverTranslateSites(
+        context: MiddlewareContext<BrowserState, BrowserAction>,
+        tabId: String,
+    ) {
+        engine.getNeverTranslateSiteList(
+            onSuccess = {
+                context.store.dispatch(
+                    TranslationsAction.SetNeverTranslateSitesAction(
+                        tabId = tabId,
+                        neverTranslateSites = it,
+                    ),
+                )
+                logger.info("Success requesting never translate sites.")
+            },
+
+            onError = {
+                context.store.dispatch(
+                    TranslationsAction.TranslateExceptionAction(
+                        tabId = tabId,
+                        operation = TranslationOperation.FETCH_NEVER_TRANSLATE_SITES,
+                        translationError = TranslationError.CouldNotLoadNeverTranslateSites(it),
+                    ),
+                )
+                logger.error("Error requesting never translate sites: ", it)
+            },
+        )
     }
 
     /**
@@ -122,7 +154,7 @@ class TranslationsMiddleware(
     private suspend fun requestTranslationPageSettings(
         context: MiddlewareContext<BrowserState, BrowserAction>,
         tabId: String,
-    ) = withContext(Dispatchers.IO) {
+    ) {
         // Always offer setting
         val alwaysOfferPopup: Boolean = engine.getTranslationsOfferPopup()
 
