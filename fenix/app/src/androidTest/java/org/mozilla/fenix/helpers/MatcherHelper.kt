@@ -5,8 +5,14 @@
 package org.mozilla.fenix.helpers
 
 import android.util.Log
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.printToString
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.Constants.TAG
@@ -96,11 +102,47 @@ object MatcherHelper {
     ) {
         for (appItem in appItems) {
             if (exists) {
+                Log.i(TAG, "assertUIObjectExists: Trying to verify ${appItem.selector} exists")
                 assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
                 Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} exists")
             } else {
+                Log.i(TAG, "assertUIObjectExists: Trying to verify ${appItem.selector} does not exist")
                 assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} does not exist")
+            }
+        }
+    }
+
+    fun assertComposeItemExists(
+        vararg composeItems: SemanticsNodeInteraction,
+        exists: Boolean = true,
+    ) {
+        for (composeItem in composeItems) {
+            if (exists) {
+                Log.i(TAG, "assertComposeItemExists: Trying to verify compose item ${composeItem.printToString()} exists")
+                composeItem.assertExists()
+                Log.i(TAG, "assertComposeItemExists: Compose item ${composeItem.printToString()} exists")
+            } else {
+                Log.i(TAG, "assertComposeItemExists: Trying to verify compose item ${composeItem.printToString()} does not exist")
+                composeItem.assertDoesNotExist()
+                Log.i(TAG, "assertComposeItemExists: Compose item ${composeItem.printToString()} does not exist")
+            }
+        }
+    }
+
+    fun assertEspressoItemIsDisplayed(
+        vararg espressoItems: ViewInteraction,
+        exists: Boolean = true,
+    ) {
+        for (espressoItem in espressoItems) {
+            if (exists) {
+                Log.i(TAG, "assertEspressoItemExists: Trying to verify espresso item $espressoItem is displayed")
+                espressoItem.check(matches(isDisplayed()))
+                Log.i(TAG, "assertEspressoItemExists: Espresso item $espressoItem is displayed")
+            } else {
+                Log.i(TAG, "assertEspressoItemExists: Trying to verify espresso item $espressoItem is not displayed")
+                espressoItem.check(matches(not(isDisplayed())))
+                Log.i(TAG, "assertEspressoItemExists: Espresso item $espressoItem is not displayed")
             }
         }
     }

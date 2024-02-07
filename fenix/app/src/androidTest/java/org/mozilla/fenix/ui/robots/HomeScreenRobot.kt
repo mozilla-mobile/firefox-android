@@ -70,6 +70,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.mozClick
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
@@ -491,7 +492,7 @@ class HomeScreenRobot {
             testRule: ComposeTestRule,
             interact: SyncSignInRobot.() -> Unit,
         ): SyncSignInRobot.Transition {
-            testRule.onNodeWithText("Sign in").performClick()
+            testRule.onNodeWithText("Sign in").mozClick()
 
             SyncSignInRobot().interact()
             return SyncSignInRobot.Transition()
