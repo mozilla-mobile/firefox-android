@@ -954,7 +954,7 @@ sealed class TranslationsAction : BrowserAction() {
      * @property tabId The ID of the tab the [EngineSession] that requested the list.
      * @property supportedLanguages The languages the engine supports for translation.
      */
-    data class TranslateSetLanguagesAction(
+    data class SetSupportedLanguagesAction(
         override val tabId: String,
         val supportedLanguages: TranslationSupport?,
     ) : TranslationsAction(), ActionWithTab
@@ -968,6 +968,17 @@ sealed class TranslationsAction : BrowserAction() {
     data class SetPageSettingsAction(
         override val tabId: String,
         val pageSettings: TranslationPageSettings?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the list of sites that the user has opted to never translate.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the list.
+     * @property neverTranslateSites The never translate sites.
+     */
+    data class SetNeverTranslateSitesAction(
+        override val tabId: String,
+        val neverTranslateSites: List<String>,
     ) : TranslationsAction(), ActionWithTab
 }
 
