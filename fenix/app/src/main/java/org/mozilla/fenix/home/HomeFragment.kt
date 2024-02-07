@@ -89,9 +89,10 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.navbar.NavBarLocation
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -452,8 +453,12 @@ class HomeFragment : Fragment() {
             BottomToolbarContainerView(
                 context = requireContext(),
                 container = binding.homeLayout,
+                location = NavBarLocation.HomeFragment(
+                    navController = findNavController(),
+                    browsingModeManager = browsingModeManager,
+                    menuButton = menuButton,
+                ),
                 androidToolbarView = toolbarView,
-                menuButton = menuButton,
                 browsingModeManager = browsingModeManager,
             )
         }

@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -131,7 +130,6 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
@@ -142,6 +140,8 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.navbar.NavBarLocation
 import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
@@ -466,10 +466,16 @@ abstract class BaseBrowserFragment :
             BottomToolbarContainerView(
                 context = context,
                 container = binding.browserLayout,
+                location = NavBarLocation.BrowserFragment(
+                    interactor = browserToolbarInteractor,
+                    navController = findNavController(),
+                    thumbnailsFeature = thumbnailsFeature,
+                    browsingModeManager = activity.browsingModeManager,
+                    menuButton = MenuButton(requireContext()).apply {
+                        menuBuilder = browserToolbarView.menuToolbar.menuBuilder
+                    },
+                ),
                 androidToolbarView = toolbarView,
-                menuButton = MenuButton(requireContext()).apply {
-                    menuBuilder = browserToolbarView.menuToolbar.menuBuilder
-                },
                 browsingModeManager = activity.browsingModeManager,
             )
         }
