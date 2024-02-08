@@ -334,8 +334,11 @@ class SearchRobot {
         fun submitQuery(query: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
             searchWrapper().waitForExists(waitingTime)
+            Log.i(Constants.TAG, "submitQuery: Waited for search wrapper to exist")
             browserToolbarEditView().setText(query)
+            Log.i(Constants.TAG, "submitQuery: Toolbar text set to: $query")
             mDevice.pressEnter()
+            Log.i(Constants.TAG, "submitQuery: Pressed device enter button")
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 assertUIObjectExists(itemWithResId("$packageName:id/browserLayout"))

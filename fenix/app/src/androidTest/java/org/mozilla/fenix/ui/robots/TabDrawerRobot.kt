@@ -36,6 +36,7 @@ import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
@@ -317,6 +318,7 @@ class TabDrawerRobot {
             mDevice.waitForIdle()
 
             newTabButton().click()
+            Log.i(Constants.TAG, "openNewTab: Clicked new tab FAB button")
             SearchRobot().interact()
             return SearchRobot.Transition()
         }
