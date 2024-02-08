@@ -246,6 +246,7 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @Suppress("LongMethod")
     internal fun bindAddon(
         holder: AddonViewHolder,
         addon: Addon,
@@ -289,6 +290,10 @@ class AddonsManagerAdapter(
         }
 
         holder.addButton.isInvisible = addon.isInstalled()
+        holder.addButton.contentDescription = context.getString(
+            R.string.mozac_feature_addons_install_addon_content_description_2,
+            addonName,
+        )
         holder.addButton.setOnClickListener {
             if (!addon.isInstalled()) {
                 addonsManagerDelegate.onInstallAddonButtonClicked(addon)
