@@ -31,9 +31,11 @@ open class TestSetup {
             // Clear bookmarks left after a failed test
             val bookmarks = bookmarksStorage.getTree(BookmarkRoot.Mobile.id)?.children
             Log.i(TAG, "Before cleanup: Bookmarks storage contains: $bookmarks")
-            bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
-            // TODO: Follow-up with a method to handle the DB update; the logs will still show the bookmarks in the storage before the test starts.
-            Log.i(TAG, "After cleanup: Bookmarks storage contains: $bookmarks")
+            bookmarks?.forEach {
+                bookmarksStorage.deleteNode(it.guid)
+                // TODO: Follow-up with a method to handle the DB update; the logs will still show the bookmarks in the storage before the test starts.
+                Log.i(TAG, "After cleanup: Bookmarks storage contains: $bookmarks")
+            }
         }
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()

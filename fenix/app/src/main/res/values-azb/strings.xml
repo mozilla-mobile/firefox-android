@@ -295,6 +295,8 @@
     <string name="search_scan_button">اسکن</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">آختاریش موتورونون تنظیم‌لری</string>
+    <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
+    <string name="awesomebar_clipboard_title">باغلانتی‌نی کلیپ بورددان آل</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_allow_button">ایجازه وئر</string>
     <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
@@ -303,9 +305,100 @@
     <string name="search_suggestions_onboarding_title">اؤزل اوتورم‌لاردا آختاریش تکلیف‌لرینه ایجازه وئریلسین؟</string>
 
 
+    <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="search_suggestions_onboarding_text">%s آدرس چوبوغونا یازدیغینیز هر شئیی وارساییلان آختاریش موتورونوزلا پایلاشاجاق.</string>
     <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">%s ایله آختار</string>
 
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">موستقیم آدرس چوبوغوندان آختارین</string>
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">آختاریش تنظیم‌لری</string>
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">بو دفعه بوردا آختار:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">%s آختاریش موتورو</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">اؤزللشدیریلمیش آنایارپاق‌نان تانیش اولون. سون تاغلار، بوکمارک‌لار و آختاریش سونوچلاری بورادا گؤرونه‌جک.</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">داها اؤزل اینترنته خوش گلیبسیز</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">داها رنگلی، داها گیزلی. پول اوچون دئییل، اینسانلیک اوچون.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title_3">اکرانلاری دگیشمک همیشه‌دن داها آساندیر</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">ایندی آیری جهازلارداکی تاغلارلا، قالدیغینیز یئردن ایدامه وئرین.</string>
+    <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_get_started_button">باشلایین</string>
+    <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
+    <string name="onboarding_home_sign_in_button">گیریش</string>
+    <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_skip_button">گئچ</string>
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">تاغلارینیز دونگل‌لنیر! آیری جهازینیزدا قالدیغینیز یئردن دوام ائدین.</string>
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">باغلا</string>
+
+    <!-- Notification pre-permission dialog -->
+    <!-- Enable notification pre permission dialog title
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="onboarding_home_enable_notifications_title" moz:removedIn="124" tools:ignore="UnusedResources">بیلدیریش‌لر %s ایله داها چوخ شئی ائتمه‌گه کومک ائدیر.</string>
+    <!-- Enable notification pre permission dialog description with rationale
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="onboarding_home_enable_notifications_description" moz:removedIn="124" tools:ignore="UnusedResources">تاغلارینیزی جهازلار آراسیندا دؤنگل‌ ائله‌یین، یئندیرمه‌لری ایداره ائله‌یین، %s گیزلیلیک قوروماسیندان لاب یاخچی یارارلانماق حاقیندا اطلاعات آلین و آیری شئی‌لر.</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="onboarding_home_enable_notifications_positive_button" moz:removedIn="124" tools:ignore="UnusedResources">ایدامه وئر</string>
+    <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
+    <string name="onboarding_home_enable_notifications_negative_button" moz:removedIn="124" tools:ignore="UnusedResources">ایندی یوخ</string>
+
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">فایرفاکس گیزللیک بیلدیریمی</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">سیزی قوروماغی سئویریک</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_3">نفع آختارمیان مورورچوموز، شیرکتلرین سیزی وب‌ده گیزلیجه تعقیب ائتمه‌سینی مسدود ائلییر.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">نفع آختارمیان مورورچوموز، شیرکتلرین سیزی گیزلیجه اینترنتده تعقیب ائتمه‌لرینی مسدود ائلییر.</string>
+    <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
+    This is part of the string with the key "juno_onboarding_default_browser_description". -->
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">گیزلیلیک بیلدیریمی</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">وارساییلان مورورچو ائله</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">ایندی یوخ</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title_2">جهازلار آراسیندا گئچیش ائلین زامان رمزلنمیش قالین.</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">گیریش و دؤنگل ائتدیگینیز زامان داها گوونلی اولورسوز. فایرفاکس رمزلری، بوکمارکلاری و آیری شئی‌لری رمزلشدیریر.</string>
+    <!-- Text for the button to sign in to sync on the device -->
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">گیریش</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">ایندی یوخ</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">بیلدیریش‌لر فایرفاکس ایله داها امن قالماغینیزا کومک ائدیر.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus_2">تاغلاری جهازلاریز آراسیندا گوونلی شکلده گؤندرین و فایرفاکسین آیری اؤزللیکلرینی کشف ائله‌یین.</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">بیلدیریش‌لری آچ</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">ایندی یوخ</string>
+    <!-- Title for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_title" tools:ignore="UnusedResources">فایرفاکس آختاریش ویجتینی ایمتیحان ائله‌یین</string>
+    <!-- Description for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_description" tools:ignore="UnusedResources">فایرفاکسی آنا اکرانیزا آرتیرساز گیزلیلیگه اؤنجه‌لیک وئرن مورورچونوزا آسانلیق‌لا الینیز چاتار.</string>
+    <!-- Text for the button to add search widget on the device used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_positive_button" tools:ignore="UnusedResources">فایرفاکس ویجتینی آرتیر</string>
     <!-- Text for the button to dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">ایندی یوخ</string>
 
@@ -324,6 +417,107 @@
     <string name="settings">تنظیم‌‎لر</string>
     <!-- Preference category for general settings -->
     <string name="preferences_category_general">عمومی</string>
+
+
+    <!-- Preference category for all links about Fenix -->
+    <string name="preferences_category_about">حاقیندا</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">بیرینی سئچ</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_2">باشقا آختارما موتورلارینی ایداره ائدین</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">آختاریش منوسوندا گؤرونن موتورلاری دوزه‌لیش ائدین</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">آختاریش منوسوندا گؤرونن موتورلار</string>
+    <!-- Preference for settings related to changing the default search engine -->
+    <string name="preferences_default_search_engine">وارساییلان آختاریش موتورو</string>
+    <!-- Preference for settings related to Search -->
+    <string name="preferences_search">آختاریش</string>
+
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">آختاریش موتورلاری</string>
+    <!-- Preference for settings related to Search engines suggestions-->
+    <string name="preferences_search_engines_suggestions">آختاریش موتورلاریندان تکلیف‌لر</string>
+    <!-- Preference Category for settings related to Search address bar -->
+    <string name="preferences_settings_address_bar">آدرس چوبوغو ترجیح‌لری</string>
+    <!-- Preference Category for settings to Firefox Suggest -->
+    <string name="preference_search_address_bar_fx_suggest">آدرس چوبوغو -فایرفاکس تکلیفی</string>
+    <!-- Preference link to Learn more about Firefox Suggest -->
+    <string name="preference_search_learn_about_fx_suggest">فایرفاکس تکلیفی حاقیندا آرتیق بیلگی آلین</string>
+    <!-- Preference link to rating Fenix on the Play Store -->
+    <string name="preferences_rate">قوقل پلی‌ده امتیاز وئر</string>
+    <!-- Preference linking to about page for Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="preferences_about">%1$s حاقیندا</string>
+    <!-- Preference for settings related to changing the default browser -->
+    <string name="preferences_set_as_default_browser">وارساییلان مورورچو ائله</string>
+    <!-- Preference category for advanced settings -->
+    <string name="preferences_category_advanced">قاباغجیل</string>
+
+    <!-- Preference category for privacy and security settings -->
+    <string name="preferences_category_privacy_security">گیزلیلیک و گوونلیک</string>
+    <!-- Preference for advanced site permissions -->
+    <string name="preferences_site_permissions">سایت ایجازه‌لری</string>
+    <!-- Preference for private browsing options -->
+    <string name="preferences_private_browsing_options">گیزلی مورور</string>
+    <!-- Preference for opening links in a private tab-->
+    <string name="preferences_open_links_in_a_private_tab">باغلانتی‌نی گیزلی تاغدا آچ</string>
+
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">گیزلی موروردا اسکرین شاتا ایجازه وئر</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">اگر اجازه وئریلیرسه، گیزلی تاغلار بیرنئچه اپلیکیشن آچیلدیغی زامان‌دا گؤرونه‌جک</string>
+    <!-- Preference for adding private browsing shortcut -->
+    <string name="preferences_add_private_browsing_shortcut">گیزلی مورور شورتکاتینی آرتیر</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">یالنیز HTTPS حالتی</string>
+
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">کوکی بنر مسدود ائلیه‌نی</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">گیزلی موروردا کوکی بنر مسدود ائلینی</string>
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_off_for_site">بو سایتدا باغلی</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">لغو</string>
+
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">ایستک یوللا</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title_2">بو سایت اوچون آرخالاما ایستنسین؟</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">ایستک گؤندریلدی</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_on_for_site">بو سایت اوچون آچیق</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">آرخالاما ایستکی گوندریلدی</string>
+    <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site">سایت هله‌لیک آرخالانمیر</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">%1$s اوچون کوکی بنر مسدود ائلین ایشله‌سین؟</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">%1$s اوچون کوکی بنر مسدود ائلین ایشدن سالینسین؟</string>
+
+    <!-- Toolbar Preferences -->
+    <!-- Preference for using top toolbar -->
+    <string name="preference_top_toolbar">اوست</string>
+    <!-- Preference for using bottom toolbar -->
+    <string name="preference_bottom_toolbar">آلت</string>
+
+    <!-- Theme Preferences -->
+    <!-- Preference for using light theme -->
+    <string name="preference_light_theme">آچیق</string>
+    <!-- Preference for using dark theme -->
+    <string name="preference_dark_theme">قارانلیق</string>
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">باتری ساخلیان طرفیندن تنظیم‌لنیر</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">رفرش اوچون چک</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">آلت‌لر چوبوغونو گیزلتمک اوچون اسکرول ائله‌</string>
 
 
     <!-- Translations feature-->
