@@ -5,19 +5,23 @@
 package mozilla.components.feature.addons.mozilla.components.feature.addons.ui
 
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.concept.engine.webextension.InstallationMethod
+import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.ui.AddonFilePicker
 import mozilla.components.feature.addons.ui.AddonOpenDocument
 import mozilla.components.support.test.any
+import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.whenever
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -91,5 +95,57 @@ class AddonFilePickerTest {
             onSuccess = any(),
             onError = any(),
         )
+    }
+
+    @Test
+    fun `WHEN creating an intent from a AddonOpenDocument THEN it contains mime types for zips and xpi files`() {
+        val contractResult = AddonOpenDocument()
+
+        val intent = contractResult.createIntent(testContext, arrayOf())
+
+        val mimeTypes = intent.extras!!.getStringArray(Intent.EXTRA_MIME_TYPES)
+        assertArrayEquals(mimeTypes, arrayOf("application/x-xpinstall", "application/zip"))
+    }
+
+    @Test
+    fun `WHEN an addon is installed successfully THEN remove the temporary file`() {
+        val uri: Uri = mock()
+
+        doReturn("file:///data/data/XPIs/addon.xpi").`when`(filePicker).convertToFileUri(uri)
+
+        val onSuccessCallbackCapture = argumentCaptor<((Addon) -> Unit)>()
+        filePicker.handleUriSelected(uri)
+
+        verify(addonManager).installAddon(
+            url = any<String>(),
+            installationMethod = eq(InstallationMethod.FROM_FILE),
+            onSuccess = onSuccessCallbackCapture.capture(),
+            onError = any(),
+        )
+
+        onSuccessCallbackCapture.value.invoke(mock())
+
+        verify(filePicker).removeTemporaryFile(uri)
+    }
+
+    @Test
+    fun `WHEN there is an error during installation THEN remove the temporary file`() {
+        val uri: Uri = mock()
+
+        doReturn("file:///data/data/XPIs/addon.xpi").`when`(filePicker).convertToFileUri(uri)
+
+        val onErrorCapture = argumentCaptor<((Throwable) -> Unit)>()
+        filePicker.handleUriSelected(uri)
+
+        verify(addonManager).installAddon(
+            url = any<String>(),
+            installationMethod = eq(InstallationMethod.FROM_FILE),
+            onSuccess = any(),
+            onError = onErrorCapture.capture(),
+        )
+
+        onErrorCapture.value.invoke(mock())
+
+        verify(filePicker).removeTemporaryFile(uri)
     }
 }

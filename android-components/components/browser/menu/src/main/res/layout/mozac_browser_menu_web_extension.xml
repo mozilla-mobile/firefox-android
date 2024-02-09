@@ -24,6 +24,7 @@
         style="@style/Mozac.Browser.Menu.Item.ImageText.Label"
         android:background="@android:color/transparent"
         android:clickable="false"
+        android:focusable="false"
         android:gravity="center_vertical"
         android:textAlignment="viewStart"
         tools:ignore="RtlCompat"

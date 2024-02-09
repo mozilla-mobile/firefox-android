@@ -516,6 +516,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    /**
+     * Indicates if the user has completed successfully first translation.
+     */
+    var showFirstTimeTranslation: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_time_translation),
+        default = true,
+    )
+
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -757,6 +765,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val blockCookiesInCustomTrackingProtection by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies),
         true,
+    )
+
+    val useProductionRemoteSettingsServer by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_remote_server_prod),
+        default = true,
     )
 
     val enabledTotalCookieProtection: Boolean
@@ -1675,23 +1688,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if notification pre permission prompt feature is enabled.
-     */
-    var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
-        default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = true,
-    )
-
-    /**
-     * Indicates if notification permission prompt has been shown to the user.
-     */
-    var isNotificationPrePermissionShown by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_is_notification_pre_permission_prompt_shown),
-        default = false,
-    )
-
-    /**
      * Returns whether onboarding should be shown to the user.
      *
      * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
@@ -1928,6 +1924,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if SuggestStrongPassword feature is enabled.
+     */
+    var enableSuggestStrongPassword by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_suggest_strong_password),
+        default = { FxNimbus.features.fxStrongPassword.value().enabled },
+        featureFlag = FeatureFlags.suggestStrongPassword,
+    )
+
+    /**
      * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
      * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
      */
@@ -1946,6 +1951,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
         default = { enableFxSuggest },
         featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates that the user does not want warned of a translations
+     * model download while in data saver mode and using mobile data.
+     */
+    var ignoreTranslationsDataSaverWarning by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_ignore_translations_data_saver_warning),
+        default = false,
     )
 
     /**

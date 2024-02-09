@@ -73,11 +73,13 @@ class WallpaperDownloader(
         val request = Request(
             url = "$remoteHost/$remotePath",
             method = Request.Method.GET,
+            conservative = true,
         )
 
         return@withContext Result.runCatching {
             val response = client.fetch(request)
             if (!response.isSuccess) {
+                response.close()
                 throw IllegalStateException()
             }
             localFile.parentFile?.mkdirs()

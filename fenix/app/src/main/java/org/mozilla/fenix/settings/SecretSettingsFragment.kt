@@ -18,13 +18,12 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.debugsettings.data.debugDrawerEnabled
-import org.mozilla.fenix.debugsettings.data.debugSettings
-import org.mozilla.fenix.debugsettings.data.updateDebugDrawerEnabled
+import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.GleanMetrics.DebugDrawer as DebugDrawerMetrics
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
 
@@ -34,6 +33,11 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        val debugSettingsRepository = DefaultDebugSettingsRepository(
+            context = requireContext(),
+            writeScope = lifecycleScope,
+        )
+
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
         requirePreference<SwitchPreference>(R.string.pref_key_allow_third_party_root_certs).apply {
@@ -84,7 +88,8 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                     val newBooleanValue = newValue as? Boolean ?: return false
-                    val ingestionScheduler = requireContext().components.fxSuggest.ingestionScheduler
+                    val ingestionScheduler =
+                        requireContext().components.fxSuggest.ingestionScheduler
                     if (newBooleanValue) {
                         ingestionScheduler.startPeriodicIngestion()
                     } else {
@@ -105,17 +110,13 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
 
         lifecycleScope.launch {
-            val debugDataStore = requireContext().debugSettings
-
-            // During initial development, this will only be available in Nightly or Debug builds.
             requirePreference<SwitchPreference>(R.string.pref_key_enable_debug_drawer).apply {
-                isVisible = Config.channel.isNightlyOrDebug
-                isChecked = debugDataStore.debugDrawerEnabled.first()
+                isVisible = true
+                isChecked = debugSettingsRepository.debugDrawerEnabled.first()
                 onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { _, newValue ->
-                        lifecycleScope.launch {
-                            debugDataStore.updateDebugDrawerEnabled(enabled = newValue as Boolean)
-                        }
+                        debugSettingsRepository.setDebugDrawerEnabled(enabled = newValue as Boolean)
+                        DebugDrawerMetrics.debugDrawerEnabled.set(newValue)
                         true
                     }
             }
@@ -128,6 +129,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
 
         requirePreference<Preference>(R.string.pref_key_custom_sponsored_stories_parameters).apply {
             isVisible = Config.channel.isNightlyOrDebug
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_remote_server_prod).apply {
+            isVisible = true
+            isChecked = context.settings().useProductionRemoteSettingsServer
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }
 

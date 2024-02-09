@@ -25,7 +25,6 @@ import org.mozilla.focus.GleanMetrics.RecentApps
 import org.mozilla.focus.R
 import org.mozilla.focus.activity.MainActivity
 import org.mozilla.focus.ext.components
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.IntentUtils
 
 /**
@@ -68,8 +67,6 @@ class SessionNotificationService : Service() {
             ACTION_ERASE -> {
                 Notifications.notificationTapped.record(NoExtras())
 
-                TelemetryWrapper.eraseNotificationEvent()
-
                 shouldSendTaskRemovedTelemetry = false
 
                 if (VisibilityLifeCycleCallback.isInBackground(this)) {
@@ -94,8 +91,6 @@ class SessionNotificationService : Service() {
         // Do not double send telemetry for notification erase event
         if (shouldSendTaskRemovedTelemetry) {
             RecentApps.appRemovedFromList.record(NoExtras())
-
-            TelemetryWrapper.eraseTaskRemoved()
         }
 
         components.tabsUseCases.removeAllTabs()
@@ -105,12 +100,25 @@ class SessionNotificationService : Service() {
     }
 
     private fun buildNotification(): Notification {
+        val eraseIntent = createEraseIntent()
+        val contentTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            getString(R.string.notification_erase_title_android_14)
+        } else {
+            getString(R.string.app_name)
+        }
+
+        val contentText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            getString(R.string.notification_erase_text_android_14)
+        } else {
+            getString(R.string.notification_erase_text)
+        }
+
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getString(R.string.notification_erase_text))
-            .setContentIntent(createNotificationIntent())
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .setContentIntent(eraseIntent)
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .setShowWhen(false)
             .setLocalOnly(true)
@@ -129,10 +137,15 @@ class SessionNotificationService : Service() {
                     createOpenAndEraseActionIntent(),
                 ),
             )
+            .apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    setDeleteIntent(eraseIntent)
+                }
+            }
             .build()
     }
 
-    private fun createNotificationIntent(): PendingIntent {
+    private fun createEraseIntent(): PendingIntent {
         val notificationIntentFlags =
             IntentUtils.defaultIntentPendingFlags() or PendingIntent.FLAG_ONE_SHOT
         val intent = Intent(this, SessionNotificationService::class.java)

@@ -21,6 +21,7 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.AppAndSystemHelper
 import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.AppAndSystemHelper.denyPermission
 import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
@@ -43,6 +44,7 @@ import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -92,6 +94,7 @@ class SearchTest {
     @After
     fun tearDown() {
         searchMockServer.shutdown()
+        AppAndSystemHelper.resetSystemLocaleToEnUS()
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154189
@@ -485,7 +488,7 @@ class SearchTest {
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
             clickDeleteAllHistoryButton()
             confirmDeleteAllHistory()
-            verifyDeleteSnackbarText("Group deleted")
+            verifySnackBarText("Group deleted")
             verifyHistoryItemExists(shouldExist = false, firstPageUrl.toString())
         }.goBack {}
         homeScreen {

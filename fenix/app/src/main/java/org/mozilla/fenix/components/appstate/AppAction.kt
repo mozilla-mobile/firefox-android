@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.appstate
 
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
@@ -15,6 +16,7 @@ import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.browser.StandardSnackbarError
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -126,6 +128,13 @@ sealed class AppAction : Action {
      * from the recent synced tabs list.
      */
     data class RemoveRecentSyncedTab(val syncedTab: RecentSyncedTab) : AppAction()
+
+    /**
+     * Action indicating that the selected tab has been changed.
+     *
+     * @property tab The tab that has been selected.
+     */
+    data class SelectedTabChanged(val tab: TabSessionState) : AppAction()
 
     /**
      * [Action]s related to interactions with the Messaging Framework.
@@ -249,6 +258,13 @@ sealed class AppAction : Action {
         data class SettingsCardExpanded(
             val productPageUrl: String,
             val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the recorded product recommendation impressions set.
+         */
+        data class ProductRecommendationImpression(
+            val key: ShoppingState.ProductRecommendationImpressionKey,
         ) : ShoppingAction()
     }
 }

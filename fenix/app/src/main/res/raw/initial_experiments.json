@@ -54,42 +54,38 @@
       "referenceBranch": "treatment-a",
       "featureValidationOptOut": false,
       "localizations": null,
-      "locales": null
+      "locales": null,
+      "publishedDate": null
     },
     {
       "schemaVersion": "1.12.0",
-      "slug": "android-re-engagement-notifications-timing-v2-copy",
-      "id": "android-re-engagement-notifications-timing-v2-copy",
+      "slug": "android-long-term-holdback-validation",
+      "id": "android-long-term-holdback-validation",
       "arguments": {},
-      "application": "org.mozilla.firefox",
+      "application": "org.mozilla.firefox_beta",
       "appName": "fenix",
-      "appId": "org.mozilla.firefox",
-      "channel": "release",
-      "userFacingName": "Android re-engagement private browser notifications v3",
-      "userFacingDescription": "Notification to bring awareness to the private browsing option. (excludes the DE audience so that they can see a different notification)",
+      "appId": "org.mozilla.firefox_beta",
+      "channel": "beta",
+      "userFacingName": "Android Long-term Holdback Validation",
+      "userFacingDescription": "This is an internal test of new experiment tooling",
       "isEnrollmentPaused": false,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
-        "namespace": "fenix-re-engagement-notification-release-5",
+        "namespace": "fenix-no-feature-fenix-beta-2",
         "start": 0,
         "count": 10000,
         "total": 10000
       },
       "featureIds": [
-        "re-engagement-notification"
+        "no-feature-fenix"
       ],
       "probeSets": [],
-      "outcomes": [
-        {
-          "slug": "default-browser",
-          "priority": "primary"
-        }
-      ],
+      "outcomes": [],
       "branches": [
         {
-          "slug": "control-off-branch",
-          "ratio": 1,
+          "slug": "delivery",
+          "ratio": 9,
           "feature": {
             "featureId": "this-is-included-for-mobile-pre-96-support",
             "enabled": false,
@@ -97,16 +93,14 @@
           },
           "features": [
             {
-              "featureId": "re-engagement-notification",
+              "featureId": "no-feature-fenix",
               "enabled": true,
-              "value": {
-                "enabled": false
-              }
+              "value": {}
             }
           ]
         },
         {
-          "slug": "treatment-privacy-notification",
+          "slug": "holdback",
           "ratio": 1,
           "feature": {
             "featureId": "this-is-included-for-mobile-pre-96-support",
@@ -115,57 +109,50 @@
           },
           "features": [
             {
-              "featureId": "re-engagement-notification",
+              "featureId": "no-feature-fenix",
               "enabled": true,
-              "value": {
-                "enabled": true,
-                "type": 0
-              }
+              "value": {}
             }
           ]
         }
       ],
-      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('120.!') >= 0) && (region in ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'])))",
-      "startDate": "2023-11-16",
+      "targeting": "((is_already_enrolled) || ((app_version|versionCompare('123.!') >= 0)))",
+      "startDate": "2024-01-25",
       "enrollmentEndDate": null,
       "endDate": null,
-      "proposedDuration": 30,
-      "proposedEnrollment": 14,
-      "referenceBranch": "control-off-branch",
+      "proposedDuration": 60,
+      "proposedEnrollment": 30,
+      "referenceBranch": "holdback",
       "featureValidationOptOut": false,
       "localizations": null,
-      "locales": null
+      "locales": null,
+      "publishedDate": "2024-01-25T17:36:03.153458Z"
     },
     {
       "schemaVersion": "1.12.0",
-      "slug": "splash-screen-test",
-      "id": "splash-screen-test",
+      "slug": "android-long-term-holdback-validation-first-run-sub-experiment",
+      "id": "android-long-term-holdback-validation-first-run-sub-experiment",
       "arguments": {},
-      "application": "org.mozilla.firefox",
+      "application": "org.mozilla.firefox_beta",
       "appName": "fenix",
-      "appId": "org.mozilla.firefox",
-      "channel": "release",
-      "userFacingName": "Splash screen Test",
-      "userFacingDescription": "Testing a splasshcreen on app launch.",
+      "appId": "org.mozilla.firefox_beta",
+      "channel": "beta",
+      "userFacingName": "Android Long-term Holdback Validation - First-run Sub-Experiment",
+      "userFacingDescription": "This is an internal test of new experiment tooling",
       "isEnrollmentPaused": false,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
-        "namespace": "fenix-splash-screen-release-2",
+        "namespace": "fenix-nimbus-is-ready-beta-1",
         "start": 0,
         "count": 10000,
         "total": 10000
       },
       "featureIds": [
-        "splash-screen"
+        "nimbus-is-ready"
       ],
       "probeSets": [],
-      "outcomes": [
-        {
-          "slug": "onboarding",
-          "priority": "primary"
-        }
-      ],
+      "outcomes": [],
       "branches": [
         {
           "slug": "control",
@@ -177,11 +164,28 @@
           },
           "features": [
             {
-              "featureId": "splash-screen",
+              "featureId": "nimbus-is-ready",
               "enabled": true,
               "value": {
-                "enabled": false,
-                "maximum_duration_ms": 0
+                "event-count": 2
+              }
+            }
+          ]
+        },
+        {
+          "slug": "treatment-a",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "nimbus-is-ready",
+              "enabled": true,
+              "value": {
+                "event-count": 5
               }
             }
           ]
@@ -196,26 +200,195 @@
           },
           "features": [
             {
-              "featureId": "splash-screen",
+              "featureId": "nimbus-is-ready",
               "enabled": true,
               "value": {
-                "enabled": true,
-                "maximum_duration_ms": 6000
+                "event-count": 10
               }
             }
           ]
         }
       ],
-      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('121.!') >= 0) && (region in ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'])))",
-      "startDate": "2023-12-06",
+      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('123.!') >= 0) && (enrollments_map['android-long-term-holdback-validation'] == 'delivery')))",
+      "startDate": "2024-02-01",
       "enrollmentEndDate": null,
       "endDate": null,
-      "proposedDuration": 49,
-      "proposedEnrollment": 21,
+      "proposedDuration": 28,
+      "proposedEnrollment": 7,
       "referenceBranch": "control",
       "featureValidationOptOut": false,
       "localizations": null,
-      "locales": null
+      "locales": null,
+      "publishedDate": "2024-02-01T19:06:38.368231Z"
+    },
+    {
+      "schemaVersion": "1.12.0",
+      "slug": "beta-fx-122-android-set-to-default-notifications-timing-experiment",
+      "id": "beta-fx-122-android-set-to-default-notifications-timing-experiment",
+      "arguments": {},
+      "application": "org.mozilla.firefox",
+      "appName": "fenix",
+      "appId": "org.mozilla.firefox",
+      "channel": "release",
+      "userFacingName": "Fx 122 Android set to default notifications timing experiment",
+      "userFacingDescription": "Timing test for the set to default message on Firefox for Android (Fenix).",
+      "isEnrollmentPaused": false,
+      "isRollout": false,
+      "bucketConfig": {
+        "randomizationUnit": "nimbus_id",
+        "namespace": "fenix-messaging-release-19",
+        "start": 0,
+        "count": 10000,
+        "total": 10000
+      },
+      "featureIds": [
+        "messaging"
+      ],
+      "probeSets": [],
+      "outcomes": [
+        {
+          "slug": "default-browser",
+          "priority": "primary"
+        }
+      ],
+      "branches": [
+        {
+          "slug": "control",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "messaging",
+              "enabled": true,
+              "value": {
+                "messages": {
+                  "{experiment}-en": {
+                    "is-control": true,
+                    "surface": "notification",
+                    "style": "NOTIFICATION",
+                    "action": "MAKE_DEFAULT_BROWSER",
+                    "trigger": [
+                      "I_AM_NOT_DEFAULT_BROWSER"
+                    ],
+                    "experiment": "{experiment}"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "slug": "treatment-a",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "messaging",
+              "enabled": true,
+              "value": {
+                "messages": {
+                  "{experiment}-en": {
+                    "title": "Firefox is Fast and Private",
+                    "text": "Make Firefox your default browser",
+                    "surface": "notification",
+                    "style": "NOTIFICATION",
+                    "action": "MAKE_DEFAULT_BROWSER",
+                    "trigger": [
+                      "DAY_1_AFTER_INSTALL",
+                      "I_AM_NOT_DEFAULT_BROWSER"
+                    ],
+                    "experiment": "{experiment}"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "slug": "treatment-b",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "messaging",
+              "enabled": true,
+              "value": {
+                "messages": {
+                  "{experiment}-en": {
+                    "title": "Firefox is Fast and Private",
+                    "text": "Make Firefox your default browser",
+                    "surface": "notification",
+                    "style": "NOTIFICATION",
+                    "action": "MAKE_DEFAULT_BROWSER",
+                    "trigger": [
+                      "DAY_3_AFTER_INSTALL",
+                      "I_AM_NOT_DEFAULT_BROWSER"
+                    ],
+                    "experiment": "{experiment}"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "slug": "treatment-c",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "messaging",
+              "enabled": true,
+              "value": {
+                "messages": {
+                  "{experiment}-en": {
+                    "title": "Firefox is Fast and Private",
+                    "text": "Make Firefox your default browser",
+                    "surface": "notification",
+                    "style": "NOTIFICATION",
+                    "action": "MAKE_DEFAULT_BROWSER",
+                    "trigger": [
+                      "DAY_6_AFTER_INSTALL",
+                      "I_AM_NOT_DEFAULT_BROWSER"
+                    ],
+                    "experiment": "{experiment}"
+                  }
+                },
+                "triggers": {
+                  "DAY_6_AFTER_INSTALL": "days_since_install == 6"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('122.!') >= 0) && (language in ['en'])))",
+      "startDate": "2024-01-23",
+      "enrollmentEndDate": null,
+      "endDate": null,
+      "proposedDuration": 43,
+      "proposedEnrollment": 14,
+      "referenceBranch": "control",
+      "featureValidationOptOut": false,
+      "localizations": null,
+      "locales": null,
+      "publishedDate": null
     }
   ]
 }

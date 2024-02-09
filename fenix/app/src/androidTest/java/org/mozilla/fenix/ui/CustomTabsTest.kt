@@ -13,7 +13,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -141,7 +140,6 @@ class CustomTabsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334761
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807289")
     @SmokeTest
     @Test
     fun verifyDownloadInACustomTabTest() {
@@ -311,6 +309,7 @@ class CustomTabsTest {
             verifyEnhancedTrackingProtectionSheetStatus(status = "ON", state = true)
         }.toggleEnhancedTrackingProtectionFromSheet {
             verifyEnhancedTrackingProtectionSheetStatus(status = "OFF", state = false)
+        }.closeEnhancedTrackingProtectionSheet {
         }
 
         openAppFromExternalLink(customTabPage.url.toString())

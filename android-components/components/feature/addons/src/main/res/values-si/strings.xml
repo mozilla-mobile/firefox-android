@@ -22,6 +22,8 @@
      then we will show another collapsed entry saying "Access your data on 2 other domains". This entry it's for the plural case, when the add-on is accessing more than one extra domain.
      %1$d will be replaced by an integer indicating the number of additional domains for which this web extension is requesting permission. -->
     <string name="mozac_feature_addons_permissions_extra_domains_description_plural" tools:ignore="PluralsCandidate">අන් වසම් %1$d කට ඔබගේ දත්ත වෙත ප්‍රවේශය</string>
+    <!-- Content description for a permission item, for an installed add-on details page. %1$s will be replaced with the permission text name, %2$d will be replaced with the permission position in the list and %3$d will be replaced with the total number of permissions in the list.Taking as an example "Read and modify privacy settings" the whole text will read Read and modify privacy settings, 2 of 6. -->
+    <string name="mozac_feature_addons_permissions_content_description_item">%3$d න් %1$s, %2$d</string>
     <!-- Description for tabs add-on permission. -->
     <string name="mozac_feature_addons_permissions_tabs_description">අතිරික්සුවේ පටිති වෙත ප්‍රවේශය</string>
     <!-- Description for unlimited_storage permission. -->
@@ -73,7 +75,7 @@
     <!-- The author of an add-on. -->
     <string name="mozac_feature_addons_author">කර්තෘ</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">කතුවරු</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">කතුවරු</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">අවසාන යාවත්කාලය</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -112,8 +114,10 @@
     <string name="mozac_feature_addons_details">විස්තර</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">අවසර</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">ඉවත් කරන්න</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">වාර්තා කරන්න</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">%1$s එක් කරන්නද?</string>
     <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
@@ -200,8 +204,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%2$s %3$s සමඟ නොගැළපෙන නිසා %1$s ස්ථාපනයට නොහැකිය.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">ඉහළ අවදානමක් සහිත ආරක්‍ෂණ හෝ ස්ථායි ගැටළු තිබෙන නිසා %1$s ස්ථාපනයට නොහැකිය.</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">ඉහළ අවදානමක් සහිත ආරක්‍ෂණ හෝ ස්ථායි ගැටළු තිබෙන නිසා %1$s ස්ථාපනයට නොහැකිය.</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s සාර්ථකව සබල විය</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

@@ -37,7 +37,8 @@ class MainMenuTest {
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
+    val activityTestRule =
+        HomeActivityIntentTestRule.withDefaultSettingsOverrides(translationsEnabled = true)
 
     @Before
     fun setUp() {
@@ -174,21 +175,21 @@ class MainMenuTest {
             verifyFindInPagePrevButton()
             verifyFindInPageCloseButton()
             enterFindInPageQuery("a")
-            verifyFindNextInPageResult("1/3")
+            verifyFindInPageResult("1/3")
             clickFindInPageNextButton()
-            verifyFindNextInPageResult("2/3")
+            verifyFindInPageResult("2/3")
             clickFindInPageNextButton()
-            verifyFindNextInPageResult("3/3")
+            verifyFindInPageResult("3/3")
             clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("2/3")
+            verifyFindInPageResult("2/3")
             clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("1/3")
+            verifyFindInPageResult("1/3")
         }.closeFindInPageWithCloseButton {
             verifyFindInPageBar(false)
         }.openThreeDotMenu {
         }.openFindInPage {
             enterFindInPageQuery("3")
-            verifyFindNextInPageResult("1/1")
+            verifyFindInPageResult("1/1")
         }.closeFindInPageWithBackButton {
             verifyFindInPageBar(false)
         }

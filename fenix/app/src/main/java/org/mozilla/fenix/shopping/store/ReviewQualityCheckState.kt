@@ -6,6 +6,7 @@ package org.mozilla.fenix.shopping.store
 
 import androidx.compose.runtime.Immutable
 import mozilla.components.lib.state.State
+import java.text.NumberFormat
 
 private const val NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE = 2
 
@@ -89,14 +90,38 @@ sealed interface ReviewQualityCheckState : State {
                  * Denotes a generic error has occurred.
                  */
                 object GenericError : Error
+
+                /**
+                 * Denotes a product is not available.
+                 */
+                object ProductNotAvailable : Error
+
+                /**
+                 * Denotes current user reported a product is back in stock.
+                 */
+                object ThanksForReporting : Error
+
+                /**
+                 * Denotes another user has already reported the product is back in stock.
+                 */
+                object ProductAlreadyReported : Error
             }
 
             /**
              * Denotes no analysis is present for the product the user is browsing.
+             *
+             * @property progress The [Progress] of the analysis, ranges from 0-100.
+             * Default value is -1, which means analysis is not in progress.
              */
             data class NoAnalysisPresent(
-                val isReanalyzing: Boolean = false,
-            ) : ProductReviewState
+                val progress: Progress = Progress(-1f),
+            ) : ProductReviewState {
+
+                /**
+                 * Whether or not the progress bar is visible.
+                 */
+                val isProgressBarVisible: Boolean = progress.value != -1f
+            }
 
             /**
              * Denotes the state where analysis of the product is fetched and present.
@@ -153,10 +178,48 @@ sealed interface ReviewQualityCheckState : State {
                 }
 
                 /**
-                 * The status of the product analysis.
+                 * The state of the product analysis.
                  */
-                enum class AnalysisStatus {
-                    NEEDS_ANALYSIS, REANALYZING, UP_TO_DATE
+                sealed interface AnalysisStatus {
+                    /**
+                     * Denotes reanalysis is in progress.
+                     *
+                     * @property progress The [Progress] of the analysis, ranges from 0-100.
+                     */
+                    data class Reanalyzing(val progress: Progress) : AnalysisStatus
+
+                    /**
+                     * Denotes a product needs analysis.
+                     */
+                    object NeedsAnalysis : AnalysisStatus
+
+                    /**
+                     * Denotes a product analysis is up to date.
+                     */
+                    object UpToDate : AnalysisStatus
+                }
+            }
+
+            /**
+             * Progress of the analysis, ranges from 0-100.
+             *
+             * @property value The value of the progress.
+             */
+            data class Progress(val value: Float) {
+                /**
+                 * Normalized progress, ranges from 0-1.
+                 */
+                val normalizedProgress: Float = value / 100f
+
+                /**
+                 * Percentage formatted progress ranging from 0-100%.
+                 */
+                val formattedProgress: String = FORMATTER.format(normalizedProgress)
+
+                companion object {
+                    private val FORMATTER = NumberFormat.getPercentInstance().apply {
+                        maximumFractionDigits = 0
+                    }
                 }
             }
         }

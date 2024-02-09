@@ -88,7 +88,6 @@ task-defaults:
             - '--browsertime-geckodriver=$MOZ_FETCHES_DIR/geckodriver'
             - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
             - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
-            - '--conditioned-profile=settled'
     fetches:
         toolchain:
             - browsertime
@@ -129,7 +128,8 @@ tasks:
             - [amazon-search, amazon-s]
             - [microsoft-support, micros-sup]
             - espn
-            - facebook
+            # Bug 1682027 - Disabled due to high failure rate
+            # - facebook
             - [youtube-watch, youtube-w]
             - allrecipes
 

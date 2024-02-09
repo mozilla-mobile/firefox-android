@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference
  * Interface to be implemented by components that provide browser toolbar functionality.
  */
 @Suppress("TooManyFunctions")
-interface Toolbar {
+interface Toolbar : ScrollableToolbar {
     /**
      * Sets/Gets the title to be displayed on the toolbar.
      */
@@ -174,6 +174,16 @@ interface Toolbar {
     fun removeEditActionEnd(action: Action)
 
     /**
+     * Hides the menu button in display mode.
+     */
+    fun hideMenuButton()
+
+    /**
+     * Shows the menu button in display mode.
+     */
+    fun showMenuButton()
+
+    /**
      * Casts this toolbar to an Android View object.
      */
     fun asView(): View = this as View
@@ -202,29 +212,6 @@ interface Toolbar {
     fun dismissMenu()
 
     /**
-     * Enable scrolling of the dynamic toolbar. Restore this functionality after [disableScrolling] stopped it.
-     *
-     * The toolbar may have other intrinsic checks depending on which the toolbar will be animated or not.
-     */
-    fun enableScrolling()
-
-    /**
-     * Completely disable scrolling of the dynamic toolbar.
-     * Use [enableScrolling] to restore the functionality.
-     */
-    fun disableScrolling()
-
-    /**
-     * Force the toolbar to expand.
-     */
-    fun expand()
-
-    /**
-     * Force the toolbar to collapse. Only if dynamic.
-     */
-    fun collapse()
-
-    /**
      * Listener to be invoked when the user edits the URL.
      */
     interface OnEditListener {
@@ -247,6 +234,11 @@ interface Toolbar {
          * Fired whenever the user changes the text in the address bar.
          */
         fun onTextChanged(text: String) = Unit
+
+        /**
+         * Fired when user clears input by tapping the clear input button.
+         */
+        fun onInputCleared() = Unit
     }
 
     /**
@@ -276,7 +268,6 @@ interface Toolbar {
      * @param longClickListener Callback that will be invoked whenever the button is long-pressed.
      * @param listener Callback that will be invoked whenever the button is pressed
      */
-    @Suppress("LongParameterList")
     open class ActionButton(
         val imageDrawable: Drawable? = null,
         val contentDescription: String,

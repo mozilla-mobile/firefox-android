@@ -5,6 +5,9 @@
 package mozilla.components.browser.state.state
 
 import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationPageSettings
+import mozilla.components.concept.engine.translate.TranslationSupport
 
 /**
  * Value type that represents the state of a translation within a [SessionState].
@@ -16,6 +19,12 @@ import mozilla.components.concept.engine.translate.TranslationEngineState
  * @property isTranslated The page is currently translated.
  * @property isTranslateProcessing The page is currently attempting a translation.
  * @property isRestoreProcessing The page is currently attempting a restoration.
+ * @property supportedLanguages Set of languages the translation engine supports.
+ * @property pageSettings The translation engine settings that relate to the current page.
+ * @property neverTranslateSites List of sites the user has opted to never translate.
+ * @property translationError Type of error that occurred when acquiring resources, translating, or
+ * restoring a translation.
+ * @property settingsError Type of error that occurred when acquiring resources or setting preferences.
  */
 data class TranslationsState(
     val isExpectedTranslate: Boolean = false,
@@ -24,4 +33,9 @@ data class TranslationsState(
     val isTranslated: Boolean = false,
     val isTranslateProcessing: Boolean = false,
     val isRestoreProcessing: Boolean = false,
+    val supportedLanguages: TranslationSupport? = null,
+    val pageSettings: TranslationPageSettings? = null,
+    val neverTranslateSites: List<String>? = null,
+    val translationError: TranslationError? = null,
+    val settingsError: TranslationError? = null,
 )

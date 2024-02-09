@@ -27,6 +27,10 @@ private fun ProductAnalysis.toProductReview(): ProductReviewState =
         } else {
             ProductReviewState.Error.GenericError
         }
+    } else if (deletedProductReported) {
+        ProductReviewState.Error.ProductAlreadyReported
+    } else if (deletedProduct) {
+        ProductReviewState.Error.ProductNotAvailable
     } else if (notEnoughReviews && !needsAnalysis) {
         ProductReviewState.Error.NotEnoughReviews
     } else {
@@ -50,8 +54,8 @@ private fun ProductAnalysis.toProductReview(): ProductReviewState =
 
 private fun Boolean.toAnalysisStatus(): AnalysisStatus =
     when (this) {
-        true -> AnalysisStatus.NEEDS_ANALYSIS
-        false -> AnalysisStatus.UP_TO_DATE
+        true -> AnalysisStatus.NeedsAnalysis
+        false -> AnalysisStatus.UpToDate
     }
 
 private fun Highlight.toHighlights(): Map<HighlightType, List<String>>? =

@@ -17,4 +17,21 @@ enum class TranslationOperation {
      * A translated page should be restored.
      */
     RESTORE,
+
+    /**
+     * The list of languages that the translation engine should fetch. This includes
+     * the languages supported for translating both "to" and "from" with their BCP-47 language tag
+     * and localized name.
+     */
+    FETCH_SUPPORTED_LANGUAGES,
+
+    /**
+     * The page related settings the translation engine should fetch.
+     */
+    FETCH_PAGE_SETTINGS,
+
+    /**
+     * The list of never translate sites the translation engine should fetch.
+     */
+    FETCH_NEVER_TRANSLATE_SITES,
 }

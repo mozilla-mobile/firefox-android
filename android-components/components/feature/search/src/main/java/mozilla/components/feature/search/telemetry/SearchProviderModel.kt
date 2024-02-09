@@ -7,45 +7,66 @@ package mozilla.components.feature.search.telemetry
 /**
  * All data needed to identify ads of a particular provider.
  *
- * @property name provider name.
- * @property regexp regular expression used to match the provider.
- * @property queryParam name of the query parameter for the user's search string.
- * @property codeParam name of the query parameter for the partner code.
- * @property codePrefixes array of prefixes (or complete values) to match against
- * the partner code parameters in the url.
- * @property followOnParams array of query parameter names that are used when a follow-on search occurs.
- * @property extraAdServersRegexps array of regular expressions that match URLs of potential ad servers.
+ * @property taggedCodes array of partner codes to match against the partner code parameters in the url.
+ * @property telemetryId provider name e.g. "google", "duckduckgo".
+ * @property organicCodes array of partner codes to match against the parameters in the url.
+ * Matching these codes will report the SERP as organic:<partner code>, which means the search
+ * was performed organically rather than through a SAP.
+ * @property codeParamName name of the query parameter for the partner code.
  * @property followOnCookies array of cookie details that are used to identify follow-on searches.
+ * @property queryParamNames list of names of the query parameters for the user's search string.
+ * @property searchPageRegexp regular expression used to match the provider.
+ * @property adServerAttributes an array of strings that potentially match data-attribute keys of anchors.
+ * @property followOnParamNames array of query parameter names that are used when a follow-on search occurs.
+ * @property extraAdServersRegexps array of regular expressions that match URLs of potential ad servers.
+ * @property expectedOrganicCodes array of partner codes to match against the parameters in the url.
+ * Matching these codes will report the SERP as organic:none which means the user has done a search
+ * through the search engine's website rather than through SAP.
  */
-internal data class SearchProviderModel(
-    val name: String,
-    val regexp: Regex,
-    val queryParam: String,
-    val codeParam: String,
-    val codePrefixes: List<String>,
-    val followOnParams: List<String>,
+data class SearchProviderModel(
+    val schema: Long,
+    val taggedCodes: List<String>,
+    val telemetryId: String,
+    val organicCodes: List<String>?,
+    val codeParamName: String,
+    val followOnCookies: List<SearchProviderCookie>?,
+    val queryParamNames: List<String>?,
+    val searchPageRegexp: Regex,
+    val adServerAttributes: List<String>?,
+    val followOnParamNames: List<String>?,
     val extraAdServersRegexps: List<Regex>,
-    val followOnCookies: List<SearchProviderCookie>,
+    val expectedOrganicCodes: List<String>?,
+
 ) {
 
     constructor(
-        name: String,
-        regexp: String,
-        queryParam: String,
-        codeParam: String = "",
-        codePrefixes: List<String> = emptyList(),
-        followOnParams: List<String> = emptyList(),
+        schema: Long,
+        taggedCodes: List<String> = emptyList(),
+        telemetryId: String,
+        organicCodes: List<String>? = emptyList(),
+        codeParamName: String = "",
+        followOnCookies: List<SearchProviderCookie>? = emptyList(),
+        queryParamNames: List<String> = emptyList(),
+        searchPageRegexp: String,
+        adServerAttributes: List<String>? = emptyList(),
+        followOnParamNames: List<String>? = emptyList(),
         extraAdServersRegexps: List<String> = emptyList(),
-        followOnCookies: List<SearchProviderCookie> = emptyList(),
+        expectedOrganicCodes: List<String>? = emptyList(),
+
     ) : this(
-        name = name,
-        regexp = regexp.toRegex(),
-        queryParam = queryParam,
-        codeParam = codeParam,
-        codePrefixes = codePrefixes,
-        followOnParams = followOnParams,
-        extraAdServersRegexps = extraAdServersRegexps.map { it.toRegex() },
+        schema = schema,
+        taggedCodes = taggedCodes,
+        telemetryId = telemetryId,
+        organicCodes = organicCodes,
+        codeParamName = codeParamName,
         followOnCookies = followOnCookies,
+        queryParamNames = queryParamNames,
+        searchPageRegexp = searchPageRegexp.toRegex(),
+        adServerAttributes = adServerAttributes,
+        followOnParamNames = followOnParamNames,
+        extraAdServersRegexps = extraAdServersRegexps.map { it.toRegex() },
+        expectedOrganicCodes = expectedOrganicCodes,
+
     )
 
     /**

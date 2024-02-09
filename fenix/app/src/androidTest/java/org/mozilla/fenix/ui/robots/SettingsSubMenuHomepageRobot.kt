@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
@@ -21,8 +22,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matchers
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
-import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -61,6 +61,7 @@ class SettingsSubMenuHomepageRobot {
         assertHomepageButton()
         assertLastTabButton()
         assertHomepageAfterFourHoursButton()
+        Log.i(Constants.TAG, "verifyHomePageView: Verified the home page elements")
     }
 
     fun verifySelectedOpeningScreenOption(openingScreenOption: String) =
@@ -97,11 +98,6 @@ class SettingsSubMenuHomepageRobot {
 
     fun selectWallpaper(wallpaperName: String) =
         mDevice.findObject(UiSelector().description(wallpaperName)).click()
-
-    fun verifySnackBarText(expectedText: String) =
-        assertUIObjectExists(
-            itemContainingText(expectedText),
-        )
 
     fun verifySponsoredShortcutsCheckBox(checked: Boolean) = assertSponsoredShortcutsCheckBox(checked)
 
