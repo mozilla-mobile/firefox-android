@@ -86,6 +86,8 @@ class BrowserRobot {
                     url.replace("http://", ""),
                 ),
             )
+            val abc = mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view")).text
+            Log.i(TAG, "Url bar text = $abc")
         }
     }
 

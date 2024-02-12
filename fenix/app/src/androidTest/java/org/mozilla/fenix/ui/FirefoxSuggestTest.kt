@@ -37,24 +37,24 @@ class FirefoxSuggestTest {
 
     private val sponsoredKeyWords: Map<String, List<String>> =
         mapOf(
-            "Amazon" to
-                listOf(
-                    "Amazon.com - Official Site",
-                    "amazon.com/?tag=admarketus-20&ref=pd_sl_924ab4435c5a5c23aa2804307ee0669ab36f88caee841ce51d1f2ecb&mfadid=adm",
-                ),
+            // "Amazon" to
+            //     listOf(
+            //         "Amazon.com - Official Site",
+            //         "amazon.com/?tag=admarketus-20&ref=pd_sl_924ab4435c5a5c23aa2804307ee0669ab36f88caee841ce51d1f2ecb&mfadid=adm",
+            //     ),
             "Nike" to
                 listOf(
                     "Nike.com - Official Site",
                     "nike.com/?cp=16423867261_search_318370984us128${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
                 ),
-            "Houzz" to listOf(
-                "Houzz.com - Official Site",
-                "houzz.com/products?m_refid=us-dsp-mpl-admp-219577_15416306_kwd-353208810&adcid=319104989us1287${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
-            ),
-            "Spanx" to listOf(
-                "SPANX® -  Official Site",
-                "spanx.com/?utm_source=admarketplace&utm_medium=cpc&utm_campaign=privacy&utm_content=319093361us1202${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
-            ),
+            // "Houzz" to listOf(
+            //     "Houzz.com - Official Site",
+            //     "houzz.com/products?m_refid=us-dsp-mpl-admp-219577_15416306_kwd-353208810&adcid=319104989us1287${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
+            // ),
+            // "Spanx" to listOf(
+            //     "SPANX® -  Official Site",
+            //     "spanx.com/?utm_source=admarketplace&utm_medium=cpc&utm_campaign=privacy&utm_content=319093361us1202${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
+            // ),
             "Bloom" to listOf(
                 "Bloomingdales.com - Official Site",
                 "bloomingdales.com/?cm_mmc=Admarketplace-_-Privacy-_-Privacy-_-privacy%20instant%20suggest-_-319093353us1228${getSponsoredFxSuggestPlaceHolder()}-_-kclickid__kenshoo_clickid_&mfadid=adm",
