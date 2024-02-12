@@ -20,8 +20,10 @@ import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.homeScreenWithComposeTopSites
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -66,8 +68,12 @@ class ComposeTopSitesTest {
     fun addAWebsiteAsATopSiteTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             expandMenu()
             verifyAddToShortcutsButton(true)
@@ -84,8 +90,12 @@ class ComposeTopSitesTest {
     fun openTopSiteInANewTabTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             expandMenu()
             verifyAddToShortcutsButton(true)
@@ -112,8 +122,12 @@ class ComposeTopSitesTest {
     fun openTopSiteInANewPrivateTabTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             expandMenu()
             verifyAddToShortcutsButton(true)
@@ -135,6 +149,9 @@ class ComposeTopSitesTest {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
         val newPageTitle = generateRandomString(5)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             waitForPageToLoad()
@@ -159,8 +176,12 @@ class ComposeTopSitesTest {
     fun removeTopSiteUsingMenuButtonTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             expandMenu()
             verifyAddToShortcutsButton(true)
@@ -186,8 +207,12 @@ class ComposeTopSitesTest {
     fun removeTopSiteFromMainMenuTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
+        homeScreenWithComposeTopSites(composeTestRule) {
+            verifyExistingTopSitesList()
+        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             expandMenu()
             verifyAddToShortcutsButton(true)
@@ -236,9 +261,11 @@ class ComposeTopSitesTest {
             verifyExistingTopSitesList()
             verifyExistingTopSiteItem(defaultWebPage.title)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
-        }.deleteTopSiteFromHistory {
+        }.removeTopSite {
             verifySnackBarText(getStringResource(R.string.snackbar_top_site_removed))
             waitUntilSnackbarGone()
+        }
+        homeScreen {
         }.openThreeDotMenu {
         }.openHistory {
             verifyEmptyHistoryView()

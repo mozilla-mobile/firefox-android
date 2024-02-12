@@ -16,10 +16,10 @@ import mozilla.components.feature.addons.amo.AMOAddonsProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
+import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
-import org.mozilla.fenix.BrowsingModePersistenceMiddleware
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -30,6 +30,7 @@ import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
+import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterState
@@ -97,6 +98,15 @@ class Components(private val context: Context) {
     val notificationsDelegate: NotificationsDelegate by lazyMonitored {
         NotificationsDelegate(
             notificationManagerCompat,
+        )
+    }
+
+    val downloadManager by lazyMonitored {
+        FetchDownloadManager(
+            context.applicationContext,
+            core.store,
+            DownloadService::class,
+            notificationsDelegate = notificationsDelegate,
         )
     }
 
@@ -224,14 +234,11 @@ class Components(private val context: Context) {
                     messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
-                BrowsingModePersistenceMiddleware(
-                    settings = settings,
-                ),
             ),
         )
     }
 
-    val fxSuggest by lazyMonitored { FxSuggest(context, analytics.crashReporter) }
+    val fxSuggest by lazyMonitored { FxSuggest(context) }
 }
 
 /**

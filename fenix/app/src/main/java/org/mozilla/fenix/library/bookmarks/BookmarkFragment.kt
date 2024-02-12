@@ -99,7 +99,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 clipboardManager = requireContext().getSystemService(),
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = bookmarkStore,
-                appStore = requireComponents.appStore,
                 sharedViewModel = sharedViewModel,
                 tabsUseCases = activity?.components?.useCases?.tabsUseCases,
                 loadBookmarkNode = ::loadBookmarkNode,
@@ -282,6 +281,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         context?.let {
             requireContext().bookmarkStorage
                 .getTree(guid, recursive)
+                ?.minus(pendingBookmarksToDelete)
                 ?.let { desktopFolders.withOptionalDesktopFolders(it) }
         }
     }

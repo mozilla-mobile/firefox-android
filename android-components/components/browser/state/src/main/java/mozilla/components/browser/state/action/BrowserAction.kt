@@ -49,6 +49,7 @@ import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
+import mozilla.components.concept.engine.translate.TranslationPageSettings
 import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
 import mozilla.components.concept.engine.webextension.WebExtensionPageAction
@@ -937,14 +938,47 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction(), ActionWithTab
 
     /**
+     * Indicates that the given [operation] data should be fetched for the given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that failed.
+     */
+    data class OperationRequestedAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
      * Sets the languages that are supported by the translations engine.
      *
      * @property tabId The ID of the tab the [EngineSession] that requested the list.
      * @property supportedLanguages The languages the engine supports for translation.
      */
-    data class TranslateSetLanguagesAction(
+    data class SetSupportedLanguagesAction(
         override val tabId: String,
         val supportedLanguages: TranslationSupport?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the given page settings on the page on the given [tabId]'s store.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property pageSettings The new page settings.
+     */
+    data class SetPageSettingsAction(
+        override val tabId: String,
+        val pageSettings: TranslationPageSettings?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the list of sites that the user has opted to never translate.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the list.
+     * @property neverTranslateSites The never translate sites.
+     */
+    data class SetNeverTranslateSitesAction(
+        override val tabId: String,
+        val neverTranslateSites: List<String>,
     ) : TranslationsAction(), ActionWithTab
 }
 

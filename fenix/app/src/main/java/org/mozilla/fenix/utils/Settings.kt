@@ -767,6 +767,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true,
     )
 
+    val useProductionRemoteSettingsServer by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_remote_server_prod),
+        default = true,
+    )
+
     val enabledTotalCookieProtection: Boolean
         get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
@@ -1472,7 +1477,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
-        default = Config.channel.isNightlyOrDebug,
+        default = true,
     )
 
     var isDynamicToolbarEnabled by booleanPreference(
@@ -1680,23 +1685,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var homescreenBlocklist by stringSetPreference(
         appContext.getPreferenceKey(R.string.pref_key_home_blocklist),
         default = setOf(),
-    )
-
-    /**
-     * Indicates if notification pre permission prompt feature is enabled.
-     */
-    var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
-        default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = true,
-    )
-
-    /**
-     * Indicates if notification permission prompt has been shown to the user.
-     */
-    var isNotificationPrePermissionShown by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_is_notification_pre_permission_prompt_shown),
-        default = false,
     )
 
     /**

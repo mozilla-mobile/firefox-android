@@ -271,7 +271,10 @@ abstract class AbstractFetchDownloadService : Service() {
     internal fun handleRemovePrivateDownloadIntent(download: DownloadState) {
         if (download.private) {
             downloadJobs[download.id]?.let {
-                cancelDownloadJob(it)
+                // Do not cancel already completed downloads.
+                if (it.status != COMPLETED) {
+                    cancelDownloadJob(it)
+                }
                 removeDownloadJob(it)
             }
             store.dispatch(DownloadAction.RemoveDownloadAction(download.id))
@@ -730,6 +733,7 @@ abstract class AbstractFetchDownloadService : Service() {
         if (response.status != PARTIAL_CONTENT_STATUS && response.status != OK_STATUS ||
             (isResumingDownload && !response.headers.contains(CONTENT_RANGE))
         ) {
+            response.close()
             // We experienced a problem trying to fetch the file, send a failure notification
             currentDownloadJobState.currentBytesCopied = 0
             currentDownloadJobState.state = currentDownloadJobState.state.copy(currentBytesCopied = 0)

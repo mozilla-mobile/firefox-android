@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.bindings
 
 import mozilla.components.browser.state.action.TabListAction
@@ -15,7 +19,6 @@ import org.mockito.Mockito.verify
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.components.appstate.bindings.BrowserStoreBinding
 
 class BrowserStoreBindingTest {
 

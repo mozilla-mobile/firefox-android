@@ -10,9 +10,11 @@ import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.APP_LINKS_DO_NOT_INTERCEPT_INTERVAL
 import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL
 import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.addUserDoNotIntercept
 import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.inUserDoNotIntercept
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.lastHasExternalAppTimestamp
 import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.userDoNotInterceptCache
 import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
@@ -43,7 +45,6 @@ class AppLinksInterceptorTest {
     private val intentUrl = "zxing://scan;S.browser_fallback_url=example.com"
     private val fallbackUrl = "https://getpocket.com"
     private val marketplaceUrl = "market://details?id=example.com"
-    private val mailtoUrl = "mailto:email@example.com"
 
     @Before
     fun setup() {
@@ -54,6 +55,8 @@ class AppLinksInterceptorTest {
         mockOpenRedirect = mock()
         whenever(mockUseCases.interceptedAppLinkRedirect).thenReturn(mockGetRedirect)
         whenever(mockUseCases.openAppLink).thenReturn(mockOpenRedirect)
+        userDoNotInterceptCache.clear()
+        lastHasExternalAppTimestamp = -APP_LINKS_DO_NOT_INTERCEPT_INTERVAL
 
         val webRedirect = AppLinkRedirect(null, webUrl, null)
         val appRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), null, null)
@@ -465,7 +468,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
@@ -495,7 +498,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -510,7 +513,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, Intent.parseUri(marketplaceUrl, 0))
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -525,7 +528,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
@@ -557,13 +560,26 @@ class AppLinksInterceptorTest {
             useCases = mockUseCases,
         )
 
-        var response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
-        assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
-
         addUserDoNotIntercept("https://soundcloud.com", null)
 
-        response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        val response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
         assertNull(response)
+    }
+
+    @Test
+    fun `WHEN request is in user do not intercept cache but there is a fallback THEN fallback is used`() {
+        appLinksInterceptor = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = true,
+            launchInApp = { false },
+            useCases = mockUseCases,
+            launchFromInterceptor = true,
+        )
+
+        addUserDoNotIntercept(intentUrl, null)
+        val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
+        assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
     @Test
@@ -627,5 +643,21 @@ class AppLinksInterceptorTest {
         userDoNotInterceptCache["app.example.com".hashCode()] = -APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL
         assertFalse(inUserDoNotIntercept("https://example.com", testIntent))
         assertFalse(inUserDoNotIntercept("https://test.com", testIntent))
+    }
+
+    @Test
+    fun `WHEN request is redirecting to external app quickly THEN request is not intercepted`() {
+        appLinksInterceptor = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = true,
+            launchInApp = { true },
+            useCases = mockUseCases,
+        )
+
+        var response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assertTrue(response is RequestInterceptor.InterceptionResponse.AppIntent)
+
+        response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assertNull(response)
     }
 }

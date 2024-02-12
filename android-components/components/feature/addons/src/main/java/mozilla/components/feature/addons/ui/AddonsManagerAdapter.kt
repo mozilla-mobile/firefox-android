@@ -18,6 +18,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -144,6 +145,7 @@ class AddonsManagerAdapter(
         val context = parent.context
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.mozac_feature_addons_item, parent, false)
+        val contentWrapperView = view.findViewById<View>(R.id.add_on_content_wrapper)
         val iconView = view.findViewById<ImageView>(R.id.add_on_icon)
         val titleView = view.findViewById<TextView>(R.id.add_on_name)
         val summaryView = view.findViewById<TextView>(R.id.add_on_description)
@@ -155,6 +157,7 @@ class AddonsManagerAdapter(
         val statusErrorView = view.findViewById<View>(R.id.add_on_status_error)
         return AddonViewHolder(
             view,
+            contentWrapperView,
             iconView,
             titleView,
             summaryView,
@@ -196,6 +199,7 @@ class AddonsManagerAdapter(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun bindSection(holder: SectionViewHolder, section: Section, position: Int) {
         holder.titleView.setText(section.title)
+        ViewCompat.setAccessibilityHeading(holder.titleView, true)
 
         style?.let {
             holder.divider.isVisible = it.visibleDividers && position != 0
@@ -244,6 +248,7 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @Suppress("LongMethod")
     internal fun bindAddon(
         holder: AddonViewHolder,
         addon: Addon,
@@ -281,11 +286,16 @@ class AddonsManagerAdapter(
         }
 
         holder.itemView.tag = addon
-        holder.itemView.setOnClickListener {
+        // Attach the on click listener to the content wrapper so that it doesn't overlap with the install button.
+        holder.contentWrapperView.setOnClickListener {
             addonsManagerDelegate.onAddonItemClicked(addon)
         }
 
         holder.addButton.isInvisible = addon.isInstalled()
+        holder.addButton.contentDescription = context.getString(
+            R.string.mozac_feature_addons_install_addon_content_description_2,
+            addonName,
+        )
         holder.addButton.setOnClickListener {
             if (!addon.isInstalled()) {
                 addonsManagerDelegate.onInstallAddonButtonClicked(addon)

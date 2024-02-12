@@ -78,25 +78,25 @@ internal fun getAutomaticTranslationListPreferences(): List<AutomaticTranslation
     return mutableListOf<AutomaticTranslationItemPreference>().apply {
         add(
             AutomaticTranslationItemPreference(
-                displayName = Locale.CANADA.displayName,
+                displayName = Locale.ENGLISH.displayLanguage,
                 automaticTranslationOptionPreference = AutomaticTranslationOptionPreference.AlwaysTranslate(),
             ),
         )
         add(
             AutomaticTranslationItemPreference(
-                displayName = Locale.FRANCE.displayName,
+                displayName = Locale.FRENCH.displayLanguage,
                 automaticTranslationOptionPreference = AutomaticTranslationOptionPreference.OfferToTranslate(),
             ),
         )
         add(
             AutomaticTranslationItemPreference(
-                displayName = Locale.GERMANY.displayName,
+                displayName = Locale.GERMAN.displayLanguage,
                 automaticTranslationOptionPreference = AutomaticTranslationOptionPreference.NeverTranslate(),
             ),
         )
         add(
             AutomaticTranslationItemPreference(
-                displayName = Locale.CHINA.displayName,
+                displayName = Locale.ITALIAN.displayLanguage,
                 automaticTranslationOptionPreference = AutomaticTranslationOptionPreference.AlwaysTranslate(),
             ),
         )

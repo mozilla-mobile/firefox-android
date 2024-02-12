@@ -47,9 +47,9 @@ class FirefoxSuggestTest {
                     "Nike.com - Official Site",
                     "nike.com/?cp=16423867261_search_318370984us128${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
                 ),
-            "Macy" to listOf(
-                "macys.com - Official Site",
-                "macys.com/?cm_mmc=Google_AdMarketPlace-_-Privacy_Instant%20Suggest-_-319101130_Broad-_-kclickid__kenshoo_clickid_&m_sc=sem&m_sb=Admarketplace&m_tp=Search&m_ac=Admarketplace&m_ag=Instant%20Suggest&m_cn=Privacy&m_pi=kclickid__kenshoo_clickid__319101130us1201${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
+            "Houzz" to listOf(
+                "Houzz.com - Official Site",
+                "houzz.com/products?m_refid=us-dsp-mpl-admp-219577_15416306_kwd-353208810&adcid=319104989us1287${getSponsoredFxSuggestPlaceHolder()}&mfadid=adm",
             ),
             "Spanx" to listOf(
                 "SPANX® -  Official Site",
@@ -100,6 +100,7 @@ class FirefoxSuggestTest {
     private val nonSponsoredKeyWord = nonSponsoredKeyWords.keys.random()
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348361
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @SmokeTest
     @Test
     fun verifyFirefoxSuggestSponsoredSearchResultsTest() {
@@ -121,6 +122,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348362
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @Test
     fun verifyFirefoxSuggestSponsoredSearchResultsWithPartialKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -141,6 +143,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348363
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @Test
     fun openFirefoxSuggestSponsoredSearchResultsTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -164,6 +167,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348369
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @Test
     fun verifyFirefoxSuggestSponsoredSearchResultsWithEditedKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -187,6 +191,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348374
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @SmokeTest
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsTest() {
@@ -213,6 +218,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348375
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsWithPartialKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -232,6 +238,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348376
+    // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
     @Test
     fun openFirefoxSuggestNonSponsoredSearchResultsTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {

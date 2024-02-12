@@ -26,15 +26,29 @@ import org.json.JSONObject
  * Main configuration and functionality for tracking ads / web searches with specific providers.
  */
 abstract class BaseSearchTelemetry {
+    var providerList: List<SearchProviderModel>? = emptyList()
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    internal fun setProviderList(providerListSerp: List<SearchProviderModel>) {
+        providerList = providerListSerp
+    }
+
+    /**
+     * Finds provider among list of providers that matches regex in url.
+     * This may additionally return null if the provider list is still being initialized.
+     */
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    internal fun getProviderForUrl(url: String): SearchProviderModel? =
+        providerList?.find { provider -> provider.searchPageRegexp.containsMatchIn(url) }
 
     /**
      * Install the web extensions that this functionality is based on and start listening for updates.
      */
-    abstract fun install(engine: Engine, store: BrowserStore)
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    internal fun getProviderForUrl(url: String): SearchProviderModel? =
-        providerList.find { provider -> provider.regexp.containsMatchIn(url) }
+    abstract suspend fun install(
+        engine: Engine,
+        store: BrowserStore,
+        providerList: List<SearchProviderModel>,
+    )
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     internal fun installWebExtension(
@@ -46,7 +60,9 @@ abstract class BaseSearchTelemetry {
             id = extensionInfo.id,
             url = extensionInfo.resourceUrl,
             onSuccess = { extension ->
-                store.flowScoped { flow -> subscribeToUpdates(flow, extension, extensionInfo) }
+                store.flowScoped { flow ->
+                    subscribeToUpdates(flow, extension, extensionInfo)
+                }
             },
             onError = { throwable ->
                 Logger.error("Could not install ${extensionInfo.id} extension", throwable)
@@ -69,68 +85,6 @@ abstract class BaseSearchTelemetry {
     }
 
     protected sealed class Action
-
-    @VisibleForTesting
-    internal val providerList = listOf(
-        SearchProviderModel(
-            name = "google",
-            regexp = "^https:\\/\\/www\\.google\\.(?:.+)\\/search",
-            queryParam = "q",
-            codeParam = "client",
-            codePrefixes = listOf("firefox"),
-            followOnParams = listOf("oq", "ved", "ei"),
-            extraAdServersRegexps = listOf("^https?:\\/\\/www\\.google(?:adservices)?\\.com\\/(?:pagead\\/)?aclk"),
-        ),
-        SearchProviderModel(
-            name = "duckduckgo",
-            regexp = "^https:\\/\\/duckduckgo\\.com\\/",
-            queryParam = "q",
-            codeParam = "t",
-            codePrefixes = listOf("f"),
-            extraAdServersRegexps = listOf(
-                "^https:\\/\\/duckduckgo.com\\/y\\.js",
-                "^https:\\/\\/www\\.amazon\\.(?:[a-z.]{2,24}).*(?:tag=duckduckgo-)",
-            ),
-        ),
-        SearchProviderModel(
-            name = "yahoo",
-            regexp = "^https:\\/\\/(?:.*)search\\.yahoo\\.com\\/search",
-            queryParam = "p",
-        ),
-        SearchProviderModel(
-            name = "baidu",
-            regexp = "^https:\\/\\/m\\.baidu\\.com(?:.*)\\/s",
-            queryParam = "word",
-            codeParam = "from",
-            codePrefixes = listOf("1000969a"),
-            followOnParams = listOf("oq"),
-            extraAdServersRegexps = listOf(
-                "^https?://www\\.baidu\\.com/baidu\\.php?",
-                "^https?://m\\.baidu\\.com/baidu\\.php?",
-            ),
-        ),
-        SearchProviderModel(
-            name = "bing",
-            regexp = "^https:\\/\\/www\\.bing\\.com\\/search",
-            queryParam = "q",
-            codeParam = "pc",
-            codePrefixes = listOf("MOZ", "MZ"),
-            followOnCookies = listOf(
-                SearchProviderCookie(
-                    extraCodeParam = "form",
-                    extraCodePrefixes = listOf("QBRE"),
-                    host = "www.bing.com",
-                    name = "SRCHS",
-                    codeParam = "PC",
-                    codePrefixes = listOf("MOZ", "MZ"),
-                ),
-            ),
-            extraAdServersRegexps = listOf(
-                "^https:\\/\\/www\\.bing\\.com\\/acli?c?k",
-                "^https:\\/\\/www\\.bing\\.com\\/fd\\/ls\\/GLinkPingPost\\.aspx.*acli?c?k",
-            ),
-        ),
-    )
 
     private suspend fun subscribeToUpdates(
         flow: Flow<BrowserState>,
