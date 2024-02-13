@@ -69,12 +69,15 @@ class AddonDetailsBindingDelegateTest {
         )
         assertEquals(4.5f, binding.ratingView.rating)
         assertEquals("100", binding.reviewCount.text)
-        val ratingContentDescription = testContext.getString(R.string.mozac_feature_addons_rating_content_description)
 
-        val formattedRatting = String.format(ratingContentDescription, 4.3f)
-        val expectedContentDescription = binding.ratingLabel.text.toString() + " " + formattedRatting
-        assertEquals(expectedContentDescription, binding.ratingLabel.contentDescription)
+        val ratingContentDescription = testContext.getString(R.string.mozac_feature_addons_rating_content_description_2)
+        var formattedRatting = String.format(ratingContentDescription, 4.3f)
+        assertEquals(formattedRatting, binding.ratingLabel.contentDescription)
         assertEquals(IMPORTANT_FOR_ACCESSIBILITY_NO, binding.ratingView.importantForAccessibility)
+
+        val reviewContentDescription = testContext.getString(R.string.mozac_feature_addons_user_rating_count_2)
+        formattedRatting = String.format(reviewContentDescription, 100)
+        assertEquals(formattedRatting, binding.reviewCount.contentDescription)
     }
 
     @Test
@@ -85,7 +88,7 @@ class AddonDetailsBindingDelegateTest {
                 ratingUrl = "https://example.org/",
             ),
         )
-        assertEquals("100", binding.reviewCount.text)
+        assertEquals("100", binding.reviewCount.text.toString())
 
         binding.reviewCount.performClick()
 
@@ -163,7 +166,7 @@ class AddonDetailsBindingDelegateTest {
             baseAddon.copy(author = Addon.Author(name = "Sarah Jane", url = "https://example.org/")),
         )
 
-        assertEquals("Sarah Jane", binding.authorText.text)
+        assertEquals("Sarah Jane", binding.authorText.text.toString())
         assertEquals(testContext.getColorFromAttr(R.attr.textAccent), binding.authorText.currentTextColor)
 
         binding.authorText.performClick()
