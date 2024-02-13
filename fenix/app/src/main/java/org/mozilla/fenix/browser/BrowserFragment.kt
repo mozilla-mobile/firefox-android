@@ -92,6 +92,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     toolbarLayout = browserToolbarView.view,
                     store = components.core.store,
                     selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                    onSwipeStarted = {
+                        thumbnailsFeature.get()?.requestScreenshot()
+                    },
                 ),
             )
         }
