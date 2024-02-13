@@ -20,13 +20,14 @@ object FenixVersions {
 
     const val androidx_activity = "1.7.2"
     const val androidx_benchmark = "1.2.2"
-    const val androidx_profileinstaller = "1.3.1"
+    const val androidx_datastore = "1.0.0"
     const val androidx_legacy = "1.0.0"
     const val androidx_lifecycle = "2.6.1"
     const val androidx_navigation = "2.5.3"
+    const val androidx_profileinstaller = "1.3.1"
     const val androidx_splash_screen = "1.0.1"
     const val androidx_transition = "1.4.1"
-    const val androidx_datastore = "1.0.0"
+
     const val google_accompanist = "0.32.0"
 
     const val adjust = "4.35.1"
