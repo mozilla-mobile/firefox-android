@@ -49,6 +49,7 @@ import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
+import mozilla.components.concept.engine.translate.TranslationPageSettingOperation
 import mozilla.components.concept.engine.translate.TranslationPageSettings
 import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
@@ -971,6 +972,20 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction(), ActionWithTab
 
     /**
+     * Updates the specified page setting operation on the translation engine and ensures the final
+     * state on the given [tabId]'s store remains in-sync.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The page setting update operation to perform.
+     * @property setting The boolean value of the corresponding [operation].
+     */
+    data class UpdatePageSettingAction(
+        override val tabId: String,
+        val operation: TranslationPageSettingOperation,
+        val setting: Boolean,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
      * Sets the list of sites that the user has opted to never translate.
      *
      * @property tabId The ID of the tab the [EngineSession] that requested the list.
@@ -979,6 +994,17 @@ sealed class TranslationsAction : BrowserAction() {
     data class SetNeverTranslateSitesAction(
         override val tabId: String,
         val neverTranslateSites: List<String>,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Remove from the list of sites the user has opted to never translate.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the removal.
+     * @property origin A site origin URI that will have the specified never translate permission set.
+     */
+    data class RemoveNeverTranslateSiteAction(
+        override val tabId: String,
+        val origin: String,
     ) : TranslationsAction(), ActionWithTab
 }
 

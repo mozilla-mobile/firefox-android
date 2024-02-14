@@ -24,8 +24,8 @@ object Versions {
     const val mockito = "5.10.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
-    const val okhttp = "4.11.0"
-    const val okio = "3.6.0"
+    const val okhttp = "4.12.0"
+    const val okio = "3.8.0"
     const val coil = "2.4.0"
 
     const val android_gradle_plugin = "8.2.2"
@@ -53,7 +53,7 @@ object Versions {
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
     const val compose_version = "1.5.4"
-    const val compose_compiler = "1.5.8"
+    const val compose_compiler = "1.5.9"
 
     object AndroidX {
         const val activityCompose = "1.7.2"
@@ -81,7 +81,7 @@ object Versions {
         const val preferences = "1.2.1"
         const val lifecycle = "2.7.0"
         const val media = "1.7.0"
-        const val navigation = "2.5.3"
+        const val navigation = "2.7.7"
         const val work = "2.7.1"
         const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
@@ -91,7 +91,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.4.0"
+        const val messaging = "23.4.1"
     }
 }
 
@@ -129,6 +129,9 @@ object ComponentsDependencies {
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
     const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${Versions.AndroidX.compose}"
+    const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"

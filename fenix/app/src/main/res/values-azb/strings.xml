@@ -611,9 +611,16 @@
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">خاریجی یئندیرمه موْدیری.</string>
 
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko قیدلرینی گوجلندیر</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">دگیشمه‌لری یئرینه سالماق اوچون اپلیکیشن‌دن چیْخیلیر...</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">تاخیلان‌لار</string>
 
+    <!-- Preference for installing a local add-on -->
+    <string name="preferences_install_local_addon">تاخیلانیْ فایل‌دان قوْش</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">بیلدیریش‌لر</string>
     <!-- Summary for notification preference indicating notifications are allowed -->
@@ -621,13 +628,63 @@
     <!-- Summary for notification preference indicating notifications are not allowed -->
     <string name="notifications_not_allowed_summary">ایجازه وئریلمه‌دی</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">اؤزل تاخیْلان مجموعه‌سی</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">تامام</string>
     <!-- Button caption to abort the add-on collection configuration -->
     <string name="customize_addon_collection_cancel">لغو</string>
 
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">مجموعه آدیْ</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">مجموعه صاحیبی (قوللانیجیْ آیدی‌سی)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">تاخیْلان مجموعه‌‌سی ایصلاح اوْلدوُ. دگیشمه‌لری یئرینه سالماق اوچون اپلیکیشن‌دن چیْخیلیر...</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">قاباقکی تاغ‌لارا قاییت</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">سوْن بوکمارک‌لار</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">سون باخیلان‌لار</string>
+
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket_2">دوشوندوروجو ناغیل‌لار</string>
+    <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
+    <string name="customize_toggle_pocket_summary">%sطرفیندن گوج آلینان مقاله‌لر</string>
+    <!-- Title for the customize home screen section with sponsored Pocket stories. -->
+    <string name="customize_toggle_pocket_sponsored">اسپانسرلی ناغیل‌لار</string>
+
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">دال پرده‌لر</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">دال پرده: %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">دال پرده گونجللندی!</string>
+    <!-- Snackbar label for action to view selected wallpaper -->
+    <string name="wallpaper_updated_snackbar_action">گؤستر</string>
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">دال پرده یئندیریلنمه‌دی</string>
+    <!-- Snackbar label for action to retry downloading the wallpaper -->
+    <string name="wallpaper_download_error_snackbar_action">گئنه چالیش</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">دال پرده دگیشیله بیلمه‌دی</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">آرتیق بیلین</string>
+
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">کلاسیک %s</string>
+
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">هونرمند سئری‌سی</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">باغیْمسیز سس‌لر مجموعه‌سی. %s</string>
 
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">ایندی دؤنگل‌لندیر</string>
@@ -636,12 +693,31 @@
     <!-- Preference for syncing bookmarks -->
     <string name="preferences_sync_bookmarks">بوُکمارک‌لار</string>
 
+    <!-- Preference for syncing logins -->
+    <string name="preferences_sync_logins">گیریش‌لر</string>
     <!-- Preference for syncing passwords -->
     <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">رمز‌لر</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">آچیْق تاغ‌لار</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">چیخیش</string>
+
+    <!-- Preference displays and allows changing current FxA device name -->
+    <string name="preferences_sync_device_name">جهاز آدی</string>
+    <!-- Text shown when user enters empty device name -->
+    <string name="empty_device_name_error">جهاز آدیْ بوْش اوْلمالیدیر</string>
+    <!-- Label indicating that sync is in progress -->
+    <string name="sync_syncing_in_progress">دؤنگل‌لنیر...</string>
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">دؤنگل خطا وئردی. سوْن باشاریْ: %s</string>
+
+    <!-- Label summary showing never synced -->
+    <string name="sync_failed_never_synced_summary">دؤنگل خطا وئردی. سوْن دؤنگل: یوْخدور</string>
+    <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
+    <string name="sync_last_synced_summary">سوْن دؤنگل: %s</string>
+
+    <!-- Label summary showing never synced -->
+    <string name="sync_never_synced_summary">سوْن دؤنگل: هئچ</string>
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
@@ -670,6 +746,36 @@
     <!-- Option in library to open Bookmarks page -->
     <string name="library_bookmarks">بوُکمارک‌لار</string>
 
+
+    <!-- Option in Library to open History page -->
+    <string name="library_history">گئچمیش</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">یئنی تاغ</string>
+    <!-- Settings Page Title -->
+    <string name="settings_title">تنظیم‌‎لر</string>
+    <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
+    <string name="content_description_close_button">باغلا</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">تاغ‌لار</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">لیست</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">هئچ زامان</string>
+
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">آنایارپاق</string>
+
+    <!-- Studies -->
+    <!-- Title of the remove studies button -->
+    <string name="studies_remove">قالدیر</string>
+
+
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">لغو</string>
+    <!-- Bookmark overflow menu edit button -->
+    <string name="bookmark_menu_edit_button">دوزه‌لیش</string>
 
     <!-- Translations feature-->
 
