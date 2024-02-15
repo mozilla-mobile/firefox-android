@@ -51,7 +51,7 @@ class OnboardingFragment : Fragment() {
 
     private val pagesToDisplay by lazy {
         pagesToDisplay(
-            shouldShowDefaultBrowserCard(requireContext()),
+            isNotDefaultBrowser(requireContext()),
             canShowNotificationPage(requireContext()),
             canShowAddWidgetCard(),
         )
@@ -62,6 +62,7 @@ class OnboardingFragment : Fragment() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val context = requireContext()
         if (pagesToDisplay.isEmpty()) {
             /* do not continue if there's no onboarding pages to display */
             onFinish(null)
@@ -71,8 +72,14 @@ class OnboardingFragment : Fragment() {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         val filter = IntentFilter(WidgetPinnedReceiver.ACTION)
-        LocalBroadcastManager.getInstance(requireContext())
+        LocalBroadcastManager.getInstance(context)
             .registerReceiver(pinAppWidgetReceiver, filter)
+
+        if (isNotDefaultBrowser(context) &&
+            pagesToDisplay.none { it.type == OnboardingPageUiData.Type.DEFAULT_BROWSER }
+        ) {
+            promptToSetAsDefaultBrowser()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -108,11 +115,7 @@ class OnboardingFragment : Fragment() {
         OnboardingScreen(
             pagesToDisplay = pagesToDisplay,
             onMakeFirefoxDefaultClick = {
-                activity?.openSetDefaultBrowserOption(useCustomTab = true)
-                telemetryRecorder.onSetToDefaultClick(
-                    sequenceId = pagesToDisplay.telemetrySequenceId(),
-                    sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
-                )
+                promptToSetAsDefaultBrowser()
             },
             onSkipDefaultClick = {
                 telemetryRecorder.onSkipSetToDefaultClick(
@@ -211,7 +214,7 @@ class OnboardingFragment : Fragment() {
         )
     }
 
-    private fun shouldShowDefaultBrowserCard(context: Context) =
+    private fun isNotDefaultBrowser(context: Context) =
         !BrowsersCache.all(context.applicationContext).isDefaultBrowser
 
     private fun canShowNotificationPage(context: Context) =
@@ -256,5 +259,13 @@ class OnboardingFragment : Fragment() {
             showAddWidgetPage,
             jexlConditions,
         ) { condition -> jexlHelper.evalJexlSafe(condition) }
+    }
+
+    private fun promptToSetAsDefaultBrowser() {
+        activity?.openSetDefaultBrowserOption(useCustomTab = true)
+        telemetryRecorder.onSetToDefaultClick(
+            sequenceId = pagesToDisplay.telemetrySequenceId(),
+            sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
+        )
     }
 }
