@@ -38,13 +38,13 @@ object Versions {
 
     const val sentry = "7.3.0"
 
-    const val zxing = "3.5.2"
+    const val zxing = "3.5.3"
 
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "56.1.0"
+    const val mozilla_glean = "57.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.17"
