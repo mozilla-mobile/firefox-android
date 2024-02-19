@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         minSdkVersion config.minSdkVersion
-        compileSdk config.compileSdkVersion
+        compileSdkPreview "VanillaIceCream"
         targetSdkVersion config.targetSdkVersion
     }
 

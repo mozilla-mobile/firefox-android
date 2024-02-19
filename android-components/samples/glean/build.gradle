@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla.samples.glean"
         minSdkVersion config.minSdkVersion
-        compileSdk config.compileSdkVersion
+        compileSdkPreview "VanillaIceCream"
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName "1.0"

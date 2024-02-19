@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         minSdkVersion config.minSdkVersion
-        compileSdk config.compileSdkVersion
+        compileSdkPreview "VanillaIceCream"
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
