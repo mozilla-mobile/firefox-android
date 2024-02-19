@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion config.minSdkVersion
-        compileSdk config.compileSdkVersion
+        compileSdkPreview "VanillaIceCream"
         targetSdkVersion config.targetSdkVersion
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
