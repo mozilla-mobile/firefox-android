@@ -66,10 +66,9 @@ class AndroidAssetFinder {
     @Suppress("PackageManagerGetSignatures")
     // https://stackoverflow.com/questions/39192844/android-studio-warning-when-using-packagemanager-get-signatures
     private fun PackageManager.getSignatures(packageName: String): Array<Signature> {
-        val packageInfo = getPackageSignatureInfo(packageName) ?: return emptyArray()
-
         return if (SDK_INT >= Build.VERSION_CODES.P) {
-            val signingInfo = packageInfo.signingInfo
+            val signingInfo =
+                getPackageSignatureInfo(packageName)?.signingInfo ?: return emptyArray()
             if (signingInfo.hasMultipleSigners()) {
                 signingInfo.apkContentsSigners
             } else {
@@ -82,7 +81,7 @@ class AndroidAssetFinder {
             }
         } else {
             @Suppress("Deprecation")
-            packageInfo.signatures
+            getPackageSignatureInfo(packageName)?.signatures ?: emptyArray()
         }
     }
 
