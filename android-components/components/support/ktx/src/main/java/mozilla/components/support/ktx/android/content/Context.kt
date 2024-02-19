@@ -48,7 +48,7 @@ import java.io.File
  * attribute. E.g. "2.0".
  */
 val Context.appVersionName: String
-    get() = packageManager.getPackageInfoCompat(packageName, 0).versionName
+    get() = packageManager.getPackageInfoCompat(packageName, 0).versionName ?: ""
 
 /**
  * Returns the name (label) of the application or the package name as a fallback.
