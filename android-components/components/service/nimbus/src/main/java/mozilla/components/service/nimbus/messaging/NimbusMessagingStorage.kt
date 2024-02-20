@@ -17,8 +17,8 @@ import org.mozilla.experiments.nimbus.internal.NimbusException
 import mozilla.components.service.nimbus.GleanMetrics.Messaging as GleanMessaging
 
 /**
- * This ID must match the name given in the `nimbus.fml.yaml` file, which
- * itself generates the classname for [org.mozilla.fenix.nimbus.Messaging].
+ * This ID must match the name given in the `messaging.fml.yaml` file, which
+ * itself generates the classname for [mozilla.components.service.nimbus.messaging.FxNimbusMessaging].
  *
  * If that ever changes, it should also change here.
  *
@@ -49,7 +49,6 @@ class NimbusMessagingStorage(
     @VisibleForTesting
     val malFormedMap = mutableMapOf<String, String>()
     private val logger = Logger("MessagingStorage")
-    private val nimbusFeature = messagingFeature
     private val customAttributes: JSONObject
         get() = attributeProvider?.getCustomAttributes(context) ?: JSONObject()
 
@@ -281,7 +280,7 @@ class NimbusMessagingStorage(
     }
 
     @VisibleForTesting
-    internal fun getOnControlBehavior(): ControlMessageBehavior = nimbusFeature.value().onControl
+    internal fun getOnControlBehavior(): ControlMessageBehavior = messagingFeature.value().onControl
 
     private suspend fun addMetadata(id: String): Message.Metadata {
         return metadataStorage.addMetadata(
