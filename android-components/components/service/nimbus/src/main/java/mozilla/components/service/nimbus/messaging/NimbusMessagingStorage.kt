@@ -10,8 +10,8 @@ import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import kotlinx.coroutines.runBlocking
 import mozilla.components.support.base.log.logger.Logger
 import org.json.JSONObject
-import org.mozilla.experiments.nimbus.GleanPlumbInterface
 import org.mozilla.experiments.nimbus.NimbusMessagingHelperInterface
+import org.mozilla.experiments.nimbus.NimbusMessagingInterface
 import org.mozilla.experiments.nimbus.internal.FeatureHolder
 import org.mozilla.experiments.nimbus.internal.NimbusException
 import mozilla.components.service.nimbus.GleanMetrics.Messaging as GleanMessaging
@@ -38,7 +38,7 @@ class NimbusMessagingStorage(
     private val onMalformedMessage: (String) -> Unit = {
         GleanMessaging.malformed.record(GleanMessaging.MalformedExtra(it))
     },
-    private val gleanPlumb: GleanPlumbInterface,
+    private val nimbus: NimbusMessagingInterface,
     private val messagingFeature: FeatureHolder<Messaging>,
     private val attributeProvider: JexlAttributeProvider? = null,
 ) {
@@ -60,7 +60,7 @@ class NimbusMessagingStorage(
      * Since it has a native peer, it should be [destroy]ed after finishing the set of evaluations.
      */
     fun createMessagingHelper(): NimbusMessagingHelperInterface =
-        gleanPlumb.createMessageHelper(customAttributes)
+        nimbus.createMessageHelper(customAttributes)
 
     /**
      * Returns the [Message] for the given [key] or returns null if none found.
@@ -68,24 +68,37 @@ class NimbusMessagingStorage(
     suspend fun getMessage(key: String): Message? =
         createMessage(messagingFeature.value(), key)
 
-    @Suppress("ReturnCount")
     private suspend fun createMessage(featureValue: Messaging, key: String): Message? {
-        val message = featureValue.messages[key] ?: return null
-        if (message.text.isBlank()) {
+        val message = createMessageOrNull(featureValue, key)
+        if (message == null) {
             reportMalformedMessage(key)
-            return null
+        }
+        return message
+    }
+
+    @Suppress("ReturnCount")
+    private suspend fun createMessageOrNull(featureValue: Messaging, key: String): Message? {
+        val message = featureValue.messages[key] ?: return null
+
+        val action = if (!message.isControl) {
+            if (message.text.isBlank()) {
+                return null
+            }
+            sanitizeAction(message.action, featureValue.actions)
+                ?: return null
+        } else {
+            "CONTROL_ACTION"
         }
 
-        val trigger = sanitizeTriggers(key, message.trigger, featureValue.triggers) ?: return null
-        val action = sanitizeAction(key, message.action, featureValue.actions, message.isControl) ?: return null
-        val defaultStyle = StyleData()
+        val trigger = sanitizeTriggers(message.trigger, featureValue.triggers) ?: return null
+        val style = sanitizeStyle(message.style, featureValue.styles) ?: return null
         val storageMetadata = metadataStorage.getMetadata()
 
         return Message(
             id = key,
             data = message,
             action = action,
-            style = featureValue.styles[message.style] ?: defaultStyle,
+            style = style,
             metadata = storageMetadata[key] ?: addMetadata(key),
             triggers = trigger,
         )
@@ -211,48 +224,41 @@ class NimbusMessagingStorage(
 
     @VisibleForTesting
     internal fun sanitizeAction(
-        messageId: String,
         unsafeAction: String,
         nimbusActions: Map<String, String>,
-        isControl: Boolean,
-    ): String? {
-        return when {
+    ): String? =
+        when {
             unsafeAction.startsWith("http") -> {
                 unsafeAction
             }
-            isControl -> "CONTROL_ACTION"
             else -> {
                 val safeAction = nimbusActions[unsafeAction]
                 if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
-                    if (!malFormedMap.containsKey(unsafeAction)) {
-                        reportMalformedMessage(messageId)
-                    }
-                    malFormedMap[unsafeAction] = messageId
-                    return null
+                    null
+                } else {
+                    safeAction
                 }
-                safeAction
             }
         }
-    }
 
     @VisibleForTesting
     internal fun sanitizeTriggers(
-        messageId: String,
         unsafeTriggers: List<String>,
         nimbusTriggers: Map<String, String>,
-    ): List<String>? {
-        return unsafeTriggers.map {
+    ): List<String>? =
+        unsafeTriggers.map {
             val safeTrigger = nimbusTriggers[it]
             if (safeTrigger.isNullOrBlank() || safeTrigger.isEmpty()) {
-                if (!malFormedMap.containsKey(it)) {
-                    reportMalformedMessage(messageId)
-                }
-                malFormedMap[it] = messageId
                 return null
             }
             safeTrigger
         }
-    }
+
+    @VisibleForTesting
+    internal fun sanitizeStyle(
+        unsafeStyle: String,
+        nimbusStyles: Map<String, StyleData>,
+    ): StyleData? = nimbusStyles[unsafeStyle]
 
     /**
      * Return true if the message passed as a parameter is eligible
