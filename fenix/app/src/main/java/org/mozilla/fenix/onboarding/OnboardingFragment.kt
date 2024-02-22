@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import mozilla.components.service.nimbus.evalJexlSafe
+import mozilla.components.service.nimbus.messaging.use
 import mozilla.components.support.base.ext.areNotificationsEnabledSafe
 import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.R
@@ -51,7 +52,7 @@ class OnboardingFragment : Fragment() {
 
     private val pagesToDisplay by lazy {
         pagesToDisplay(
-            shouldShowDefaultBrowserCard(requireContext()),
+            isNotDefaultBrowser(requireContext()),
             canShowNotificationPage(requireContext()),
             canShowAddWidgetCard(),
         )
@@ -62,6 +63,7 @@ class OnboardingFragment : Fragment() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val context = requireContext()
         if (pagesToDisplay.isEmpty()) {
             /* do not continue if there's no onboarding pages to display */
             onFinish(null)
@@ -71,8 +73,14 @@ class OnboardingFragment : Fragment() {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         val filter = IntentFilter(WidgetPinnedReceiver.ACTION)
-        LocalBroadcastManager.getInstance(requireContext())
+        LocalBroadcastManager.getInstance(context)
             .registerReceiver(pinAppWidgetReceiver, filter)
+
+        if (isNotDefaultBrowser(context) &&
+            pagesToDisplay.none { it.type == OnboardingPageUiData.Type.DEFAULT_BROWSER }
+        ) {
+            promptToSetAsDefaultBrowser()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -108,11 +116,7 @@ class OnboardingFragment : Fragment() {
         OnboardingScreen(
             pagesToDisplay = pagesToDisplay,
             onMakeFirefoxDefaultClick = {
-                activity?.openSetDefaultBrowserOption(useCustomTab = true)
-                telemetryRecorder.onSetToDefaultClick(
-                    sequenceId = pagesToDisplay.telemetrySequenceId(),
-                    sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
-                )
+                promptToSetAsDefaultBrowser()
             },
             onSkipDefaultClick = {
                 telemetryRecorder.onSkipSetToDefaultClick(
@@ -211,7 +215,7 @@ class OnboardingFragment : Fragment() {
         )
     }
 
-    private fun shouldShowDefaultBrowserCard(context: Context) =
+    private fun isNotDefaultBrowser(context: Context) =
         !BrowsersCache.all(context.applicationContext).isDefaultBrowser
 
     private fun canShowNotificationPage(context: Context) =
@@ -228,7 +232,7 @@ class OnboardingFragment : Fragment() {
         showAddWidgetPage: Boolean,
     ): List<OnboardingPageUiData> {
         val jexlConditions = FxNimbus.features.junoOnboarding.value().conditions
-        val jexlHelper = requireContext().components.analytics.messagingStorage.helper
+        val jexlHelper = requireContext().components.nimbus.createJexlHelper()
 
         val privacyCaption = Caption(
             text = getString(R.string.juno_onboarding_privacy_notice_text),
@@ -249,12 +253,22 @@ class OnboardingFragment : Fragment() {
                 },
             ),
         )
-        return FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(
-            privacyCaption,
-            showDefaultBrowserPage,
-            showNotificationPage,
-            showAddWidgetPage,
-            jexlConditions,
-        ) { condition -> jexlHelper.evalJexlSafe(condition) }
+        return jexlHelper.use {
+            FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(
+                privacyCaption,
+                showDefaultBrowserPage,
+                showNotificationPage,
+                showAddWidgetPage,
+                jexlConditions,
+            ) { condition -> jexlHelper.evalJexlSafe(condition) }
+        }
+    }
+
+    private fun promptToSetAsDefaultBrowser() {
+        activity?.openSetDefaultBrowserOption(useCustomTab = true)
+        telemetryRecorder.onSetToDefaultClick(
+            sequenceId = pagesToDisplay.telemetrySequenceId(),
+            sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
+        )
     }
 }
