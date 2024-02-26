@@ -18,7 +18,9 @@ import mozilla.components.concept.storage.UpdatableCreditCardFields
  */
 internal fun UpdatableAddressFields.into(): mozilla.appservices.autofill.UpdatableAddressFields {
     return mozilla.appservices.autofill.UpdatableAddressFields(
-        name = this.name,
+        givenName = this.givenName,
+        additionalName = this.additionalName,
+        familyName = this.familyName,
         organization = this.organization,
         streetAddress = this.streetAddress,
         addressLevel3 = this.addressLevel3,
@@ -55,7 +57,9 @@ internal fun UpdatableCreditCardFields.into(): mozilla.appservices.autofill.Upda
 internal fun mozilla.appservices.autofill.Address.into(): Address {
     return Address(
         guid = this.guid,
-        name = this.name,
+        givenName = this.givenName,
+        additionalName = this.additionalName,
+        familyName = this.familyName,
         organization = this.organization,
         streetAddress = this.streetAddress,
         addressLevel3 = this.addressLevel3,

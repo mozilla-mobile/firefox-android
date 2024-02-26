@@ -47,7 +47,7 @@ class AddressEditorView(
      * Binds the view in the [AddressEditorFragment], using the current [Address] if available.
      */
     fun bind() {
-        binding.nameInput.apply {
+        binding.firstNameInput.apply {
             requestFocus()
             placeCursorAtEnd()
             showKeyboard()
@@ -64,7 +64,11 @@ class AddressEditorView(
         address?.let { address ->
             binding.emailInput.setText(address.email)
             binding.phoneInput.setText(address.tel)
-            binding.nameInput.setText(address.name)
+
+            binding.firstNameInput.setText(address.givenName)
+            binding.middleNameInput.setText(address.additionalName)
+            binding.lastNameInput.setText(address.familyName)
+
             binding.streetAddressInput.setText(address.streetAddress)
             binding.cityInput.setText(address.addressLevel2)
             binding.zipInput.setText(address.postalCode)
@@ -84,7 +88,9 @@ class AddressEditorView(
         binding.root.hideKeyboard()
 
         val addressFields = UpdatableAddressFields(
-            name = binding.nameInput.text.toString(),
+            givenName = binding.firstNameInput.text.toString(),
+            additionalName = binding.middleNameInput.text.toString(),
+            familyName = binding.lastNameInput.text.toString(),
             organization = "",
             streetAddress = binding.streetAddressInput.text.toString(),
             addressLevel3 = "",

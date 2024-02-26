@@ -24,7 +24,9 @@ class AddressAutofillTest : TestSetup() {
         var navigateToAutofillSettings = true
         var isAddressAutofillEnabled = true
         var userHasSavedAddress = false
-        var name = "Mozilla Fenix Firefox"
+        var firstName = "Mozilla"
+        var middleName = "Fenix"
+        var lastName = "Firefox"
         var streetAddress = "Harrison Street"
         var city = "San Francisco"
         var state = "Alaska"
@@ -36,7 +38,9 @@ class AddressAutofillTest : TestSetup() {
 
     object SecondAddressAutofillDetails {
         var navigateToAutofillSettings = false
-        var name = "Android Test Name"
+        var firstName = "Android"
+        var middleName = "Test"
+        var lastName = "Name"
         var streetAddress = "Fort Street"
         var city = "San Jose"
         var state = "Arizona"
@@ -61,7 +65,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -96,7 +102,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -137,7 +145,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -163,7 +173,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -207,7 +219,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -242,7 +256,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -255,7 +271,9 @@ class AddressAutofillTest : TestSetup() {
             clickAddAddressButton()
             fillAndSaveAddress(
                 navigateToAutofillSettings = SecondAddressAutofillDetails.navigateToAutofillSettings,
-                name = SecondAddressAutofillDetails.name,
+                firstName = SecondAddressAutofillDetails.firstName,
+                middleName = SecondAddressAutofillDetails.middleName,
+                lastName = SecondAddressAutofillDetails.lastName,
                 streetAddress = SecondAddressAutofillDetails.streetAddress,
                 city = SecondAddressAutofillDetails.city,
                 state = SecondAddressAutofillDetails.state,
@@ -301,7 +319,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -314,7 +334,9 @@ class AddressAutofillTest : TestSetup() {
             clickSavedAddress("Mozilla")
             fillAndSaveAddress(
                 navigateToAutofillSettings = SecondAddressAutofillDetails.navigateToAutofillSettings,
-                name = SecondAddressAutofillDetails.name,
+                firstName = SecondAddressAutofillDetails.firstName,
+                middleName = SecondAddressAutofillDetails.middleName,
+                lastName = SecondAddressAutofillDetails.lastName,
                 streetAddress = SecondAddressAutofillDetails.streetAddress,
                 city = SecondAddressAutofillDetails.city,
                 state = SecondAddressAutofillDetails.state,
@@ -355,7 +377,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,
@@ -392,7 +416,9 @@ class AddressAutofillTest : TestSetup() {
                 navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
                 isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
                 userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
-                name = FirstAddressAutofillDetails.name,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
                 streetAddress = FirstAddressAutofillDetails.streetAddress,
                 city = FirstAddressAutofillDetails.city,
                 state = FirstAddressAutofillDetails.state,

@@ -33,7 +33,9 @@ class AddressPickerTest {
 
     private val address = Address(
         guid = "1",
-        name = "Jane Marie Doe",
+        givenName = "Location",
+        additionalName = "Location",
+        familyName = "Location",
         organization = "Mozilla",
         streetAddress = "1230 Main st",
         addressLevel3 = "Location3",

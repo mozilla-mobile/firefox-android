@@ -20,6 +20,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.list.IconListItem
 import org.mozilla.fenix.compose.list.TextListItem
 import org.mozilla.fenix.settings.address.ext.getAddressLabel
+import org.mozilla.fenix.settings.address.ext.getFullName
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -38,7 +39,7 @@ fun AddressList(
     LazyColumn {
         items(addresses) { address ->
             TextListItem(
-                label = address.name,
+                label = address.getFullName(),
                 modifier = Modifier.padding(start = 56.dp),
                 description = address.getAddressLabel(),
                 maxDescriptionLines = 2,
@@ -65,7 +66,9 @@ private fun AddressListPreview() {
                 addresses = listOf(
                     Address(
                         guid = "1",
-                        name = "Banana Apple",
+                        givenName = "Banana",
+                        additionalName = "",
+                        familyName = "Apple",
                         organization = "Mozilla",
                         streetAddress = "123 Sesame Street",
                         addressLevel3 = "",

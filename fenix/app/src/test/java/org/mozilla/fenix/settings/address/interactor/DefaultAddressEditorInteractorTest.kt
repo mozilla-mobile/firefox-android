@@ -31,7 +31,9 @@ class DefaultAddressEditorInteractorTest {
     @Test
     fun `WHEN save button is clicked THEN forward to controller handler`() {
         val addressFields = UpdatableAddressFields(
-            name = "John Smith",
+            givenName = "John",
+            additionalName = "",
+            familyName = "Smith",
             organization = "Mozilla",
             streetAddress = "123 Sesame Street",
             addressLevel3 = "",

@@ -332,7 +332,9 @@ data class UpdatableCreditCardFields(
  * Information about a address.
  *
  * @property guid The unique identifier for this address.
- * @property name A person's full name, typically made up of a first, middle and last name, e.g. John Joe Doe.
+ * @property givenName First name.
+ * @property additionalName Middle name.
+ * @property familyName Last name.
  * @property organization Organization.
  * @property streetAddress Street address.
  * @property addressLevel3 Sublocality (Suburb) name type.
@@ -351,7 +353,9 @@ data class UpdatableCreditCardFields(
 @Parcelize
 data class Address(
     val guid: String,
-    val name: String,
+    val givenName: String,
+    val additionalName: String,
+    val familyName: String,
     val organization: String,
     val streetAddress: String,
     val addressLevel3: String,
@@ -366,6 +370,15 @@ data class Address(
     val timeLastModified: Long = 0L,
     val timesUsed: Long = 0L,
 ) : Parcelable {
+    /**
+     * Returns the full name for the [Address]. The combination of names is based on desktop code
+     * found here:
+     * https://searchfox.org/mozilla-central/rev/d989c65584ded72c2de85cb40bede7ac2f176387/toolkit/components/formautofill/FormAutofillNameUtils.jsm#400
+     */
+    val fullName: String
+        get() = listOf(givenName, additionalName, familyName)
+            .filter { it.isNotEmpty() }
+            .joinToString(" ")
 
     /**
      * Returns a label for the [Address]. The ordering is based on the
@@ -395,7 +408,9 @@ data class Address(
 /**
  * Information about a new address. This is what you pass to create or update an address.
  *
- * @property name A person's full name, typically made up of a first, middle and last name, e.g. John Joe Doe.
+ * @property givenName First name.
+ * @property additionalName Middle name.
+ * @property familyName Last name.
  * @property organization Organization.
  * @property streetAddress Street address.
  * @property addressLevel3 Sublocality (Suburb) name type.
@@ -407,7 +422,9 @@ data class Address(
  * @property email E-mail address.
  */
 data class UpdatableAddressFields(
-    val name: String,
+    val givenName: String,
+    val additionalName: String,
+    val familyName: String,
     val organization: String,
     val streetAddress: String,
     val addressLevel3: String,

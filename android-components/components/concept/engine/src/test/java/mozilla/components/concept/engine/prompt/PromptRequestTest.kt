@@ -322,7 +322,9 @@ class PromptRequestTest {
     fun `WHEN calling confirm or dismiss on the SelectAddress prompt request THEN the respective callback is invoked`() {
         val address = Address(
             guid = "1",
-            name = "Firefox",
+            givenName = "Firefox",
+            additionalName = "-",
+            familyName = "-",
             organization = "-",
             streetAddress = "street",
             addressLevel3 = "address3",
