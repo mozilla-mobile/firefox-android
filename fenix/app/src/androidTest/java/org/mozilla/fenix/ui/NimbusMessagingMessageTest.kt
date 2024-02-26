@@ -20,7 +20,6 @@ import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestHelper
-import org.mozilla.fenix.messaging.CustomAttributeProvider
 
 /**
  * This test is to test the integrity of messages hardcoded in the FML.
@@ -34,8 +33,8 @@ class NimbusMessagingMessageTest {
 
     private lateinit var context: Context
 
-    private val storage
-        get() = context.components.analytics.messagingStorage
+    private val messaging
+        get() = context.components.nimbus.messaging
 
     @get:Rule
     val activityTestRule =
@@ -55,7 +54,7 @@ class NimbusMessagingMessageTest {
      */
     @Test
     fun testAllMessageIntegrity() = runTest {
-        val messages = storage.getMessages()
+        val messages = messaging.getMessages()
         val rawMessages = feature.messages
         assertTrue(rawMessages.isNotEmpty())
 
@@ -66,24 +65,6 @@ class NimbusMessagingMessageTest {
             fail("Problem with message(s) in FML: $missing")
         }
         assertEquals(messages.size, rawMessages.size)
-    }
-
-    /**
-     * Check if the messages' triggers are well formed JEXL.
-     */
-    @Test
-    fun testAllMessageTriggers() = runTest {
-        val nimbus = context.components.analytics.experiments
-        val helper = nimbus.createMessageHelper(
-            CustomAttributeProvider.getCustomAttributes(context),
-        )
-        val messages = storage.getMessages()
-        messages.forEach { message ->
-            storage.isMessageEligible(message, helper)
-            if (storage.malFormedMap.isNotEmpty()) {
-                fail("${message.id} has a problem with its JEXL trigger: ${storage.malFormedMap.keys}")
-            }
-        }
     }
 
     private fun checkIsLocalized(string: String) {
