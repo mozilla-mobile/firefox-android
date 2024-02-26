@@ -359,6 +359,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarningSync: Boolean
         get() = loginsSecureWarningSyncCount.underMaxCount()
 
+    var closeOrphanTabOnBack by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_orphan_tab_on_back),
+        default = false,
+    )
+
     val shouldShowSecurityPinWarning: Boolean
         get() = secureWarningCount.underMaxCount()
 

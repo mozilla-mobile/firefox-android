@@ -1340,6 +1340,7 @@ abstract class BaseBrowserFragment :
             ),
         )
         return true
+
     }
 
     /**
@@ -1391,7 +1392,7 @@ abstract class BaseBrowserFragment :
                 true
             } else {
                 val hasParentSession = session is TabSessionState && session.parentId != null
-                if (hasParentSession) {
+                if (hasParentSession || requireContext().settings().closeOrphanTabOnBack) {
                     requireComponents.useCases.tabsUseCases.removeTab(session.id, selectParentIfExists = true)
                 }
                 // We want to return to home if this session didn't have a parent session to select.
