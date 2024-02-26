@@ -13,6 +13,7 @@ import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithCondition
 import org.mozilla.fenix.helpers.DataGenerationHelper.getSponsoredFxSuggestPlaceHolder
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
@@ -20,7 +21,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 
-class FirefoxSuggestTest {
+class FirefoxSuggestTest : TestSetup() {
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
