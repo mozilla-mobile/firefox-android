@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -193,6 +194,7 @@ class FirefoxSuggestTest : TestSetup() {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348374
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @SmokeTest
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsTest() {
@@ -220,6 +222,7 @@ class FirefoxSuggestTest : TestSetup() {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348375
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsWithPartialKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -240,6 +243,7 @@ class FirefoxSuggestTest : TestSetup() {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348376
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun openFirefoxSuggestNonSponsoredSearchResultsTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
