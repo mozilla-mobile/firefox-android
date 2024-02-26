@@ -192,6 +192,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348374
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @SmokeTest
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsTest() {
@@ -218,6 +219,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348375
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsWithPartialKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -237,6 +239,7 @@ class FirefoxSuggestTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348376
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun openFirefoxSuggestNonSponsoredSearchResultsTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
