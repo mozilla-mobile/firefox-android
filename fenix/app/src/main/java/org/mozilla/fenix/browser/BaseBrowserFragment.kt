@@ -1340,7 +1340,6 @@ abstract class BaseBrowserFragment :
             ),
         )
         return true
-
     }
 
     /**
