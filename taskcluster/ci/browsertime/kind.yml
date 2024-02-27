@@ -42,10 +42,16 @@ task-defaults:
         tier: 2
         platform:
             by-abi:
-                arm64-v8a: android-hw-a51-11-0-aarch64-shippable-qr/opt
+                arm64-v8a:
+                    - android-hw-a51-11-0-aarch64-shippable-qr/opt
+                    - android-hw-p6-13-0-android-aarch64-shippable-qr/opt
+                    - android-hw-s21-13-0-android-aarch64-shippable-qr/opt
     worker-type:
         by-abi:
-            arm64-v8a: t-bitbar-gw-perf-a51
+            arm64-v8a:
+                - t-bitbar-gw-perf-a51
+                - t-bitbar-gw-perf-p6
+                - t-bitbar-gw-perf-s21
     worker:
         max-run-time: 3600
         env:
