@@ -10,7 +10,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import mozilla.appservices.fxaclient.FxaClient
 import mozilla.appservices.fxaclient.FxaException
+import mozilla.appservices.fxaclient.FxaStateCheckerEvent
+import mozilla.appservices.fxaclient.FxaStateCheckerState
 import mozilla.appservices.syncmanager.SyncTelemetry
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AccountEvent
@@ -24,23 +27,23 @@ import mozilla.components.concept.sync.DeviceConstellation
 import mozilla.components.concept.sync.DeviceConstellationObserver
 import mozilla.components.concept.sync.DevicePushSubscription
 import mozilla.components.concept.sync.ServiceResult
+import mozilla.components.service.fxa.manager.AppServicesStateMachineChecker
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import mozilla.appservices.fxaclient.PersistedFirefoxAccount as FirefoxAccount
 
-internal sealed class FxaDeviceConstellationException : Exception() {
+internal sealed class FxaDeviceConstellationException(message: String? = null) : Exception(message) {
     /**
      * Failure while ensuring device capabilities.
      */
-    class EnsureCapabilitiesFailed : FxaDeviceConstellationException()
+    class EnsureCapabilitiesFailed(message: String? = null) : FxaDeviceConstellationException(message)
 }
 
 /**
- * Provides an implementation of [DeviceConstellation] backed by a [FirefoxAccount].
+ * Provides an implementation of [DeviceConstellation] backed by a [FxaClient
  */
 class FxaDeviceConstellation(
-    private val account: FirefoxAccount,
+    private val account: FxaClient,
     private val scope: CoroutineScope,
     @get:VisibleForTesting
     internal val crashReporter: CrashReporting? = null,
@@ -86,29 +89,43 @@ class FxaDeviceConstellation(
             val capabilities = config.capabilities.map { it.into() }.toSet()
             if (finalizeAction == DeviceFinalizeAction.Initialize) {
                 try {
+                    AppServicesStateMachineChecker.checkInternalState(FxaStateCheckerState.InitializeDevice)
                     account.initializeDevice(config.name, config.type.into(), capabilities)
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.InitializeDeviceSuccess)
                     ServiceResult.Ok
                 } catch (e: FxaPanicException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                     throw e
                 } catch (e: FxaUnauthorizedException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                     ServiceResult.AuthError
                 } catch (e: FxaException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                     ServiceResult.OtherError
                 }
             } else {
                 try {
+                    AppServicesStateMachineChecker.checkInternalState(FxaStateCheckerState.EnsureDeviceCapabilities)
                     account.ensureCapabilities(capabilities)
+                    AppServicesStateMachineChecker.handleInternalEvent(
+                        FxaStateCheckerEvent.EnsureDeviceCapabilitiesSuccess,
+                    )
                     ServiceResult.Ok
                 } catch (e: FxaPanicException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                     throw e
                 } catch (e: FxaUnauthorizedException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.EnsureCapabilitiesAuthError)
                     // Unless we've added a new capability, in practice 'ensureCapabilities' isn't
                     // actually expected to do any work: everything should have been done by initializeDevice.
                     // So if it did, and failed, let's report this so that we're aware of this!
                     // See https://github.com/mozilla-mobile/android-components/issues/8164
-                    crashReporter?.submitCaughtException(FxaDeviceConstellationException.EnsureCapabilitiesFailed())
+                    crashReporter?.submitCaughtException(
+                        FxaDeviceConstellationException.EnsureCapabilitiesFailed(e.toString()),
+                    )
                     ServiceResult.AuthError
                 } catch (e: FxaException) {
+                    AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                     ServiceResult.OtherError
                 }
             }

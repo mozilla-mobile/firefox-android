@@ -52,7 +52,6 @@ class HomeActivityTestRule(
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled: Boolean = settings.deleteSitePermissions,
-        isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled: Boolean = settings.shouldShowOpenInAppBanner,
         etpPolicy: ETPPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled: Boolean = false,
@@ -67,7 +66,6 @@ class HomeActivityTestRule(
         this.isTCPCFREnabled = isTCPCFREnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
         this.isDeleteSitePermissionsEnabled = isDeleteSitePermissionsEnabled
-        this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
         this.isOpenInAppBannerEnabled = isOpenInAppBannerEnabled
         this.etpPolicy = etpPolicy
         this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
@@ -126,7 +124,6 @@ class HomeActivityTestRule(
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
-            isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,
             composeTopSitesEnabled = composeTopSitesEnabled,
         )
@@ -164,11 +161,11 @@ class HomeActivityIntentTestRule internal constructor(
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled: Boolean = settings.deleteSitePermissions,
-        isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled: Boolean = settings.shouldShowOpenInAppBanner,
         etpPolicy: ETPPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled: Boolean = false,
         composeTopSitesEnabled: Boolean = false,
+        translationsEnabled: Boolean = false,
     ) : this(initialTouchMode, launchActivity, skipOnboarding) {
         this.isHomeOnboardingDialogEnabled = isHomeOnboardingDialogEnabled
         this.isPocketEnabled = isPocketEnabled
@@ -179,11 +176,11 @@ class HomeActivityIntentTestRule internal constructor(
         this.isTCPCFREnabled = isTCPCFREnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
         this.isDeleteSitePermissionsEnabled = isDeleteSitePermissionsEnabled
-        this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
         this.isOpenInAppBannerEnabled = isOpenInAppBannerEnabled
         this.etpPolicy = etpPolicy
         this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
         this.composeTopSitesEnabled = composeTopSitesEnabled
+        this.isTranslationsEnabled = translationsEnabled
     }
 
     private val longTapUserPreference = getLongPressTimeout()
@@ -244,7 +241,6 @@ class HomeActivityIntentTestRule internal constructor(
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions
-        isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog
         isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner
         etpPolicy = getETPPolicy(settings)
     }
@@ -266,6 +262,7 @@ class HomeActivityIntentTestRule internal constructor(
             skipOnboarding: Boolean = false,
             tabsTrayRewriteEnabled: Boolean = false,
             composeTopSitesEnabled: Boolean = false,
+            translationsEnabled: Boolean = false,
         ) = HomeActivityIntentTestRule(
             initialTouchMode = initialTouchMode,
             launchActivity = launchActivity,
@@ -275,9 +272,9 @@ class HomeActivityIntentTestRule internal constructor(
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
-            isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,
             composeTopSitesEnabled = composeTopSitesEnabled,
+            translationsEnabled = translationsEnabled,
         )
     }
 }

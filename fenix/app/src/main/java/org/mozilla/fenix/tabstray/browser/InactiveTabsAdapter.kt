@@ -14,13 +14,12 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
 /**
  * The adapter for displaying the section of inactive tabs.
  *
- * @property lifecycleOwner [LifecycleOwner] to which the Composable will be tied to.
- * @property tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState.inactiveTabs].
- * @property interactor [InactiveTabsInteractor] used to respond to interactions with the inactive tabs header
+ * @param lifecycleOwner [LifecycleOwner] to which the Composable will be tied to.
+ * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState.inactiveTabs].
+ * @param interactor [InactiveTabsInteractor] used to respond to interactions with the inactive tabs header
  * and the auto close dialog.
  * @property featureName [String] representing the name of the inactive tabs feature for telemetry reporting.
  */
-@Suppress("LongParameterList")
 class InactiveTabsAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val tabsTrayStore: TabsTrayStore,

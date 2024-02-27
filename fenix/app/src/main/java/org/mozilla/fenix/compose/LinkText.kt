@@ -6,14 +6,25 @@ package org.mozilla.fenix.compose
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Card
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -21,7 +32,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import mozilla.components.support.ktx.android.content.isScreenReaderEnabled
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -62,7 +75,6 @@ fun LinkText(
     linkTextColor: Color = FirefoxTheme.colors.textAccent,
     linkTextDecoration: TextDecoration = TextDecoration.None,
 ) {
-    val context = LocalContext.current
     val annotatedString = buildUrlAnnotatedString(
         text,
         linkTextStates,
@@ -70,6 +82,12 @@ fun LinkText(
         linkTextDecoration,
     )
 
+    val showDialog = remember { mutableStateOf(false) }
+    val linksAvailable = stringResource(id = R.string.a11y_links_available)
+
+    if (showDialog.value) {
+        LinksDialog(linkTextStates) { showDialog.value = false }
+    }
     // When using UrlAnnotation, talkback shows links in a separate dialog and
     // opens them in the default browser. Since this component allows the caller to define the
     // onClick behaviour - e.g. to open the link in in-app custom tab, here StringAnnotation is used
@@ -77,22 +95,78 @@ fun LinkText(
     ClickableText(
         text = annotatedString,
         style = style,
-        modifier = Modifier.clickable(
-            enabled = context.isScreenReaderEnabled,
-            role = Role.Button,
-            onClickLabel = linkTextStates.firstOrNull()?.text ?: "",
-            onClick = {
-                linkTextStates.firstOrNull()?.let {
-                    it.onClick(it.url)
+        modifier = Modifier.semantics(mergeDescendants = true) {
+            onClick {
+                if (linkTextStates.size > 1) {
+                    showDialog.value = true
+                } else {
+                    linkTextStates.firstOrNull()?.let {
+                        it.onClick(it.url)
+                    }
                 }
-            },
-        ),
-        onClick = { charOffset ->
-            if (!context.isScreenReaderEnabled) {
-                onTextClick(annotatedString, charOffset, linkTextStates)
+
+                return@onClick true
             }
+            contentDescription = "$annotatedString $linksAvailable"
+        },
+        onClick = { charOffset ->
+            onTextClick(annotatedString, charOffset, linkTextStates)
         },
     )
+}
+
+@Composable
+private fun LinksDialog(
+    linkTextStates: List<LinkTextState>,
+    onDismissRequest: () -> Unit,
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(color = FirefoxTheme.colors.layer2)
+                    .padding(all = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.a11y_links_title),
+                    color = FirefoxTheme.colors.textPrimary,
+                    style = FirefoxTheme.typography.headline5,
+                )
+
+                linkTextStates.forEach { linkText ->
+                    TextButton(
+                        onClick = { linkText.onClick(linkText.url) },
+                        modifier = Modifier
+                            .align(Alignment.Start),
+                    ) {
+                        Text(
+                            text = linkText.text,
+                            color = FirefoxTheme.colors.textAccent,
+                            textDecoration = TextDecoration.Underline,
+                            style = FirefoxTheme.typography.button,
+                        )
+                    }
+                }
+
+                TextButton(
+                    onClick = { onDismissRequest() },
+                    modifier = Modifier
+                        .align(Alignment.End),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.standard_snackbar_error_dismiss),
+                        color = FirefoxTheme.colors.textAccent,
+                        style = FirefoxTheme.typography.button,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @VisibleForTesting
@@ -235,5 +309,29 @@ private fun MultipleLinksPreview() {
                 linkTextStates = listOf(state1, state2),
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun LinksDialogPreview() {
+    val state1 = LinkTextState(
+        text = "clickable text",
+        url = "www.mozilla.com",
+        onClick = {},
+    )
+
+    val state2 = LinkTextState(
+        text = "another clickable text",
+        url = "www.mozilla.com",
+        onClick = {},
+    )
+
+    val linkTextStateList = listOf(state1, state2)
+    FirefoxTheme {
+        LinksDialog(
+            linkTextStates = linkTextStateList,
+            onDismissRequest = {},
+        )
     }
 }

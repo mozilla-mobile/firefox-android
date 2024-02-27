@@ -15,7 +15,7 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
  * Interactor for the Bookmarks screen.
  * Provides implementations for the BookmarkViewInteractor.
  *
- * @property bookmarksController view controller
+ * @param bookmarksController view controller
  */
 @SuppressWarnings("TooManyFunctions")
 class BookmarkFragmentInteractor(
@@ -139,6 +139,10 @@ class BookmarkFragmentInteractor(
             BookmarkNodeType.ITEM -> {
                 bookmarksController.handleBookmarkTapped(item)
                 BookmarksManagement.open.record(NoExtras())
+                MetricsUtils.recordBookmarkMetrics(
+                    MetricsUtils.BookmarkAction.OPEN,
+                    METRIC_SOURCE,
+                )
             }
             BookmarkNodeType.FOLDER -> bookmarksController.handleBookmarkExpand(item)
             BookmarkNodeType.SEPARATOR -> throw IllegalStateException("Cannot open separators")

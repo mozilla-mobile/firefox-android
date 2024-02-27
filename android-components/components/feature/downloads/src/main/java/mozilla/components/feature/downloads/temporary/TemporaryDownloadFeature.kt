@@ -78,7 +78,11 @@ abstract class TemporaryDownloadFeature(
     @WorkerThread
     @VisibleForTesting
     internal fun download(internetResource: ShareInternetResourceState): File {
-        val request = Request(internetResource.url.sanitizeURL(), private = internetResource.private)
+        val request = Request(
+            internetResource.url.sanitizeURL(),
+            private = internetResource.private,
+            referrerUrl = internetResource.referrerUrl,
+        )
         val response = if (internetResource.response == null) {
             httpClient.fetch(request)
         } else {
@@ -86,6 +90,7 @@ abstract class TemporaryDownloadFeature(
         }
 
         if (response.status != Response.SUCCESS) {
+            response.close()
             // We experienced a problem trying to fetch the file, nothing more we can do.
             throw (RuntimeException("Resource is not available to download"))
         }

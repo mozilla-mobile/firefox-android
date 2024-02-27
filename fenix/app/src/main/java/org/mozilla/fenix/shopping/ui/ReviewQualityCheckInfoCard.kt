@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -22,6 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -31,6 +33,7 @@ import org.mozilla.fenix.compose.LinkText
 import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
+import org.mozilla.fenix.shopping.ui.ext.headingResource
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -61,6 +64,8 @@ fun ReviewQualityCheckInfoCard(
         ),
         elevation = 0.dp,
     ) {
+        val titleContentDescription = headingResource(title)
+
         Row {
             when (type) {
                 ReviewQualityCheckInfoType.Warning -> {
@@ -77,10 +82,6 @@ fun ReviewQualityCheckInfoCard(
                 -> {
                     InfoCardIcon(iconId = R.drawable.mozac_ic_information_fill_24)
                 }
-
-                ReviewQualityCheckInfoType.Loading -> {
-                    IndeterminateProgressIndicator(modifier = Modifier.size(24.dp))
-                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -90,6 +91,10 @@ fun ReviewQualityCheckInfoCard(
                     text = title,
                     color = FirefoxTheme.colors.textPrimary,
                     style = FirefoxTheme.typography.headline8,
+                    modifier = Modifier.semantics {
+                        heading()
+                        contentDescription = titleContentDescription
+                    },
                 )
 
                 description?.let {
@@ -154,7 +159,6 @@ enum class ReviewQualityCheckInfoType {
     Error,
     Info,
     AnalysisUpdate,
-    Loading,
     ;
 
     val cardBackgroundColor: Color
@@ -165,7 +169,6 @@ enum class ReviewQualityCheckInfoType {
             Error -> FirefoxTheme.colors.layerError
             Info -> FirefoxTheme.colors.layerInfo
             AnalysisUpdate -> Color.Transparent
-            Loading -> Color.Transparent
         }
 
     val buttonBackgroundColor: Color
@@ -176,14 +179,13 @@ enum class ReviewQualityCheckInfoType {
             Error -> FirefoxTheme.colors.actionError
             Info -> FirefoxTheme.colors.actionInfo
             AnalysisUpdate -> FirefoxTheme.colors.actionSecondary
-            Loading -> FirefoxTheme.colors.actionSecondary
         }
 
     val buttonTextColor: Color
         @Composable
         get() = when {
             this == Info && !isSystemInDarkTheme() -> FirefoxTheme.colors.textOnColorPrimary
-            this == AnalysisUpdate || this == Loading -> FirefoxTheme.colors.textActionSecondary
+            this == AnalysisUpdate -> FirefoxTheme.colors.textActionSecondary
             else -> FirefoxTheme.colors.textPrimary
         }
 }

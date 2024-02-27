@@ -187,16 +187,7 @@ abstract class AbstractFetchDownloadService : Service() {
                     }
 
                     ACTION_CANCEL -> {
-                        removeNotification(context, currentDownloadJobState)
-                        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
-                        setDownloadJobStatus(currentDownloadJobState, CANCELLED)
-                        currentDownloadJobState.job?.cancel()
-
-                        currentDownloadJobState.job = CoroutineScope(IO).launch {
-                            deleteDownloadingFile(currentDownloadJobState.state)
-                            currentDownloadJobState.downloadDeleted = true
-                        }
-
+                        cancelDownloadJob(currentDownloadJobState)
                         removeDownloadJob(currentDownloadJobState)
                         emitNotificationCancelFact()
                         logger.debug("ACTION_CANCEL for ${currentDownloadJobState.state.id}")
@@ -267,6 +258,7 @@ abstract class AbstractFetchDownloadService : Service() {
                 )
                 handleDownloadIntent(newDownloadState)
             }
+
             else -> {
                 handleDownloadIntent(download)
             }
@@ -279,6 +271,10 @@ abstract class AbstractFetchDownloadService : Service() {
     internal fun handleRemovePrivateDownloadIntent(download: DownloadState) {
         if (download.private) {
             downloadJobs[download.id]?.let {
+                // Do not cancel already completed downloads.
+                if (it.status != COMPLETED) {
+                    cancelDownloadJob(it)
+                }
                 removeDownloadJob(it)
             }
             store.dispatch(DownloadAction.RemoveDownloadAction(download.id))
@@ -317,6 +313,23 @@ abstract class AbstractFetchDownloadService : Service() {
                 updateDownloadNotification()
                 if (downloadJobs.isEmpty()) cancel()
             }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun cancelDownloadJob(
+        currentDownloadJobState: DownloadJobState,
+    ) {
+        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
+        setDownloadJobStatus(
+            currentDownloadJobState,
+            CANCELLED,
+        )
+        currentDownloadJobState.job?.cancel()
+        currentDownloadJobState.job = CoroutineScope(IO).launch {
+            deleteDownloadingFile(currentDownloadJobState.state)
+            currentDownloadJobState.downloadDeleted =
+                true
         }
     }
 
@@ -703,6 +716,7 @@ abstract class AbstractFetchDownloadService : Service() {
             download.url.sanitizeURL(),
             headers = headers,
             private = download.private,
+            referrerUrl = download.referrerUrl,
         )
         // When resuming a download we need to use the httpClient as
         // download.response doesn't support adding headers.
@@ -719,6 +733,7 @@ abstract class AbstractFetchDownloadService : Service() {
         if (response.status != PARTIAL_CONTENT_STATUS && response.status != OK_STATUS ||
             (isResumingDownload && !response.headers.contains(CONTENT_RANGE))
         ) {
+            response.close()
             // We experienced a problem trying to fetch the file, send a failure notification
             currentDownloadJobState.currentBytesCopied = 0
             currentDownloadJobState.state = currentDownloadJobState.state.copy(currentBytesCopied = 0)
@@ -839,6 +854,7 @@ abstract class AbstractFetchDownloadService : Service() {
         val intent = Intent(ACTION_DOWNLOAD_COMPLETE)
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, getDownloadJobStatus(downloadState))
         intent.putExtra(EXTRA_DOWNLOAD_ID, downloadState.state.id)
+        intent.setPackage(context.packageName)
 
         context.sendBroadcast(intent, "${context.packageName}.permission.RECEIVE_DOWNLOAD_BROADCAST")
     }

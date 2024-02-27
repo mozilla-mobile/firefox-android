@@ -5,19 +5,15 @@
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.composeTabDrawer
@@ -29,9 +25,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 
-class ComposeCollectionTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
+class ComposeCollectionTest : TestSetup() {
     private val firstCollectionName = "testcollection_1"
     private val secondCollectionName = "testcollection_2"
     private val collectionName = "First Collection"
@@ -51,20 +45,7 @@ class ComposeCollectionTest {
             ),
         ) { it.activity }
 
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/353823
     @SmokeTest
     @Test
     fun createFirstCollectionUsingHomeScreenButtonTest() {
@@ -97,6 +78,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343422
     @SmokeTest
     @Test
     fun verifyExpandedCollectionItemsTest() {
@@ -147,6 +129,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343425
     @SmokeTest
     @Test
     fun openAllTabsFromACollectionTest() {
@@ -181,6 +164,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343426
     @SmokeTest
     @Test
     fun shareAllTabsFromACollectionTest() {
@@ -208,6 +192,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343428
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     @SmokeTest
@@ -248,6 +233,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2319453
     // open a webpage, and add currently opened tab to existing collection
     @Test
     fun saveTabToExistingCollectionFromMainMenuTest() {
@@ -276,8 +262,9 @@ class ComposeCollectionTest {
         }
     }
 
+    // Testrail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343423
     @Test
-    fun verifyAddTabButtonOfCollectionMenu() {
+    fun saveTabToExistingCollectionUsingTheAddTabButtonTest() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
         val secondWebPage = getGenericAsset(mockWebServer, 2)
 
@@ -303,6 +290,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343424
     @Test
     fun renameCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -325,6 +313,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/991248
     @Test
     fun createCollectionUsingSelectTabsButtonTest() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
@@ -347,6 +336,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2319455
     @Test
     fun removeTabFromCollectionUsingTheCloseButtonTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -378,6 +368,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/343427
     @Test
     fun removeTabFromCollectionUsingSwipeLeftActionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
@@ -410,6 +401,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/991278
     @Test
     fun removeTabFromCollectionUsingSwipeRightActionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
@@ -442,6 +434,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/991276
     @Test
     fun createCollectionByLongPressingOpenTabsTest() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
@@ -462,7 +455,7 @@ class ComposeCollectionTest {
             verifyTabsMultiSelectionCounter(2)
         }.clickSaveCollection {
             typeCollectionNameAndSave(collectionName)
-            verifySnackBarText("Tabs saved!")
+            verifySnackBarText("Collection saved!")
         }
 
         composeTabDrawer(composeTestRule) {
@@ -474,6 +467,7 @@ class ComposeCollectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/344897
     @Test
     fun navigateBackInCollectionFlowTest() {
         val webPage = getGenericAsset(mockWebServer, 1)

@@ -22,6 +22,8 @@
      then we will show another collapsed entry saying "Access your data on 2 other domains". This entry it's for the plural case, when the add-on is accessing more than one extra domain.
      %1$d will be replaced by an integer indicating the number of additional domains for which this web extension is requesting permission. -->
     <string name="mozac_feature_addons_permissions_extra_domains_description_plural" tools:ignore="PluralsCandidate">เข้าถึงข้อมูลของคุณใน %1$d โดเมนอื่นๆ</string>
+    <!-- Content description for a permission item, for an installed add-on details page. %1$s will be replaced with the permission text name, %2$d will be replaced with the permission position in the list and %3$d will be replaced with the total number of permissions in the list.Taking as an example "Read and modify privacy settings" the whole text will read Read and modify privacy settings, 2 of 6. -->
+    <string name="mozac_feature_addons_permissions_content_description_item">%1$s, %2$d จาก %3$d</string>
     <!-- Description for tabs add-on permission. -->
     <string name="mozac_feature_addons_permissions_tabs_description">เข้าถึงแท็บของเบราว์เซอร์</string>
     <!-- Description for unlimited_storage permission. -->
@@ -72,8 +74,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">ขยายเครื่องมือนักพัฒนาเพื่อเข้าถึงข้อมูลของคุณในแท็บที่เปิดอยู่</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">รุ่น</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">ผู้สร้าง</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">ผู้สร้าง</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">ผู้สร้าง</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">อัปเดตล่าสุด</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +86,8 @@
     <string name="mozac_feature_addons_learn_more">เรียนรู้เพิ่มเติมเกี่ยวกับสิทธิอนุญาต</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">การจัดอันดับ</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">เพิ่มเติมเกี่ยวกับส่วนเสริมนี้</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">การตั้งค่า</string>
     <!-- Indicates the add-on is enabled. -->
@@ -92,6 +98,8 @@
     <string name="mozac_feature_addons_settings_allow_in_private_browsing">อนุญาตในการเรียกดูแบบส่วนตัว</string>
     <!-- Indicates the add-on is allowed in private browsing mode. -->
     <string name="mozac_feature_addons_settings_run_in_private_browsing">เรียกใช้ในการเรียกดูแบบส่วนตัว</string>
+    <!-- This is displayed when the add-on is not allowed to run in private browsing. -->
+    <string name="mozac_feature_addons_not_allowed_in_private_browsing">ไม่อนุญาตในหน้าต่างส่วนตัว</string>
     <!-- Indicates the add-on is enabled. -->
     <string name="mozac_feature_addons_enabled">ถูกเปิดใช้งาน</string>
     <!-- Indicates the add-on is disabled. -->
@@ -110,28 +118,48 @@
     <string name="mozac_feature_addons_details">รายละเอียด</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">สิทธิอนุญาต</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">เอาออก</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">รายงาน</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">เพิ่ม %1$s หรือไม่?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s ขอสิทธิอนุญาตเพิ่มเติม</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">ส่วนขยายต้องการสิทธิอนุญาตจากคุณเพื่อ:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">ส่วนเสริมต้องการ:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">เพิ่ม</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">อนุญาต</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">ปฏิเสธ</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">ยกเลิก</string>
     <!-- Accessibility content description to install add-on button. -->
-    <string name="mozac_feature_addons_install_addon_content_description">ติดตั้งส่วนเสริม</string>
+    <string name="mozac_feature_addons_install_addon_content_description" tools:ignore="UnusedResources" moz:removedIn="124">ติดตั้งส่วนเสริม</string>
+    <!-- Accessibility content description to install add-on button. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_install_addon_content_description_2">ติดตั้ง %1$s</string>
     <!-- This is the label of a button to cancel an ongoing add-on installation. -->
     <string name="mozac_feature_addons_install_addon_dialog_cancel">ยกเลิก</string>
     <!-- Indicates how many users have rated an add-on. %1$s will be replaced with number of reviews -->
     <string name="mozac_feature_addons_user_rating_count_2">บทวิจารณ์: %1$s</string>
     <!-- Accessibility content description for the amount of stars that add-on has, where %1$.02f will be the amount of stars and / separator and 5 the maximum number of stars e.g (2/5, 4.5/5 or 5/5)  . -->
-    <string name="mozac_feature_addons_rating_content_description">%1$.02f/5</string>
+    <string name="mozac_feature_addons_rating_content_description" moz:removedIn="124" tools:ignore="UnusedResources">%1$.02f/5</string>
+    <!-- Accessibility content description for the amount of stars that add-on has, where %1$.02f will be the amount of stars. -->
+    <string name="mozac_feature_addons_rating_content_description_2">คะแนน: %1$.02f จาก 5</string>
     <!-- This is the title of page where all the add-ons are listed-->
     <string name="mozac_feature_addons_addons">ส่วนเสริม</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">ตัวจัดการส่วนเสริม</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">ส่วนเสริมถูกปิดใช้งานชั่วคราว</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">มีส่วนเสริมอย่างน้อยตัวหนึ่งหยุดทำงาน ทำให้ระบบของคุณไม่เสถียร</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">เริ่มส่วนเสริมใหม่</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">ค้นหาส่วนเสริมเพิ่มเติม</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
@@ -184,8 +212,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">ไม่สามารถติดตั้ง %1$s เนื่องจากเข้ากันไม่ได้กับ %2$s %3$s</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">ไม่สามารถติดตั้ง %1$s เนื่องจากมีความเสี่ยงสูงที่จะก่อให้เกิดปัญหาด้านเสถียรภาพหรือความปลอดภัย</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">ไม่สามารถติดตั้ง %1$s เนื่องจากมีความเสี่ยงสูงที่จะก่อให้เกิดปัญหาด้านเสถียรภาพหรือความปลอดภัย</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">เปิดใช้งาน %1$s สำเร็จแล้ว</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->
@@ -224,8 +250,20 @@
     <string name="mozac_feature_addons_updater_dialog_status">สถานะ:</string>
     <!-- Text shown in the dialog when add-on installation is completed. %1$s is the add-on name. %2$s is the app name. -->
     <string name="mozac_feature_addons_installed_dialog_title">%1$s ได้ถูกเพิ่มไปยัง %2$s แล้ว</string>
-    <!-- Text shown in the dialog when add-on installation is completed. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_installed_dialog_description">เปิดในเมนู</string>
+    <!-- Text shown in the dialog when add-on installation is completed. -->
+    <string name="mozac_feature_addons_installed_dialog_description" moz:removedIn="124" tools:ignore="UnusedResources">เปิดในเมนู</string>
+    <!-- Text shown in the dialog when add-on installation is completed. %1$s is the add-on name. %2$s is the app name. -->
+    <string name="mozac_feature_addons_installed_dialog_description_2">เข้าถึง %1$s ได้จากเมนู %2$s</string>
     <!-- Confirmation button text for the dialog when add-on installation is completed. -->
-    <string name="mozac_feature_addons_installed_dialog_okay_button">ตกลง เข้าใจแล้ว</string>
+    <string name="mozac_feature_addons_installed_dialog_okay_button" moz:removedIn="124" tools:ignore="UnusedResources">ตกลง เข้าใจแล้ว</string>
+    <!-- Confirmation button text for the dialog when add-on installation is completed. -->
+    <string name="mozac_feature_addons_installed_dialog_okay_button_2">ตกลง</string>
+    <!-- "Learn more" link displayed below an add-on status message. -->
+    <string name="mozac_feature_addons_status_learn_more">เรียนรู้เพิ่มเติม</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_blocklisted">%1$s ถูกปิดใช้งานเนื่องจากปัญหาด้านความปลอดภัยหรือความเสถียร</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on hasn't been signed correctly. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_unsigned">%1$s ไม่สามารถยืนยันได้ว่าปลอดภัยและได้ถูกปิดใช้งาน</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on isn't compatible with the application version. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
+    <string name="mozac_feature_addons_status_incompatible">%1$s เข้ากันไม่ได้กับ %2$s รุ่นของคุณ (รุ่น %3$s)</string>
 </resources>

@@ -19,7 +19,7 @@ import java.util.Locale
 /**
  * Utility class for downloading wallpaper metadata from the remote server.
  *
- * @property client The client that will be used to fetch metadata.
+ * @param client The client that will be used to fetch metadata.
  */
 class WallpaperMetadataFetcher(
     private val client: Client,
@@ -32,7 +32,7 @@ class WallpaperMetadataFetcher(
      */
     suspend fun downloadWallpaperList(): List<Wallpaper> = withContext(Dispatchers.IO) {
         Result.runCatching {
-            val request = Request(url = metadataUrl, method = Request.Method.GET)
+            val request = Request(url = metadataUrl, method = Request.Method.GET, conservative = true)
             val response = client.fetch(request)
             response.body.useBufferedReader {
                 val json = it.readText()

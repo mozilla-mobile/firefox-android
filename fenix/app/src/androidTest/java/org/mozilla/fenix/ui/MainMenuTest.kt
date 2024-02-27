@@ -5,23 +5,22 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import mozilla.components.concept.engine.utils.EngineReleaseChannel
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertYoutubeAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithCondition
+import org.mozilla.fenix.helpers.Constants.PackageName.PRINT_SPOOLER
+import org.mozilla.fenix.helpers.DataGenerationHelper.generateRandomString
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
-import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
-import org.mozilla.fenix.helpers.TestHelper.runWithCondition
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
@@ -29,26 +28,10 @@ import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
-class MainMenuTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
-
+class MainMenuTest : TestSetup() {
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
-
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
+    val activityTestRule =
+        HomeActivityIntentTestRule.withDefaultSettingsOverrides(translationsEnabled = true)
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233849
     @Test
@@ -171,21 +154,21 @@ class MainMenuTest {
             verifyFindInPagePrevButton()
             verifyFindInPageCloseButton()
             enterFindInPageQuery("a")
-            verifyFindNextInPageResult("1/3")
+            verifyFindInPageResult("1/3")
             clickFindInPageNextButton()
-            verifyFindNextInPageResult("2/3")
+            verifyFindInPageResult("2/3")
             clickFindInPageNextButton()
-            verifyFindNextInPageResult("3/3")
+            verifyFindInPageResult("3/3")
             clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("2/3")
+            verifyFindInPageResult("2/3")
             clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("1/3")
+            verifyFindInPageResult("1/3")
         }.closeFindInPageWithCloseButton {
             verifyFindInPageBar(false)
         }.openThreeDotMenu {
         }.openFindInPage {
             enterFindInPageQuery("3")
-            verifyFindNextInPageResult("1/1")
+            verifyFindInPageResult("1/1")
         }.closeFindInPageWithBackButton {
             verifyFindInPageBar(false)
         }
@@ -260,7 +243,7 @@ class MainMenuTest {
     @Test
     fun addPageShortcutToHomeScreenTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val shortcutTitle = TestHelper.generateRandomString(5)
+        val shortcutTitle = generateRandomString(5)
 
         homeScreen {
         }.openNavigationToolbar {
@@ -349,6 +332,35 @@ class MainMenuTest {
             verifyThreeDotMenuExists()
         }.forceRefreshPage {
             verifyPageContent("REFRESHED")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2282411
+    @Test
+    fun printWebPageFromMainMenuTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.clickPrintButton {
+            assertNativeAppOpens(PRINT_SPOOLER)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2282408
+    @Test
+    fun printWebPageFromShareMenuTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.clickShareButton {
+        }.clickPrintButton {
+            assertNativeAppOpens(PRINT_SPOOLER)
         }
     }
 }

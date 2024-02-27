@@ -207,15 +207,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             enableEventTimestamps = FxNimbus.features.glean.value().enableEventTimestamps,
         )
 
+        // Set the metric configuration from Nimbus.
+        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
+
         Glean.initialize(
             applicationContext = this,
             configuration = configuration.setCustomEndpointIfAvailable(customEndpoint),
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo,
         )
-
-        // Set the metric configuration from Nimbus.
-        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
 
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
         val store = components.core.store
@@ -374,11 +374,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         // If Firefox Suggest is enabled, register a worker to periodically ingest
                         // new search suggestions. The worker requires us to have called
                         // `GlobalFxSuggestDependencyProvider.initialize`, which we did before
-                        // scheduling these tasks.
+                        // scheduling these tasks. When disabled we stop the periodic work.
                         if (settings().enableFxSuggest) {
                             components.fxSuggest.ingestionScheduler.startPeriodicIngestion()
+                        } else {
+                            components.fxSuggest.ingestionScheduler.stopPeriodicIngestion()
                         }
                     }
+                    components.core.fileUploadsDirCleaner.cleanUploadsDirectory()
                 }
                 // Account manager initialization needs to happen on the main thread.
                 GlobalScope.launch(Dispatchers.Main) {
@@ -430,7 +433,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         fun queueNimbusFetchInForeground() {
             queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
-                    components.analytics.experiments.maybeFetchExperiments(
+                    components.nimbus.sdk.maybeFetchExperiments(
                         context = this@FenixApplication,
                     )
                 }
@@ -499,7 +502,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         beginSetupMegazord()
 
         // This lazily constructs the Nimbus object…
-        val nimbus = components.analytics.experiments
+        val nimbus = components.nimbus.sdk
         // … which we then can populate the feature configuration.
         FxNimbus.initialize { nimbus }
     }
@@ -863,6 +866,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             componentOptedOut.set(!settings.isReviewQualityCheckEnabled)
             nimbusDisabledShopping.set(!FxNimbus.features.shoppingExperience.value().enabled)
             userHasOnboarded.set(settings.reviewQualityCheckOptInTimeInMillis != 0L)
+            disabledAds.set(!settings.isReviewQualityCheckProductRecommendationsEnabled)
         }
     }
 

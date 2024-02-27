@@ -4,15 +4,18 @@
 
 package org.mozilla.fenix.search.toolbar
 
+import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateMargins
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.search.SearchEngineSource
@@ -116,8 +119,18 @@ class ToolbarView(
                         url = text
                         interactor.onTextChanged(text)
                     }
+
+                    override fun onInputCleared() {
+                        Events.browserToolbarInputCleared.record()
+                    }
                 },
             )
+
+            if (settings.isTabletAndTabStripEnabled) {
+                (layoutParams as ViewGroup.MarginLayoutParams).updateMargins(
+                    top = context.resources.getDimensionPixelSize(R.dimen.tab_strip_height),
+                )
+            }
         }
     }
 

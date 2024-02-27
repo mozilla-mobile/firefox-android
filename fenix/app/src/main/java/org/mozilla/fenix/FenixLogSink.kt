@@ -11,8 +11,8 @@ import mozilla.components.support.base.log.sink.LogSink
 /**
  * Fenix [LogSink] implementation that writes to Android's log, depending on settings.
  *
- * @property logsDebug If set to false, removes logging of debug logs.
- * @property androidLogSink an [AndroidLogSink] that writes to Android's log.
+ * @param logsDebug If set to false, removes logging of debug logs.
+ * @param androidLogSink an [AndroidLogSink] that writes to Android's log.
  */
 class FenixLogSink(
     private val logsDebug: Boolean = true,
@@ -23,7 +23,7 @@ class FenixLogSink(
         priority: Log.Priority,
         tag: String?,
         throwable: Throwable?,
-        message: String?,
+        message: String,
     ) {
         if (priority == Log.Priority.DEBUG && !logsDebug) {
             return

@@ -22,6 +22,8 @@
      then we will show another collapsed entry saying "Access your data on 2 other domains". This entry it's for the plural case, when the add-on is accessing more than one extra domain.
      %1$d will be replaced by an integer indicating the number of additional domains for which this web extension is requesting permission. -->
     <string name="mozac_feature_addons_permissions_extra_domains_description_plural" tools:ignore="PluralsCandidate">その他 %1$d ドメイン上のデータへのアクセス</string>
+    <!-- Content description for a permission item, for an installed add-on details page. %1$s will be replaced with the permission text name, %2$d will be replaced with the permission position in the list and %3$d will be replaced with the total number of permissions in the list.Taking as an example "Read and modify privacy settings" the whole text will read Read and modify privacy settings, 2 of 6. -->
+    <string name="mozac_feature_addons_permissions_content_description_item">%1$s、%2$d / %3$d</string>
     <!-- Description for tabs add-on permission. -->
     <string name="mozac_feature_addons_permissions_tabs_description">ブラウザーのタブへのアクセス</string>
     <!-- Description for unlimited_storage permission. -->
@@ -75,7 +77,7 @@
     <!-- The author of an add-on. -->
     <string name="mozac_feature_addons_author">作者</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">作者</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">作者</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">最終更新日時</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -84,6 +86,8 @@
     <string name="mozac_feature_addons_learn_more">権限の詳細情報</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">評価</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">このアドオンの詳細</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">設定</string>
     <!-- Indicates the add-on is enabled. -->
@@ -112,14 +116,24 @@
     <string name="mozac_feature_addons_details">詳細</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">権限</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">削除</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">報告</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">%1$s を追加しますか？</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s が追加の許可を必要としています。</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">あなたの許可が必要です:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">追加の許可:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">追加</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">許可</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">拒否</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">キャンセル</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -134,6 +148,10 @@
     <string name="mozac_feature_addons_addons">アドオン</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">アドオンマネージャー</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">アドオンは一時的に無効化されています</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">システムを不安定にしている 1 つ以上のアドオンが動作を停止しました。 </string>
     <!-- Button to re-enable the add-ons in the "crash" notification -->
     <string name="mozac_feature_addons_manager_notification_restart_button">アドオンを再起動</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
@@ -188,8 +206,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%2$s %3$s と互換性がないため、%1$s をインストールできませんでした。</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">セキュリティまたは安定性に問題があるため、%1$s をインストールできませんでした。</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">セキュリティまたは安定性に問題があるため、%1$s をインストールできませんでした</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s を有効にしました</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

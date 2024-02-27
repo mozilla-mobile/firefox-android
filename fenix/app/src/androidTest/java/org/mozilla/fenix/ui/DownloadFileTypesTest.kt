@@ -11,7 +11,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.helpers.TestSetup
+import org.mozilla.fenix.ui.robots.downloadRobot
 
 /**
  *  Test for verifying downloading a list of different file types:
@@ -20,7 +21,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  - Verifies downloading of varying file types and the appearance inside the Downloads listing.
  **/
 @RunWith(Parameterized::class)
-class DownloadFileTypesTest(fileName: String) {
+class DownloadFileTypesTest(fileName: String) : TestSetup() {
     /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
     private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
     private var downloadFile: String = fileName
@@ -45,17 +46,14 @@ class DownloadFileTypesTest(fileName: String) {
         )
     }
 
-    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251028&group_by=cases:section_id&group_id=31659&group_order=asc
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251028
     @SmokeTest
     @Test
     fun allFilesAppearInDownloadsMenuTest() {
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-        }.clickDownloadLink(downloadFile) {
-            verifyDownloadPrompt(downloadFile)
-        }.clickDownload {
+        downloadRobot {
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = downloadFile)
             verifyDownloadCompleteNotificationPopup()
-        }.closeCompletedDownloadPrompt {
+        }.closeDownloadPrompt {
         }.openThreeDotMenu {
         }.openDownloadsManager {
             waitForDownloadsListToExist()

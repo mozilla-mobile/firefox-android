@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.state.BrowserState
@@ -25,14 +26,17 @@ import mozilla.components.concept.engine.webextension.DisabledFlags.Companion.BL
 import mozilla.components.concept.engine.webextension.DisabledFlags.Companion.SIGNATURE
 import mozilla.components.concept.engine.webextension.DisabledFlags.Companion.USER
 import mozilla.components.concept.engine.webextension.EnableSource
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.feature.addons.AddonManager.Companion.ADDON_ICON_SIZE
+import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.feature.addons.update.AddonUpdater.Status
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import mozilla.components.support.test.whenever
@@ -50,8 +54,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
 @ExperimentalCoroutinesApi
@@ -79,6 +86,7 @@ class AddonManagerTest {
         // addon3 (ext3) is a featured extension that is marked as disabled.
         // addon4 (ext4) and addon5 (ext5) are not featured extensions but they are installed.
         val addonsProvider: AddonsProvider = mock()
+
         whenever(addonsProvider.getFeaturedAddons(anyBoolean(), eq(null), language = anyString())).thenReturn(listOf(Addon(id = "ext1"), Addon(id = "ext2"), Addon(id = "ext3")))
 
         // Prepare engine
@@ -111,7 +119,7 @@ class AddonManagerTest {
         val newlySupportedExtension: WebExtension = mock()
         val metadata: Metadata = mock()
         whenever(newlySupportedExtension.isEnabled()).thenReturn(false)
-        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.APP_SUPPORT))
+        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(APP_SUPPORT))
         whenever(metadata.optionsPageUrl).thenReturn("http://options-page.moz")
         whenever(metadata.openOptionsPageInTab).thenReturn(true)
         whenever(newlySupportedExtension.id).thenReturn("ext3")
@@ -143,8 +151,6 @@ class AddonManagerTest {
         whenever(ext6Metadata.name).thenReturn("temporarily loaded extension - ext6")
         whenever(ext6Metadata.temporary).thenReturn(true)
         whenever(ext6.getMetadata()).thenReturn(ext6Metadata)
-        val ext6Icon: Bitmap = mock()
-        whenever(ext6.loadIcon(ADDON_ICON_SIZE)).thenReturn(ext6Icon)
         WebExtensionSupport.installedExtensions["ext6"] = ext6
 
         val ext7: WebExtension = mock()
@@ -239,11 +245,11 @@ class AddonManagerTest {
         whenever(temporaryExtension.id).thenReturn("temp_ext")
         whenever(temporaryExtension.url).thenReturn("site_url")
         whenever(temporaryExtension.getMetadata()).thenReturn(temporaryExtensionMetadata)
-        whenever(temporaryExtension.loadIcon(ADDON_ICON_SIZE)).thenReturn(temporaryExtensionIcon)
         WebExtensionSupport.installedExtensions["temp_ext"] = temporaryExtension
 
         val addonManager = spy(AddonManager(store, mock(), addonsProvider, mock()))
-        whenever(addonManager.getIconDispatcher()).thenReturn(Dispatchers.Main)
+
+        whenever(addonManager.loadIcon(temporaryExtension)).thenReturn(temporaryExtensionIcon)
 
         val addons = addonManager.getAddons()
         assertEquals(1, addons.size)
@@ -347,7 +353,7 @@ class AddonManagerTest {
         WebExtensionSupport.installedExtensions[addon.id] = extension
 
         val addonManager = AddonManager(store, mock(), addonsProvider, mock())
-        addonManager.installAddon(addon)
+        addonManager.installAddon(url = addon.downloadUrl)
         addonManager.enableAddon(addon)
         addonManager.disableAddon(addon)
         addonManager.uninstallAddon(addon)
@@ -471,7 +477,7 @@ class AddonManagerTest {
         whenever(extension.id).thenReturn("unsupportedExt")
 
         val metadata: Metadata = mock()
-        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.APP_SUPPORT))
+        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(APP_SUPPORT))
         whenever(extension.getMetadata()).thenReturn(metadata)
 
         WebExtensionSupport.installedExtensions["extensionId"] = extension
@@ -529,24 +535,29 @@ class AddonManagerTest {
         var installedAddon: Addon? = null
         val manager = AddonManager(mock(), engine, mock(), mock())
         manager.installAddon(
-            addon,
+            url = addon.downloadUrl,
+            installationMethod = InstallationMethod.MANAGER,
             onSuccess = {
                 installedAddon = it
             },
         )
 
         verify(engine).installWebExtension(
-            eq("ext1"),
             any(),
+            eq(InstallationMethod.MANAGER),
             onSuccessCaptor.capture(),
             any(),
         )
 
+        val metadata: Metadata = mock()
         val extension: WebExtension = mock()
+        whenever(metadata.name).thenReturn("nameFromMetadata")
         whenever(extension.id).thenReturn("ext1")
+        whenever(extension.getMetadata()).thenReturn(metadata)
         onSuccessCaptor.value.invoke(extension)
         assertNotNull(installedAddon)
         assertEquals(addon.id, installedAddon!!.id)
+        assertEquals("nameFromMetadata", installedAddon!!.translateName(testContext))
         assertTrue(manager.pendingAddonActions.isEmpty())
     }
 
@@ -554,61 +565,27 @@ class AddonManagerTest {
     fun `installAddon failure`() {
         val addon = Addon(id = "ext1")
         val engine: Engine = mock()
-        val onErrorCaptor = argumentCaptor<((String, Throwable) -> Unit)>()
+        val onErrorCaptor = argumentCaptor<((Throwable) -> Unit)>()
 
         var throwable: Throwable? = null
-        var msg: String? = null
         val manager = AddonManager(mock(), engine, mock(), mock())
         manager.installAddon(
-            addon,
-            onError = { errorMsg, caught ->
+            url = addon.downloadUrl,
+            installationMethod = InstallationMethod.FROM_FILE,
+            onError = { caught ->
                 throwable = caught
-                msg = errorMsg
             },
         )
 
         verify(engine).installWebExtension(
-            eq("ext1"),
-            any(),
-            any(),
-            onErrorCaptor.capture(),
+            url = any(),
+            installationMethod = eq(InstallationMethod.FROM_FILE),
+            onSuccess = any(),
+            onError = onErrorCaptor.capture(),
         )
 
-        onErrorCaptor.value.invoke(addon.id, IllegalStateException("test"))
+        onErrorCaptor.value.invoke(IllegalStateException("test"))
         assertNotNull(throwable!!)
-        assertEquals(msg, addon.id)
-        assertTrue(manager.pendingAddonActions.isEmpty())
-    }
-
-    @Test
-    fun `installAddon fails for blocked permission`() {
-        val addon = Addon(
-            id = "ext1",
-            permissions = listOf("bookmarks", "geckoviewaddons", "nativemessaging"),
-        )
-
-        val engine: Engine = mock()
-
-        var throwable: Throwable? = null
-        var msg: String? = null
-        val manager = AddonManager(mock(), engine, mock(), mock())
-        manager.installAddon(
-            addon,
-            onError = { errorMsg, caught ->
-                throwable = caught
-                msg = errorMsg
-            },
-        )
-
-        verify(engine, never()).installWebExtension(
-            any(),
-            any(),
-            any(),
-            any(),
-        )
-
-        assertNotNull(throwable!!)
-        assertEquals(msg, addon.id)
         assertTrue(manager.pendingAddonActions.isEmpty())
     }
 
@@ -806,6 +783,95 @@ class AddonManagerTest {
         assertEquals("test", throwable!!.localizedMessage)
         assertTrue(manager.pendingAddonActions.isEmpty())
     }
+
+    @Test
+    fun `toInstalledState read from icon cache`() {
+        val extension: WebExtension = mock()
+        val metadata: Metadata = mock()
+
+        val manager = spy(AddonManager(mock(), mock(), mock(), mock()))
+
+        manager.iconsCache["ext1"] = mock()
+        whenever(extension.id).thenReturn("ext1")
+        whenever(extension.getMetadata()).thenReturn(metadata)
+        whenever(extension.isEnabled()).thenReturn(true)
+        whenever(extension.getDisabledReason()).thenReturn(null)
+        whenever(extension.isAllowedInPrivateBrowsing()).thenReturn(true)
+        whenever(metadata.version).thenReturn("version")
+        whenever(metadata.optionsPageUrl).thenReturn("optionsPageUrl")
+        whenever(metadata.openOptionsPageInTab).thenReturn(true)
+
+        val installedExtension = manager.toInstalledState(extension)
+
+        assertEquals(manager.iconsCache["ext1"], installedExtension.icon)
+        assertEquals("version", installedExtension.version)
+        assertEquals("optionsPageUrl", installedExtension.optionsPageUrl)
+        assertNull(installedExtension.disabledReason)
+        assertTrue(installedExtension.openOptionsPageInTab)
+        assertTrue(installedExtension.enabled)
+        assertTrue(installedExtension.allowedInPrivateBrowsing)
+
+        verify(manager, times(0)).loadIcon(eq(extension))
+    }
+
+    @Test
+    fun `toInstalledState load icon when cache is not available`() {
+        val extension: WebExtension = mock()
+        val metadata: Metadata = mock()
+
+        val manager = spy(AddonManager(mock(), mock(), mock(), mock()))
+
+        whenever(extension.id).thenReturn("ext1")
+        whenever(extension.getMetadata()).thenReturn(metadata)
+        whenever(extension.isEnabled()).thenReturn(true)
+        whenever(extension.getDisabledReason()).thenReturn(null)
+        whenever(extension.isAllowedInPrivateBrowsing()).thenReturn(true)
+        whenever(metadata.version).thenReturn("version")
+        whenever(metadata.optionsPageUrl).thenReturn("optionsPageUrl")
+        whenever(metadata.openOptionsPageInTab).thenReturn(true)
+
+        val installedExtension = manager.toInstalledState(extension)
+
+        assertEquals(manager.iconsCache["ext1"], installedExtension.icon)
+        assertEquals("version", installedExtension.version)
+        assertEquals("optionsPageUrl", installedExtension.optionsPageUrl)
+        assertNull(installedExtension.disabledReason)
+        assertTrue(installedExtension.openOptionsPageInTab)
+        assertTrue(installedExtension.enabled)
+        assertTrue(installedExtension.allowedInPrivateBrowsing)
+
+        verify(manager).loadIcon(extension)
+    }
+
+    @Test
+    fun `loadIcon try to load the icon from extension`() = runTestOnMain {
+        val extension: WebExtension = mock()
+
+        val manager = spy(AddonManager(mock(), mock(), mock(), mock()))
+
+        whenever(extension.loadIcon(AddonManager.ADDON_ICON_SIZE)).thenReturn(mock())
+
+        val icon = manager.loadIcon(extension)
+
+        assertNotNull(icon)
+    }
+
+    @Test
+    fun `loadIcon calls tryLoadIconInBackground when TimeoutCancellationException`() =
+        runTestOnMain {
+            val extension: WebExtension = mock()
+
+            val manager = spy(AddonManager(mock(), mock(), mock(), mock()))
+            doNothing().`when`(manager).tryLoadIconInBackground(extension)
+
+            doThrow(mock<TimeoutCancellationException>()).`when`(extension)
+                .loadIcon(AddonManager.ADDON_ICON_SIZE)
+
+            val icon = manager.loadIcon(extension)
+
+            assertNull(icon)
+            verify(manager).loadIcon(extension)
+        }
 
     @Test
     fun `getDisabledReason cases`() {

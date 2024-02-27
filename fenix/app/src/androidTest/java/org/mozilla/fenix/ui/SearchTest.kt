@@ -21,6 +21,12 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.denyPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithCondition
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithSystemLocaleChanged
+import org.mozilla.fenix.helpers.AppAndSystemHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.helpers.Constants.PackageName.ANDROID_SETTINGS
 import org.mozilla.fenix.helpers.Constants.searchEngineCodes
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -32,17 +38,13 @@ import org.mozilla.fenix.helpers.MockBrowserDataHelper.createTabItem
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.setCustomSearchEngine
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
-import org.mozilla.fenix.helpers.TestHelper.denyPermission
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.TestHelper.runWithCondition
-import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -62,7 +64,7 @@ import java.util.Locale
  *
  */
 
-class SearchTest {
+class SearchTest : TestSetup() {
     private lateinit var searchMockServer: MockWebServer
     private var queryString = "firefox"
     private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
@@ -77,13 +79,13 @@ class SearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
-            isCookieBannerReductionDialogEnabled = false,
             tabsTrayRewriteEnabled = false,
         ),
     ) { it.activity }
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         searchMockServer = MockWebServer().apply {
             dispatcher = SearchDispatcher()
             start()
@@ -91,7 +93,7 @@ class SearchTest {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDown() {
         searchMockServer.shutdown()
     }
 
@@ -486,7 +488,7 @@ class SearchTest {
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
             clickDeleteAllHistoryButton()
             confirmDeleteAllHistory()
-            verifyDeleteSnackbarText("Group deleted")
+            verifySnackBarText("Group deleted")
             verifyHistoryItemExists(shouldExist = false, firstPageUrl.toString())
         }.goBack {}
         homeScreen {
@@ -792,7 +794,7 @@ class SearchTest {
     fun verifySearchEnginesFunctionalityUsingRTLLocaleTest() {
         val arabicLocale = Locale("ar", "AR")
 
-        TestHelper.runWithSystemLocaleChanged(arabicLocale, activityTestRule.activityRule) {
+        runWithSystemLocaleChanged(arabicLocale, activityTestRule.activityRule) {
             homeScreen {
             }.openSearch {
                 verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")

@@ -15,7 +15,6 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.lib.state.ext.observeAsComposableState
-import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.tabstray.TabListItem
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
@@ -24,10 +23,10 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
 /**
  * A Compose ViewHolder implementation for "tab" items with list layout.
  *
- * @property interactor [TabsTrayInteractor] handling tabs interactions in a tab tray.
- * @property tabsTrayStore [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
+ * @param interactor [TabsTrayInteractor] handling tabs interactions in a tab tray.
+ * @param tabsTrayStore [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
  * @param composeItemView that displays a "tab".
- * @property featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
+ * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
  */
 class ComposeListViewHolder(
@@ -84,7 +83,6 @@ class ComposeListViewHolder(
         TabListItem(
             tab = tab,
             thumbnailSize = 108,
-            storage = components.core.thumbnailStorage,
             isSelected = isSelectedTabState,
             multiSelectionEnabled = multiSelectionEnabled,
             multiSelectionSelected = multiSelectionSelected,

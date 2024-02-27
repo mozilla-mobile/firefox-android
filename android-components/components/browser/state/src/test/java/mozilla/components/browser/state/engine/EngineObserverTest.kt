@@ -16,6 +16,7 @@ import mozilla.components.browser.state.action.CrashAction
 import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
+import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.AppIntentState
@@ -38,7 +39,11 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -98,7 +103,42 @@ class EngineObserverTest {
             ) {}
             override fun requestAnalysisStatus(
                 url: String,
+                onResult: (ProductAnalysisStatus) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendPlacementAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reportBackInStock(
+                url: String,
                 onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
+            override fun getNeverTranslateSiteSetting(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun setNeverTranslateSiteSetting(
+                setting: Boolean,
+                onResult: () -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
             override fun findAll(text: String) {}
@@ -107,7 +147,7 @@ class EngineObserverTest {
             override fun exitFullScreenMode() {}
             override fun purgeHistory() {}
             override fun loadData(data: String, mimeType: String, encoding: String) {
-                notifyObservers { onLocationChange(data) }
+                notifyObservers { onLocationChange(data, false) }
                 notifyObservers { onProgress(100) }
                 notifyObservers { onLoadingStateChange(true) }
                 notifyObservers { onNavigationStateChange(true, true) }
@@ -120,7 +160,7 @@ class EngineObserverTest {
                 flags: LoadUrlFlags,
                 additionalHeaders: Map<String, String>?,
             ) {
-                notifyObservers { onLocationChange(url) }
+                notifyObservers { onLocationChange(url, false) }
                 notifyObservers { onProgress(100) }
                 notifyObservers { onLoadingStateChange(true) }
                 notifyObservers { onNavigationStateChange(true, true) }
@@ -184,7 +224,42 @@ class EngineObserverTest {
             ) {}
             override fun requestAnalysisStatus(
                 url: String,
+                onResult: (ProductAnalysisStatus) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendPlacementAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reportBackInStock(
+                url: String,
                 onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
+            override fun getNeverTranslateSiteSetting(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun setNeverTranslateSiteSetting(
+                setting: Boolean,
+                onResult: () -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
             override fun findAll(text: String) {}
@@ -267,7 +342,42 @@ class EngineObserverTest {
             ) {}
             override fun requestAnalysisStatus(
                 url: String,
+                onResult: (ProductAnalysisStatus) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendPlacementAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reportBackInStock(
+                url: String,
                 onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
+            override fun getNeverTranslateSiteSetting(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun setNeverTranslateSiteSetting(
+                setting: Boolean,
+                onResult: () -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
             override fun loadUrl(
@@ -340,6 +450,31 @@ class EngineObserverTest {
     }
 
     @Test
+    fun `WHEN onTranslateComplete is called THEN dispatch a TranslationsAction TranslateSuccessAction`() {
+        val store: BrowserStore = mock()
+        val observer = EngineObserver("mozilla", store)
+
+        observer.onTranslateComplete(operation = TranslationOperation.TRANSLATE)
+
+        verify(store).dispatch(
+            TranslationsAction.TranslateSuccessAction("mozilla", operation = TranslationOperation.TRANSLATE),
+        )
+    }
+
+    @Test
+    fun `WHEN onTranslateException is called THEN dispatch a TranslationsAction TranslateExceptionAction`() {
+        val store: BrowserStore = mock()
+        val observer = EngineObserver("mozilla", store)
+        val exception = TranslationError.UnknownError(Exception())
+
+        observer.onTranslateException(operation = TranslationOperation.TRANSLATE, exception)
+
+        verify(store).dispatch(
+            TranslationsAction.TranslateExceptionAction("mozilla", operation = TranslationOperation.TRANSLATE, exception),
+        )
+    }
+
+    @Test
     fun engineObserverClearsWebsiteTitleIfNewPageStartsLoading() {
         val store = BrowserStore(
             initialState = BrowserState(
@@ -359,7 +494,7 @@ class EngineObserverTest {
 
         assertEquals("Mozilla", store.state.tabs[0].content.title)
 
-        observer.onLocationChange("https://getpocket.com")
+        observer.onLocationChange("https://getpocket.com", false)
         store.waitUntilIdle()
 
         assertEquals("", store.state.tabs[0].content.title)
@@ -386,7 +521,7 @@ class EngineObserverTest {
 
         assertEquals("Mozilla", store.state.tabs[0].content.title)
 
-        observer.onLocationChange("https://www.mozilla.org")
+        observer.onLocationChange("https://www.mozilla.org", false)
         store.waitUntilIdle()
 
         assertEquals("Mozilla", store.state.tabs[0].content.title)
@@ -413,7 +548,7 @@ class EngineObserverTest {
 
         assertEquals("Mozilla", store.state.tabs[0].content.title)
 
-        observer.onLocationChange("https://www.mozilla.org/#something")
+        observer.onLocationChange("https://www.mozilla.org/#something", false)
         store.waitUntilIdle()
 
         assertEquals("Mozilla", store.state.tabs[0].content.title)
@@ -440,7 +575,7 @@ class EngineObserverTest {
 
         assertEquals(previewImageUrl, store.state.tabs[0].content.previewImageUrl)
 
-        observer.onLocationChange("https://getpocket.com")
+        observer.onLocationChange("https://getpocket.com", false)
         store.waitUntilIdle()
 
         assertNull(store.state.tabs[0].content.previewImageUrl)
@@ -468,12 +603,12 @@ class EngineObserverTest {
 
         assertEquals(previewImageUrl, store.state.tabs[0].content.previewImageUrl)
 
-        observer.onLocationChange("https://www.mozilla.org")
+        observer.onLocationChange("https://www.mozilla.org", false)
         store.waitUntilIdle()
 
         assertEquals(previewImageUrl, store.state.tabs[0].content.previewImageUrl)
 
-        observer.onLocationChange("https://www.mozilla.org/#something")
+        observer.onLocationChange("https://www.mozilla.org/#something", false)
         store.waitUntilIdle()
 
         assertEquals(previewImageUrl, store.state.tabs[0].content.previewImageUrl)
@@ -561,7 +696,7 @@ class EngineObserverTest {
 
         assertEquals(manifest, store.state.tabs[0].content.webAppManifest)
 
-        observer.onLocationChange("https://getpocket.com")
+        observer.onLocationChange("https://getpocket.com", false)
         store.waitUntilIdle()
 
         assertNull(store.state.tabs[0].content.webAppManifest)
@@ -589,7 +724,7 @@ class EngineObserverTest {
 
         assertEquals(listOf(request), store.state.tabs[0].content.permissionRequestsList)
 
-        observer.onLocationChange("https://getpocket.com")
+        observer.onLocationChange("https://getpocket.com", false)
         store.waitUntilIdle()
 
         assertEquals(emptyList<PermissionRequest>(), store.state.tabs[0].content.permissionRequestsList)
@@ -617,7 +752,7 @@ class EngineObserverTest {
 
         assertEquals(listOf(request), store.state.tabs[0].content.permissionRequestsList)
 
-        observer.onLocationChange("https://www.mozilla.org/hello.html")
+        observer.onLocationChange("https://www.mozilla.org/hello.html", false)
         store.waitUntilIdle()
 
         assertEquals(listOf(request), store.state.tabs[0].content.permissionRequestsList)
@@ -645,7 +780,7 @@ class EngineObserverTest {
 
         assertEquals(manifest, store.state.tabs[0].content.webAppManifest)
 
-        observer.onLocationChange("https://www.mozilla.org/hello.html")
+        observer.onLocationChange("https://www.mozilla.org/hello.html", false)
         store.waitUntilIdle()
 
         assertEquals(manifest, store.state.tabs[0].content.webAppManifest)
@@ -677,12 +812,12 @@ class EngineObserverTest {
 
         assertEquals(manifest, store.state.tabs[0].content.webAppManifest)
 
-        observer.onLocationChange("https://www.mozilla.org/hello/page2.html")
+        observer.onLocationChange("https://www.mozilla.org/hello/page2.html", false)
         store.waitUntilIdle()
 
         assertEquals(manifest, store.state.tabs[0].content.webAppManifest)
 
-        observer.onLocationChange("https://www.mozilla.org/hello.html")
+        observer.onLocationChange("https://www.mozilla.org/hello.html", false)
         store.waitUntilIdle()
         assertNull(store.state.tabs[0].content.webAppManifest)
     }
@@ -1392,7 +1527,7 @@ class EngineObserverTest {
         )
 
         val observer = EngineObserver("test-id", store)
-        observer.onLocationChange("https://www.mozilla.org/en-US/")
+        observer.onLocationChange("https://www.mozilla.org/en-US/", false)
 
         store.waitUntilIdle()
 
@@ -1577,11 +1712,32 @@ class EngineObserverTest {
         observer.onLoadUrl()
         store.waitUntilIdle()
 
-        middleware.assertNotDispatched(ContentAction.UpdateSearchTermsAction::class)
         middleware.assertLastAction(ContentAction.UpdateIsSearchAction::class) { action ->
             assertEquals(false, action.isSearch)
             assertEquals("test-id", action.sessionId)
         }
+    }
+
+    @Test
+    fun `GIVEN a search is performed WHEN the location is changed without user interaction THEN the search terms are not cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(
+                    createTab("https://www.mozilla.org", id = "test-id"),
+                ),
+            ),
+            middleware = listOf(middleware),
+        )
+
+        store.dispatch(ContentAction.UpdateIsSearchAction("test-id", true))
+        store.waitUntilIdle()
+
+        val observer = EngineObserver("test-id", store)
+        observer.onLocationChange("testUrl", false)
+        store.waitUntilIdle()
+
+        middleware.assertNotDispatched(ContentAction.UpdateSearchTermsAction::class)
     }
 
     @Test

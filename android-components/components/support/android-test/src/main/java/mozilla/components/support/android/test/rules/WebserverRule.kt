@@ -20,7 +20,7 @@ import java.io.IOException
  */
 class WebserverRule : TestWatcher() {
     private val webserver: MockWebServer = MockWebServer().apply {
-        setDispatcher(AndroidAssetDispatcher())
+        dispatcher = AndroidAssetDispatcher()
     }
 
     fun url(path: String = ""): String {
@@ -43,7 +43,7 @@ private class AndroidAssetDispatcher : Dispatcher() {
     private val mainThreadHandler = Handler(Looper.getMainLooper())
 
     override fun dispatch(request: RecordedRequest): MockResponse {
-        var path = request.path.drop(1)
+        var path = request.path!!.drop(1)
         if (path.isEmpty() || path.endsWith("/")) {
             path += "index.html"
         }

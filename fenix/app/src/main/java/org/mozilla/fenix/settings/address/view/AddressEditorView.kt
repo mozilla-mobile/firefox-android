@@ -31,10 +31,10 @@ import org.mozilla.fenix.settings.address.toCountryCode
 /**
  * An address editor for adding or updating an address.
  *
- * @property binding The binding used to display the view.
- * @property interactor [AddressEditorInteractor] used to respond to any user interactions.
- * @property region If the [RegionState] is available, it will be used to set the country when adding a new address.
- * @property address An [Address] to edit.
+ * @param binding The binding used to display the view.
+ * @param interactor [AddressEditorInteractor] used to respond to any user interactions.
+ * @param region If the [RegionState] is available, it will be used to set the country when adding a new address.
+ * @param address An [Address] to edit.
  */
 class AddressEditorView(
     private val binding: FragmentAddressEditorBinding,
@@ -47,7 +47,7 @@ class AddressEditorView(
      * Binds the view in the [AddressEditorFragment], using the current [Address] if available.
      */
     fun bind() {
-        binding.firstNameInput.apply {
+        binding.nameInput.apply {
             requestFocus()
             placeCursorAtEnd()
             showKeyboard()
@@ -64,11 +64,7 @@ class AddressEditorView(
         address?.let { address ->
             binding.emailInput.setText(address.email)
             binding.phoneInput.setText(address.tel)
-
-            binding.firstNameInput.setText(address.givenName)
-            binding.middleNameInput.setText(address.additionalName)
-            binding.lastNameInput.setText(address.familyName)
-
+            binding.nameInput.setText(address.name)
             binding.streetAddressInput.setText(address.streetAddress)
             binding.cityInput.setText(address.addressLevel2)
             binding.zipInput.setText(address.postalCode)
@@ -88,9 +84,7 @@ class AddressEditorView(
         binding.root.hideKeyboard()
 
         val addressFields = UpdatableAddressFields(
-            givenName = binding.firstNameInput.text.toString(),
-            additionalName = binding.middleNameInput.text.toString(),
-            familyName = binding.lastNameInput.text.toString(),
+            name = binding.nameInput.text.toString(),
             organization = "",
             streetAddress = binding.streetAddressInput.text.toString(),
             addressLevel3 = "",

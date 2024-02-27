@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -49,7 +49,6 @@ import org.mozilla.focus.searchsuggestions.SearchSuggestionsViewModel
 import org.mozilla.focus.searchsuggestions.ui.SearchSuggestionsFragment
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.topsites.DefaultTopSitesStorage.Companion.TOP_SITES_MAX_LIMIT
 import org.mozilla.focus.topsites.DefaultTopSitesView
 import org.mozilla.focus.topsites.TopSitesOverlay
@@ -114,7 +113,8 @@ class UrlInputFragment :
     private val customDomainsProvider = CustomDomainsProvider()
     private var _binding: FragmentUrlinputBinding? = null
     private val binding get() = _binding!!
-    private lateinit var searchSuggestionsViewModel: SearchSuggestionsViewModel
+
+    private val searchSuggestionsViewModel: SearchSuggestionsViewModel by activityViewModels()
 
     @Volatile
     private var isAnimating: Boolean = false
@@ -136,39 +136,6 @@ class UrlInputFragment :
         // Get session from session manager if there's a session UUID in the fragment's arguments
         arguments?.getString(ARGUMENT_SESSION_UUID)?.let { id ->
             tab = requireComponents.store.state.findTab(id)
-        }
-    }
-
-    @Suppress("DEPRECATION") // https://github.com/mozilla-mobile/focus-android/issues/4958
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        searchSuggestionsViewModel =
-            ViewModelProvider(this).get(SearchSuggestionsViewModel::class.java)
-
-        childFragmentManager.beginTransaction()
-            .replace(binding.searchViewContainer.id, SearchSuggestionsFragment.create())
-            .commit()
-
-        searchSuggestionsViewModel.selectedSearchSuggestion.observe(
-            viewLifecycleOwner,
-        ) {
-            val isSuggestion = searchSuggestionsViewModel.searchQuery.value != it
-            it?.let {
-                if (searchSuggestionsViewModel.alwaysSearch) {
-                    onSearch(it, isSuggestion = false, alwaysSearch = true)
-                } else {
-                    onSearch(it, isSuggestion)
-                }
-                searchSuggestionsViewModel.clearSearchSuggestion()
-            }
-        }
-
-        searchSuggestionsViewModel.autocompleteSuggestion.observe(viewLifecycleOwner) { text ->
-            if (text != null) {
-                searchSuggestionsViewModel.clearAutocompleteSuggestion()
-                binding.browserToolbar.setSearchTerms(text)
-            }
         }
     }
 
@@ -254,6 +221,31 @@ class UrlInputFragment :
 
     @Suppress("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        childFragmentManager.beginTransaction()
+            .replace(binding.searchViewContainer.id, SearchSuggestionsFragment.create())
+            .commit()
+
+        searchSuggestionsViewModel.selectedSearchSuggestion.observe(
+            viewLifecycleOwner,
+        ) {
+            val isSuggestion = searchSuggestionsViewModel.searchQuery.value != it
+            it?.let {
+                if (searchSuggestionsViewModel.alwaysSearch) {
+                    onSearch(it, isSuggestion = false, alwaysSearch = true)
+                } else {
+                    onSearch(it, isSuggestion)
+                }
+                searchSuggestionsViewModel.clearSearchSuggestion()
+            }
+        }
+
+        searchSuggestionsViewModel.autocompleteSuggestion.observe(viewLifecycleOwner) { text ->
+            if (text != null) {
+                searchSuggestionsViewModel.clearAutocompleteSuggestion()
+                binding.browserToolbar.setSearchTerms(text)
+            }
+        }
+
         binding.browserToolbar.private = true
 
         toolbarIntegration.set(
@@ -527,8 +519,6 @@ class UrlInputFragment :
                 search(input)
             }
 
-            TelemetryWrapper.urlBarEvent(isUrl)
-
             if (isUrl) {
                 SearchBar.enteredUrl.record(NoExtras())
             } else {
@@ -537,7 +527,6 @@ class UrlInputFragment :
                 SearchBar.performedSearch.record(
                     SearchBar.PerformedSearchExtra(defaultSearchEngineName),
                 )
-                TelemetryWrapper.searchEnterEvent()
                 BrowserSearch.searchCount["$defaultSearchEngineName.action"].add()
             }
         }
@@ -551,7 +540,7 @@ class UrlInputFragment :
 
     private fun onSearch(
         query: String,
-        isSuggestion: Boolean = false,
+        @Suppress("UNUSED_PARAMETER") isSuggestion: Boolean = false,
         alwaysSearch: Boolean = false,
     ) {
         if (alwaysSearch) {
@@ -563,8 +552,6 @@ class UrlInputFragment :
                 search(query)
             }
         }
-
-        TelemetryWrapper.searchSelectEvent(isSuggestion)
 
         val defaultSearchEngineName = requireComponents.store.defaultSearchEngineName().lowercase()
         BrowserSearch.searchCount["$defaultSearchEngineName.suggestion"].add()
@@ -581,6 +568,8 @@ class UrlInputFragment :
                 source = SessionState.Source.Internal.UserEntered,
             )
         }
+
+        searchSuggestionsViewModel.setSearchQuery("")
     }
 
     private fun openUrl(url: String) {
@@ -606,6 +595,8 @@ class UrlInputFragment :
                 private = true,
             )
         }
+
+        searchSuggestionsViewModel.setSearchQuery("")
     }
 
     internal fun onStartEditing() {

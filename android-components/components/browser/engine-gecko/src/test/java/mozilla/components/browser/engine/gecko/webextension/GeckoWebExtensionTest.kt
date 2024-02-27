@@ -10,6 +10,7 @@ import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.MessageHandler
 import mozilla.components.concept.engine.webextension.Port
 import mozilla.components.concept.engine.webextension.TabHandler
@@ -420,6 +421,7 @@ class GeckoWebExtensionTest {
                 updateDate = "updateDate",
                 reviewCount = 2,
                 averageRating = 2.2,
+                incognito = "split",
             ),
         )
         val extensionWithMetadata = GeckoWebExtension(nativeWebExtension, runtime)
@@ -432,7 +434,7 @@ class GeckoWebExtensionTest {
         assertEquals("desc", metadata.description)
         assertEquals("developer1", metadata.developerName)
         assertEquals("https://developer1.dev", metadata.developerUrl)
-        assertEquals("https://mozilla.org", metadata.homePageUrl)
+        assertEquals("https://mozilla.org", metadata.homepageUrl)
         assertEquals("myextension", metadata.name)
         assertEquals("http://options-page.moz", metadata.optionsPageUrl)
         assertEquals("moz-extension://123c5c5b-cd03-4bea-b23f-ac0b9ab40257/", metadata.baseUrl)
@@ -447,6 +449,7 @@ class GeckoWebExtensionTest {
         assertTrue(metadata.disabledFlags.contains(DisabledFlags.USER))
         assertFalse(metadata.disabledFlags.contains(DisabledFlags.BLOCKLIST))
         assertFalse(metadata.disabledFlags.contains(DisabledFlags.APP_SUPPORT))
+        assertEquals(Incognito.SPLIT, metadata.incognito)
     }
 
     @Test
@@ -463,6 +466,7 @@ class GeckoWebExtensionTest {
                 baseUrl = "moz-extension://123c5c5b-cd03-4bea-b23f-ac0b9ab40257/",
                 disabledFlags = DisabledFlags.USER,
                 permissions = arrayOf("p1", "p2"),
+                incognito = null,
             ),
         )
         val extensionWithMetadata = GeckoWebExtension(nativeWebExtension, runtime)
@@ -477,13 +481,14 @@ class GeckoWebExtensionTest {
         assertNull(metadata.description)
         assertNull(metadata.developerName)
         assertNull(metadata.developerUrl)
-        assertNull(metadata.homePageUrl)
+        assertNull(metadata.homepageUrl)
         assertNull(metadata.name)
         assertNull(metadata.optionsPageUrl)
         assertNull(metadata.fullDescription)
         assertNull(metadata.reviewUrl)
         assertNull(metadata.updateDate)
         assertNull(metadata.downloadUrl)
+        assertEquals(Incognito.SPANNING, metadata.incognito)
     }
 
     @Test
@@ -582,5 +587,50 @@ class GeckoWebExtensionTest {
         val webExtensionWithIcon = GeckoWebExtension(nativeWebExtensionWithIcon, runtime)
         webExtensionWithIcon.getIcon(48)
         verify(iconMock).getBitmap(48)
+    }
+
+    @Test
+    fun `incognito set to spanning`() {
+        val runtime: GeckoRuntime = mock()
+        val nativeWebExtension = mockNativeWebExtension(
+            id = "id",
+            location = "uri",
+            metaData = mockNativeWebExtensionMetaData(version = "1", incognito = "spanning"),
+        )
+        val extensionWithMetadata = GeckoWebExtension(nativeWebExtension, runtime)
+
+        val metadata = extensionWithMetadata.getMetadata()
+        assertNotNull(metadata)
+        assertEquals(Incognito.SPANNING, metadata.incognito)
+    }
+
+    @Test
+    fun `incognito set to not_allowed`() {
+        val runtime: GeckoRuntime = mock()
+        val nativeWebExtension = mockNativeWebExtension(
+            id = "id",
+            location = "uri",
+            metaData = mockNativeWebExtensionMetaData(version = "1", incognito = "not_allowed"),
+        )
+        val extensionWithMetadata = GeckoWebExtension(nativeWebExtension, runtime)
+
+        val metadata = extensionWithMetadata.getMetadata()
+        assertNotNull(metadata)
+        assertEquals(Incognito.NOT_ALLOWED, metadata.incognito)
+    }
+
+    @Test
+    fun `incognito set to split`() {
+        val runtime: GeckoRuntime = mock()
+        val nativeWebExtension = mockNativeWebExtension(
+            id = "id",
+            location = "uri",
+            metaData = mockNativeWebExtensionMetaData(version = "1", incognito = "split"),
+        )
+        val extensionWithMetadata = GeckoWebExtension(nativeWebExtension, runtime)
+
+        val metadata = extensionWithMetadata.getMetadata()
+        assertNotNull(metadata)
+        assertEquals(Incognito.SPLIT, metadata.incognito)
     }
 }

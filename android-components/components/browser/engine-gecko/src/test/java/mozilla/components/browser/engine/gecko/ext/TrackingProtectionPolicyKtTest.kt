@@ -33,6 +33,10 @@ class TrackingProtectionPolicyKtTest {
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED.mode, setting.cookieBannerMode)
         assertEquals(EngineSession.CookieBannerHandlingMode.REJECT_ALL.mode, setting.cookieBannerModePrivateBrowsing)
         assertFalse(setting.cookieBannerDetectOnlyMode)
+        assertFalse(setting.queryParameterStrippingEnabled)
+        assertFalse(setting.queryParameterStrippingPrivateBrowsingEnabled)
+        assertEquals("", setting.queryParameterStrippingAllowList[0])
+        assertEquals("", setting.queryParameterStrippingStripList[0])
 
         val policyWithSafeBrowsing =
             TrackingProtectionPolicy.recommended().toContentBlockingSetting(
@@ -40,11 +44,23 @@ class TrackingProtectionPolicyKtTest {
                 cookieBannerHandlingMode = cookieBannerSetting,
                 cookieBannerHandlingModePrivateBrowsing = cookieBannerSettingPrivateBrowsing,
                 cookieBannerHandlingDetectOnlyMode = true,
+                cookieBannerGlobalRulesEnabled = true,
+                cookieBannerGlobalRulesSubFramesEnabled = true,
+                queryParameterStripping = true,
+                queryParameterStrippingPrivateBrowsing = true,
+                queryParameterStrippingAllowList = "AllowList",
+                queryParameterStrippingStripList = "StripList",
             )
         assertEquals(0, policyWithSafeBrowsing.safeBrowsingCategories)
         assertEquals(cookieBannerSetting.mode, policyWithSafeBrowsing.cookieBannerMode)
         assertEquals(cookieBannerSettingPrivateBrowsing.mode, policyWithSafeBrowsing.cookieBannerModePrivateBrowsing)
         assertTrue(policyWithSafeBrowsing.cookieBannerDetectOnlyMode)
+        assertTrue(policyWithSafeBrowsing.cookieBannerGlobalRulesEnabled)
+        assertTrue(policyWithSafeBrowsing.cookieBannerGlobalRulesSubFramesEnabled)
+        assertTrue(policyWithSafeBrowsing.queryParameterStrippingEnabled)
+        assertTrue(policyWithSafeBrowsing.queryParameterStrippingPrivateBrowsingEnabled)
+        assertEquals("AllowList", policyWithSafeBrowsing.queryParameterStrippingAllowList[0])
+        assertEquals("StripList", policyWithSafeBrowsing.queryParameterStrippingStripList[0])
     }
 
     @Test

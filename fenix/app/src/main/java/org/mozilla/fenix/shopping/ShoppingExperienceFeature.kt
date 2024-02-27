@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.shopping
 
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * An abstraction for shopping experience feature flag.
@@ -15,17 +15,21 @@ interface ShoppingExperienceFeature {
      * Returns true if the shopping experience feature is enabled.
      */
     val isEnabled: Boolean
+
+    /**
+     * Returns true if product recommendations exposure nimbus flag is enabled.
+     */
+    val isProductRecommendationsExposureEnabled: Boolean
 }
 
 /**
  * The default implementation of [ShoppingExperienceFeature].
- *
- * @property settings Used to check if the feature is enabled.
  */
-class DefaultShoppingExperienceFeature(
-    private val settings: Settings,
-) : ShoppingExperienceFeature {
+class DefaultShoppingExperienceFeature : ShoppingExperienceFeature {
 
     override val isEnabled
-        get() = settings.enableShoppingExperience
+        get() = FxNimbus.features.shoppingExperience.value().enabled
+
+    override val isProductRecommendationsExposureEnabled: Boolean
+        get() = FxNimbus.features.shoppingExperience.value().productRecommendationsExposure
 }

@@ -4,30 +4,23 @@
 
 package org.mozilla.fenix.ui
 
-import android.content.Context
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.runBlocking
-import mozilla.components.browser.storage.sync.PlacesHistoryStorage
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
-import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -38,42 +31,17 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Tests for verifying basic functionality of history
  *
  */
-class ComposeHistoryTest {
-    private lateinit var mockWebServer: MockWebServer
-    private lateinit var mDevice: UiDevice
-
+class ComposeHistoryTest : TestSetup() {
     @get:Rule
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(
+            HomeActivityIntentTestRule(
                 tabsTrayRewriteEnabled = true,
+                isJumpBackInCFREnabled = false,
             ),
         ) { it.activity }
 
-    @Before
-    fun setUp() {
-        InstrumentationRegistry.getInstrumentation().targetContext.settings()
-            .shouldShowJumpBackInCFR = false
-
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        // Clearing all history data after each test to avoid overlapping data
-        val applicationContext: Context = activityTestRule.activity.applicationContext
-        val historyStorage = PlacesHistoryStorage(applicationContext)
-
-        runBlocking {
-            historyStorage.deleteEverything()
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243285
     @Test
     fun verifyEmptyHistoryMenuTest() {
         homeScreen {
@@ -85,6 +53,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2302742
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     @SmokeTest
@@ -110,6 +79,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243288
     @Test
     fun deleteHistoryItemTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -125,11 +95,12 @@ class ComposeHistoryTest {
             ) {
                 clickDeleteHistoryButton(firstWebPage.url.toString())
             }
-            verifyDeleteSnackbarText("Deleted")
+            verifySnackBarText(expectedText = "Deleted")
             verifyEmptyHistoryView()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1848881
     @SmokeTest
     @Test
     fun deleteAllHistoryTest() {
@@ -149,11 +120,12 @@ class ComposeHistoryTest {
             verifyDeleteConfirmationMessage()
             selectEverythingOption()
             confirmDeleteAllHistory()
-            verifyDeleteSnackbarText("Browsing data deleted")
+            verifySnackBarText(expectedText = "Browsing data deleted")
             verifyEmptyHistoryView()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339690
     @SmokeTest
     @Test
     fun historyMultiSelectionToolbarItemsTest() {
@@ -182,6 +154,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339696
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openMultipleSelectedHistoryItemsInANewTabTest() {
@@ -212,6 +185,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/346098
     @Test
     fun openMultipleSelectedHistoryItemsInPrivateTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -237,6 +211,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/346099
     @Test
     fun deleteMultipleSelectedHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -271,6 +246,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339701
     @Test
     fun shareMultipleSelectedHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -297,6 +273,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715627
     @Test
     fun verifySearchHistoryViewTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -339,6 +316,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715631
     @Test
     fun verifyVoiceSearchInHistoryTest() {
         homeScreen {
@@ -351,6 +329,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715632
     @Test
     fun verifySearchForHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -376,6 +355,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715634
     @Test
     fun verifyDeletedHistoryItemsCanNotBeSearchedTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -418,6 +398,7 @@ class ComposeHistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/903590
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     @SmokeTest

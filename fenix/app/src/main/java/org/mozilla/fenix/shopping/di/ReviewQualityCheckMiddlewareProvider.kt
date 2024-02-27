@@ -8,9 +8,12 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.middleware.DefaultNetworkChecker
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckService
+import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckTelemetryService
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckVendorsService
 import org.mozilla.fenix.shopping.middleware.GetReviewQualityCheckSumoUrl
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
@@ -30,29 +33,34 @@ object ReviewQualityCheckMiddlewareProvider {
      *
      * @param settings The [Settings] instance to use.
      * @param browserStore The [BrowserStore] instance to access state.
+     * @param appStore The [AppStore] instance to access state.
      * @param context The [Context] instance to use.
      * @param scope The [CoroutineScope] to use for launching coroutines.
      */
     fun provideMiddleware(
         settings: Settings,
         browserStore: BrowserStore,
+        appStore: AppStore,
         context: Context,
         scope: CoroutineScope,
     ): List<ReviewQualityCheckMiddleware> =
         listOf(
-            providePreferencesMiddleware(settings, browserStore, scope),
+            providePreferencesMiddleware(settings, browserStore, appStore, scope),
             provideNetworkMiddleware(browserStore, context, scope),
             provideNavigationMiddleware(TabsUseCases.SelectOrAddUseCase(browserStore), context),
-            provideTelemetryMiddleware(),
+            provideTelemetryMiddleware(browserStore, appStore, scope),
         )
 
     private fun providePreferencesMiddleware(
         settings: Settings,
         browserStore: BrowserStore,
+        appStore: AppStore,
         scope: CoroutineScope,
     ) = ReviewQualityCheckPreferencesMiddleware(
         reviewQualityCheckPreferences = DefaultReviewQualityCheckPreferences(settings),
         reviewQualityCheckVendorsService = DefaultReviewQualityCheckVendorsService(browserStore),
+        appStore = appStore,
+        shoppingExperienceFeature = DefaultShoppingExperienceFeature(),
         scope = scope,
     )
 
@@ -74,5 +82,15 @@ object ReviewQualityCheckMiddlewareProvider {
         GetReviewQualityCheckSumoUrl(context),
     )
 
-    private fun provideTelemetryMiddleware() = ReviewQualityCheckTelemetryMiddleware()
+    private fun provideTelemetryMiddleware(
+        browserStore: BrowserStore,
+        appStore: AppStore,
+        scope: CoroutineScope,
+    ) =
+        ReviewQualityCheckTelemetryMiddleware(
+            telemetryService = DefaultReviewQualityCheckTelemetryService(browserStore),
+            browserStore = browserStore,
+            appStore = appStore,
+            scope = scope,
+        )
 }

@@ -11,16 +11,17 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 
 private const val POWERED_BY_URL =
-    "https://www.fakespot.com/our-mission?utm_source=review-checker" +
+    "https://www.fakespot.com/review-checker?utm_source=review-checker" +
         "&utm_campaign=fakespot-by-mozilla&utm_medium=inproduct&utm_term=core-sheet"
-private const val PRIVACY_POLICY_URL = "https://www.fakespot.com/privacy-policy"
+private const val PRIVACY_POLICY_URL = "https://www.mozilla.org/en-US/privacy/firefox/#review-checker" +
+    "?utm_source=review-checker&utm_campaign=privacy-policy&utm_medium=in-product&utm_term=opt-in-screen"
 private const val TERMS_OF_USE_URL = "https://www.fakespot.com/terms"
 
 /**
  * Middleware that handles navigation events for the review quality check feature.
  *
- * @property selectOrAddUseCase UseCase instance used to open new tabs.
- * @property getReviewQualityCheckSumoUrl Instance used to retrieve the learn more SUMO link.
+ * @param selectOrAddUseCase UseCase instance used to open new tabs.
+ * @param getReviewQualityCheckSumoUrl Instance used to retrieve the learn more SUMO link.
  */
 class ReviewQualityCheckNavigationMiddleware(
     private val selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
@@ -64,5 +65,7 @@ class ReviewQualityCheckNavigationMiddleware(
         is ReviewQualityCheckAction.OpenOnboardingPrivacyPolicyLink -> PRIVACY_POLICY_URL
 
         is ReviewQualityCheckAction.OpenPoweredByLink -> POWERED_BY_URL
+
+        is ReviewQualityCheckAction.RecommendedProductClick -> action.productUrl
     }
 }

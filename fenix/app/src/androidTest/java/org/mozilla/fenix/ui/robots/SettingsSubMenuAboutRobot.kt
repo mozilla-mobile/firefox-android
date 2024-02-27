@@ -26,14 +26,13 @@ import androidx.test.uiautomator.UiSelector
 import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.settings.SupportUtils
 import java.text.SimpleDateFormat
@@ -125,7 +124,8 @@ private fun assertCurrentTimestamp() {
 private fun assertWhatIsNewInFirefoxPreview() {
     aboutMenuList.scrollToEnd(LISTS_MAXSWIPES)
 
-    onView(withText("What’s new in $appName"))
+    val firefox = TestHelper.appContext.getString(R.string.firefox)
+    onView(withText("What’s new in $firefox"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
         .perform(click())
 }
@@ -156,11 +156,7 @@ private fun assertCrashes() {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
         .perform(click())
 
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().textContains("No crash reports have been submitted."),
-        ).waitForExists(waitingTime),
-    )
+    assertUIObjectExists(itemContainingText("No crash reports have been submitted."))
 
     for (i in 1..3) {
         Espresso.pressBack()

@@ -8,25 +8,22 @@ import android.Manifest
 import androidx.core.net.toUri
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.rule.GrantPermissionRule
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.setNetworkEnabled
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getStorageTestAsset
-import org.mozilla.fenix.helpers.TestHelper
-import org.mozilla.fenix.helpers.TestHelper.deleteDownloadedFileOnStorage
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
-import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.clickPageObject
+import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -35,9 +32,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Delete Browsing Data on quit
  *
  */
-class SettingsDeleteBrowsingDataOnQuitTest {
-    private lateinit var mockWebServer: MockWebServer
-
+class SettingsDeleteBrowsingDataOnQuitTest : TestSetup() {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
@@ -46,19 +41,6 @@ class SettingsDeleteBrowsingDataOnQuitTest {
     val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
         Manifest.permission.RECORD_AUDIO,
     )
-
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416048
     @Test
@@ -191,13 +173,10 @@ class SettingsDeleteBrowsingDataOnQuitTest {
             clickDeleteBrowsingOnQuitButtonSwitch()
             exitMenu()
         }
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-        }.clickDownloadLink("smallZip.zip") {
-            verifyDownloadPrompt("smallZip.zip")
-        }.clickDownload {
+        downloadRobot {
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "smallZip.zip")
             verifyDownloadCompleteNotificationPopup()
-        }.closeCompletedDownloadPrompt {
+        }.closeDownloadPrompt {
         }.goToHomescreen {
         }.openThreeDotMenu {
             clickQuit()
@@ -209,7 +188,6 @@ class SettingsDeleteBrowsingDataOnQuitTest {
         }.openDownloadsManager {
             verifyEmptyDownloadsList()
         }
-        deleteDownloadedFileOnStorage("smallZip.zip")
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416053
@@ -251,7 +229,7 @@ class SettingsDeleteBrowsingDataOnQuitTest {
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416052
     @Test
     fun deleteCachedFilesOnQuitTest() {
-        val pocketTopArticles = TestHelper.getStringResource(R.string.pocket_pinned_top_articles)
+        val pocketTopArticles = getStringResource(R.string.pocket_pinned_top_articles)
 
         homeScreen {
         }.openThreeDotMenu {

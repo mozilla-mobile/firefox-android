@@ -13,6 +13,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.MessageHandler
 import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.Port
@@ -359,7 +360,7 @@ class GeckoWebExtension(
                 description = it.description,
                 developerName = it.creatorName,
                 developerUrl = it.creatorUrl,
-                homePageUrl = it.homepageUrl,
+                homepageUrl = it.homepageUrl,
                 creatorName = it.creatorName,
                 creatorUrl = it.creatorUrl,
                 reviewUrl = it.reviewUrl,
@@ -372,6 +373,8 @@ class GeckoWebExtension(
                 openOptionsPageInTab = it.openOptionsPageInTab,
                 baseUrl = it.baseUrl,
                 temporary = it.temporary,
+                detailUrl = it.amoListingUrl,
+                incognito = Incognito.fromString(it.incognito),
             )
         }
     }

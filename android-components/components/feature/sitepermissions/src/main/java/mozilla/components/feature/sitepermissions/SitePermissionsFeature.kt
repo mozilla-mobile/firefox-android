@@ -71,7 +71,9 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import java.security.InvalidParameterException
 import mozilla.components.ui.icons.R as iconsR
 
-internal const val FRAGMENT_TAG = "mozac_feature_sitepermissions_prompt_dialog"
+internal const val PROMPT_FRAGMENT_TAG = "mozac_feature_sitepermissions_prompt_dialog"
+
+private const val FULL_SCREEN_NOTIFICATION_TAG = "mozac_feature_prompts_full_screen_notification_dialog"
 
 @VisibleForTesting
 internal const val STORAGE_ACCESS_DOCUMENTATION_URL =
@@ -96,7 +98,7 @@ internal const val STORAGE_ACCESS_DOCUMENTATION_URL =
  * @property shouldShowDoNotAskAgainCheckBox optional Visibility for Do not ask again Checkbox
  **/
 
-@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
+@Suppress("TooManyFunctions", "LargeClass")
 class SitePermissionsFeature(
     private val context: Context,
     @set:VisibleForTesting
@@ -128,7 +130,7 @@ class SitePermissionsFeature(
     private var loadingScope: CoroutineScope? = null
 
     override fun start() {
-        fragmentManager.findFragmentByTag(FRAGMENT_TAG)?.let { fragment ->
+        fragmentManager.findFragmentByTag(PROMPT_FRAGMENT_TAG)?.let { fragment ->
             // There's still a [SitePermissionsDialogFragment] visible from the last time. Re-attach
             // this feature so that the fragment can invoke the callback on this feature once the user
             // makes a selection. This can happen when the app was in the background and on resume
@@ -450,8 +452,16 @@ class SitePermissionsFeature(
         } else {
             handleNoRuledFlow(permissionFromStorage, permissionRequest, origin)
         }
-        prompt?.show(fragmentManager, FRAGMENT_TAG)
-        return prompt
+
+        val fullScreenNotificationDisplayed =
+            fragmentManager.fragments.any { fragment -> fragment.tag == FULL_SCREEN_NOTIFICATION_TAG }
+
+        return if (fullScreenNotificationDisplayed || prompt == null) {
+            null
+        } else {
+            prompt.show(fragmentManager, PROMPT_FRAGMENT_TAG)
+            prompt
+        }
     }
 
     @VisibleForTesting
@@ -847,7 +857,6 @@ class SitePermissionsFeature(
         }
     }
 
-    @Suppress("LongParameterList")
     @VisibleForTesting
     internal fun createSinglePermissionPrompt(
         context: Context,

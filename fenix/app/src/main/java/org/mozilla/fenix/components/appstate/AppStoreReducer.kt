@@ -8,7 +8,9 @@ import androidx.annotation.VisibleForTesting
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.recordNewImpression
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingStateReducer
 import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
@@ -98,6 +100,10 @@ internal object AppStoreReducer {
                 )
                 else -> state.recentSyncedTabState
             },
+        )
+        is AppAction.SelectedTabChanged -> state.copy(
+            selectedTabId = action.tab.id,
+            mode = BrowsingMode.fromBoolean(action.tab.content.private),
         )
         is AppAction.DisbandSearchGroupAction -> state.copy(
             recentHistory = state.recentHistory.filterNot {
@@ -232,7 +238,7 @@ internal object AppStoreReducer {
             standardSnackbarError = action.standardSnackbarError,
         )
 
-        is AppAction.ShoppingSheetStateUpdated -> state.copy(shoppingSheetExpanded = action.expanded)
+        is AppAction.ShoppingAction -> ShoppingStateReducer.reduce(state, action)
     }
 }
 

@@ -14,6 +14,34 @@ Use Gradle to download the library from [maven.mozilla.org](https://maven.mozill
 implementation "org.mozilla.components:feature-fxsuggest:{latest-version}"
 ```
 
+## Facts
+
+This component emits the following [Facts](../../support/base/README.md#Facts):
+
+| Action        | Item                             | Extras                        | Description                                                                                                   |
+|---------------|----------------------------------|-------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `INTERACTION` | `amp_suggestion_clicked`         | `suggestion_clicked_extras`   | The user clicked on a Firefox Suggestion from adMarketplace.                                                  |
+| `DISPLAY`     | `amp_suggestion_impressed`       | `suggestion_impressed_extras` | A Firefox Suggestion from adMarketplace was visible when the user finished interacting with the awesomebar.   |
+| `INTERACTION` | `wikipedia_suggestion_clicked`   | `suggestion_clicked_extras`   | The user clicked on a Firefox Suggestion for a Wikipedia page.                                                |
+| `DISPLAY`     | `wikipedia_suggestion_impressed` | `suggestion_impressed_extras` | A Firefox Suggestion for a Wikipedia page was visible when the user finished interacting with the awesomebar. |
+
+#### `suggestion_clicked_extras`
+
+| Key                | Type                       | Value                                                      |
+|--------------------|----------------------------|------------------------------------------------------------|
+| `interaction_info` | `FxSuggestInteractionInfo` | Type-specific information to record for this suggestion.   |
+| `position`         | `Long`                     | The 1-based position of this suggestion in the awesomebar. |
+
+
+#### `suggestion_impressed_extras`
+
+| Key                    | Type                       | Value                                                                                                          |
+|------------------------|----------------------------|----------------------------------------------------------------------------------------------------------------|
+| `interaction_info`     | `FxSuggestInteractionInfo` | Type-specific information to record for this suggestion.                                                       |
+| `position`             | `Long`                     | The 1-based position of this suggestion in the awesomebar.                                                     |
+| `is_clicked`           | `Boolean`                  | Whether the user clicked on this suggestion after it was shown.                                                |
+| `engagement_abandoned` | `Boolean`                  | Whether the user dismissed the awesomebar without navigating to a destination after this suggestion was shown. |
+
 ## License
 
     This Source Code Form is subject to the terms of the Mozilla Public

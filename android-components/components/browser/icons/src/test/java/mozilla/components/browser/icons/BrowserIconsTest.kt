@@ -24,7 +24,8 @@ import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import okio.Okio
+import okio.buffer
+import okio.source
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -79,7 +80,7 @@ class BrowserIconsTest {
         server.enqueue(
             MockResponse().setBody(
 
-                Okio.buffer(Okio.source(javaClass.getResourceAsStream("/png/mozac.png")!!)).buffer,
+                javaClass.getResourceAsStream("/png/mozac.png")!!.source().buffer().buffer,
             ),
         )
 
@@ -119,7 +120,7 @@ class BrowserIconsTest {
             assertNotNull(icon.bitmap)
 
             val serverRequest = server.takeRequest()
-            assertEquals("/icon128.png", serverRequest.requestUrl.encodedPath())
+            assertEquals("/icon128.png", serverRequest.requestUrl?.encodedPath)
         } finally {
             server.shutdown()
         }
@@ -131,7 +132,7 @@ class BrowserIconsTest {
 
         server.enqueue(
             MockResponse().setBody(
-                Okio.buffer(Okio.source(javaClass.getResourceAsStream("/png/mozac.png")!!)).buffer,
+                javaClass.getResourceAsStream("/png/mozac.png")!!.source().buffer().buffer,
             ),
         )
 
@@ -174,7 +175,7 @@ class BrowserIconsTest {
 
         server.enqueue(
             MockResponse().setBody(
-                Okio.buffer(Okio.source(javaClass.getResourceAsStream("/png/mozac.png")!!)).buffer,
+                javaClass.getResourceAsStream("/png/mozac.png")!!.source().buffer().buffer,
             ),
         )
 

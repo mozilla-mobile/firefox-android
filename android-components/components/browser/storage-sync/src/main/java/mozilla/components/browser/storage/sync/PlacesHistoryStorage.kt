@@ -72,7 +72,7 @@ open class PlacesHistoryStorage(
                 places.writer().noteObservation(
                     VisitObservation(
                         uri,
-                        visitType = visit.visitType.intoTransitionType(),
+                        visitType = visit.visitType.into(),
                         isRedirectSource = visit.redirectSource != null,
                         isPermanentRedirectSource = visit.redirectSource == RedirectSource.PERMANENT,
                     ),
@@ -237,19 +237,6 @@ open class PlacesHistoryStorage(
         withContext(writeScope.coroutineContext) {
             handlePlacesExceptions("deleteVisit") {
                 places.writer().deleteVisit(url, timestamp)
-            }
-        }
-    }
-
-    /**
-     * Should only be called in response to severe disk storage pressure. May delete all of the data,
-     * or some subset of it.
-     * Sync behaviour: will not remove history from remote clients.
-     */
-    override suspend fun prune() {
-        withContext(writeScope.coroutineContext) {
-            handlePlacesExceptions("prune") {
-                places.writer().pruneDestructively()
             }
         }
     }

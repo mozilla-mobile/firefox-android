@@ -9,7 +9,9 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.GleanMetrics.Shopping
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -35,20 +37,35 @@ interface ReviewQualityCheckService {
     /**
      * Fetches the status of the product review for the current tab.
      *
-     * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
+     * @return [AnalysisStatusProgressDto] if the request succeeds, null otherwise.
      */
-    suspend fun analysisStatus(): AnalysisStatusDto?
+    suspend fun analysisStatus(): AnalysisStatusProgressDto?
+
+    /**
+     * Fetches product recommendations related to the product user is browsing in the current tab.
+     *
+     * @return [ProductRecommendation] if request succeeds, null otherwise.
+     */
+    suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation?
+
+    /**
+     * Reports that a product is back in stock.
+     *
+     * @return [ReportBackInStockStatusDto] if the request succeeds, null otherwise.
+     */
+    suspend fun reportBackInStock(): ReportBackInStockStatusDto?
 }
 
 /**
  * Service that handles the network requests for the review quality check feature.
  *
- * @property browserStore Reference to the application's [BrowserStore] to access state.
+ * @param browserStore Reference to the application's [BrowserStore] to access state.
  */
 class DefaultReviewQualityCheckService(
     private val browserStore: BrowserStore,
 ) : ReviewQualityCheckService {
 
+    private val recommendationsCache: MutableMap<String, ProductRecommendation> = mutableMapOf()
     private val logger = Logger("DefaultReviewQualityCheckService")
 
     override suspend fun fetchProductReview(): ProductAnalysis? = withContext(Dispatchers.Main) {
@@ -74,7 +91,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.reanalyzeProduct(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error starting reanalysis", it)
@@ -85,13 +102,18 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    override suspend fun analysisStatus(): AnalysisStatusDto? = withContext(Dispatchers.Main) {
+    override suspend fun analysisStatus(): AnalysisStatusProgressDto? = withContext(Dispatchers.Main) {
         suspendCoroutine { continuation ->
             browserStore.state.selectedTab?.let { tab ->
                 tab.engineState.engineSession?.requestAnalysisStatus(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(
+                            AnalysisStatusProgressDto(
+                                status = it.status.asEnumOrDefault(AnalysisStatusDto.OTHER)!!,
+                                progress = it.progress,
+                            ),
+                        )
                     },
                     onException = {
                         logger.error("Error fetching analysis status", it)
@@ -102,8 +124,58 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    private inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
-        enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
+    override suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation? =
+        withContext(Dispatchers.Main) {
+            suspendCoroutine { continuation ->
+                browserStore.state.selectedTab?.let { tab ->
+
+                    if (recommendationsCache.containsKey(tab.content.url)) {
+                        continuation.resume(recommendationsCache[tab.content.url])
+                    } else {
+                        tab.engineState.engineSession?.requestProductRecommendations(
+                            url = tab.content.url,
+                            onResult = {
+                                if (it.isEmpty()) {
+                                    if (shouldRecordAvailableTelemetry) {
+                                        Shopping.surfaceNoAdsAvailable.record()
+                                    }
+                                } else {
+                                    Shopping.adsExposure.record()
+                                }
+                                // Return the first available recommendation since ui requires only
+                                // one recommendation.
+                                continuation.resume(
+                                    it.firstOrNull()?.also { recommendation ->
+                                        recommendationsCache[tab.content.url] = recommendation
+                                    },
+                                )
+                            },
+                            onException = {
+                                logger.error("Error fetching product recommendation", it)
+                                continuation.resume(null)
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+    override suspend fun reportBackInStock(): ReportBackInStockStatusDto? = withContext(Dispatchers.Main) {
+        suspendCoroutine { continuation ->
+            browserStore.state.selectedTab?.let { tab ->
+                tab.engineState.engineSession?.reportBackInStock(
+                    url = tab.content.url,
+                    onResult = {
+                        continuation.resume(it.asEnumOrDefault<ReportBackInStockStatusDto>())
+                    },
+                    onException = {
+                        logger.error("Error reporting product back in stock", it)
+                        continuation.resume(null)
+                    },
+                )
+            }
+        }
+    }
 }
 
 /**
@@ -126,17 +198,38 @@ enum class AnalysisStatusDto {
     COMPLETED,
 
     /**
-     * Product can not be analyzed.
+     * Any other status.
      */
-    NOT_ANALYZABLE,
+    OTHER,
+}
+
+/**
+ * Class that represents the analysis status response of the product review analysis.
+ *
+ * @property status Enum indicating the current status of the analysis
+ * @property progress Number indicating the progress of the analysis
+ */
+data class AnalysisStatusProgressDto(
+    val status: AnalysisStatusDto,
+    val progress: Double,
+)
+
+/**
+ * Enum that represents the status returned from reporting a product is back in stock.
+ */
+enum class ReportBackInStockStatusDto {
+    /**
+     * Report created.
+     */
+    REPORT_CREATED,
 
     /**
-     * Current analysis status with provided params not found.
+     * Product is already reported to be back in stock.
      */
-    NOT_FOUND,
+    ALREADY_REPORTED,
 
     /**
-     * Wrong product params provided.
+     * Product was not actually marked as deleted.
      */
-    UNPROCESSABLE,
+    NOT_DELETED,
 }

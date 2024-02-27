@@ -5,6 +5,7 @@
 package org.mozilla.fenix.telemetry
 
 import android.content.Context
+import mozilla.components.browser.state.action.AwesomeBarAction
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.DownloadAction
@@ -25,6 +26,7 @@ import mozilla.telemetry.glean.internal.TimerId
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.Event
@@ -39,13 +41,13 @@ private const val PROGRESS_COMPLETE = 100
 /**
  * [Middleware] to record telemetry in response to [BrowserAction]s.
  *
- * @property context An Android [Context].
- * @property settings reference to the application [Settings].
- * @property metrics [MetricController] to pass events that have been mapped from actions.
- * @property crashReporting An instance of [CrashReporting] to report caught exceptions.
- * @property nimbusSearchEngine The Nimbus search engine.
- * @property searchState Map that stores the [TabSessionState.id] & [TimerId].
- * @property timerId The [TimerId] for the [Metrics.searchPageLoadTime].
+ * @param context An Android [Context].
+ * @param settings reference to the application [Settings].
+ * @param metrics [MetricController] to pass events that have been mapped from actions.
+ * @param crashReporting An instance of [CrashReporting] to report caught exceptions.
+ * @param nimbusSearchEngine The Nimbus search engine.
+ * @param searchState Map that stores the [TabSessionState.id] & [TimerId].
+ * @param timerId The [TimerId] for the [Metrics.searchPageLoadTime].
  */
 class TelemetryMiddleware(
     private val context: Context,
@@ -59,7 +61,7 @@ class TelemetryMiddleware(
 
     private val logger = Logger("TelemetryMiddleware")
 
-    @Suppress("TooGenericExceptionCaught", "ComplexMethod", "NestedBlockDepth")
+    @Suppress("TooGenericExceptionCaught", "ComplexMethod", "NestedBlockDepth", "LongMethod")
     override fun invoke(
         context: MiddlewareContext<BrowserState, BrowserAction>,
         next: (BrowserAction) -> Unit,
@@ -143,6 +145,13 @@ class TelemetryMiddleware(
             }
             is ExtensionsProcessAction.DisabledAction -> {
                 Addons.extensionsProcessUiDisable.add()
+            }
+            is AwesomeBarAction.EngagementFinished -> {
+                if (action.abandoned) {
+                    Awesomebar.abandonment.record()
+                } else {
+                    Awesomebar.engagement.record()
+                }
             }
             else -> {
                 // no-op

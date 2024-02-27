@@ -10,6 +10,7 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.relaunchCleanApp
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
@@ -17,14 +18,14 @@ import org.mozilla.fenix.ui.robots.homeScreen
  *  Note: This involves setting the feature flag On for the onboarding cards
  *
  */
-class UpgradingUsersOnboardingTest {
+class UpgradingUsersOnboardingTest : TestSetup() {
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
         HomeActivityIntentTestRule(isHomeOnboardingDialogEnabled = true),
     ) { it.activity }
 
-    // https://testrail.stage.mozaws.net/index.php?/cases/view/1913592
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1913592
     @Test
     fun upgradingUsersOnboardingScreensTest() {
         homeScreen {
@@ -34,7 +35,7 @@ class UpgradingUsersOnboardingTest {
         }
     }
 
-    // https://testrail.stage.mozaws.net/index.php?/cases/view/1913591
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1913591
     @Test
     fun upgradingUsersOnboardingCanBeSkippedTest() {
         homeScreen {
@@ -50,7 +51,7 @@ class UpgradingUsersOnboardingTest {
         }
     }
 
-    // https://testrail.stage.mozaws.net/index.php?/cases/view/1932156
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1932156
     @Test
     fun upgradingUsersOnboardingSignInButtonTest() {
         homeScreen {

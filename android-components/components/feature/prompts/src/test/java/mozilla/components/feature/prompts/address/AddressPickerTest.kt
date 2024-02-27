@@ -33,9 +33,7 @@ class AddressPickerTest {
 
     private val address = Address(
         guid = "1",
-        givenName = "Location",
-        additionalName = "Location",
-        familyName = "Location",
+        name = "Jane Marie Doe",
         organization = "Mozilla",
         streetAddress = "1230 Main st",
         addressLevel3 = "Location3",
@@ -111,7 +109,7 @@ class AddressPickerTest {
     @Test
     fun `GIVEN a custom tab and a prompt request WHEN handleSelectAddressRequest is called THEN the prompt is shown with the provided addresses`() {
         val customTabContent: ContentState = mock()
-        val customTab = CustomTabSessionState("custom-tab", customTabContent, mock(), mock())
+        val customTab = CustomTabSessionState(id = "custom-tab", content = customTabContent, trackingProtection = mock(), config = mock())
         whenever(customTabContent.promptRequests).thenReturn(listOf(promptRequest))
         whenever(state.customTabs).thenReturn(listOf(customTab))
 

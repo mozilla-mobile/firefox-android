@@ -18,11 +18,12 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.thumbnails.loader.ThumbnailLoader
 import mozilla.components.concept.base.images.ImageLoadRequest
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.TabPreviewBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
-import kotlin.math.max
+import kotlin.math.min
 
 class TabPreview @JvmOverloads constructor(
     context: Context,
@@ -34,7 +35,7 @@ class TabPreview @JvmOverloads constructor(
     private val thumbnailLoader = ThumbnailLoader(context.components.core.thumbnailStorage)
 
     init {
-        if (!context.settings().shouldUseBottomToolbar) {
+        if (context.settings().toolbarPosition == ToolbarPosition.TOP) {
             binding.fakeToolbar.updateLayoutParams<LayoutParams> {
                 gravity = Gravity.TOP
             }
@@ -59,7 +60,7 @@ class TabPreview @JvmOverloads constructor(
             binding.tabButton.setCount(count)
         }
 
-        binding.previewThumbnail.translationY = if (!context.settings().shouldUseBottomToolbar) {
+        binding.previewThumbnail.translationY = if (context.settings().toolbarPosition == ToolbarPosition.TOP) {
             binding.fakeToolbar.height.toFloat()
         } else {
             0f
@@ -72,7 +73,7 @@ class TabPreview @JvmOverloads constructor(
     fun loadPreviewThumbnail(thumbnailId: String, isPrivate: Boolean) {
         doOnNextLayout {
             val previewThumbnail = binding.previewThumbnail
-            val thumbnailSize = max(previewThumbnail.height, previewThumbnail.width)
+            val thumbnailSize = min(previewThumbnail.height, previewThumbnail.width)
             thumbnailLoader.loadIntoView(
                 previewThumbnail,
                 ImageLoadRequest(thumbnailId, thumbnailSize, isPrivate),

@@ -34,6 +34,8 @@
     <string name="preferences_debug_settings">Secret Settings</string>
     <!-- Label for the secret settings preference -->
     <string name="preferences_debug_info" translatable="false">Secret Debug Info</string>
+    <!-- Label for using remote settings server url -->
+    <string name="preferences_debug_settings_remote_settings_server" translatable="false">Use Remote Settings Production server \n(Staging will be used when disabled) \n(requires restart)</string>
     <!-- Label for allowing third party root certificates from the Android OS CA store preference -->
     <string name="preferences_debug_settings_allow_third_party_root_certs">Use third party CA certificates</string>
     <!-- Label for a longer description of allowing third party root certificates from the Android OS CA store preference -->
@@ -66,12 +68,18 @@
     <string name="preferences_debug_settings_tabs_tray_to_compose" translatable="false">Enable Tabs Tray to Compose rewrite</string>
     <!-- Label for enabling the Compose Top Sites -->
     <string name="preferences_debug_settings_compose_top_sites" translatable="false">Enable Compose Top Sites</string>
-    <!-- Label for enabling the shopping experience -->
-    <string name="preferences_debug_settings_shopping_experience" translatable="false">Enable Shopping Experience</string>
     <!-- Label for enabling translations -->
     <string name="preferences_debug_settings_translations" translatable="false">Enable Firefox Translations</string>
     <!-- Label for enabling Firefox Suggest -->
     <string name="preferences_debug_settings_fxsuggest" translatable="false">Enable Firefox Suggest</string>
+    <!-- Label for enabling Toolbar Redesign incomplete portions -->
+    <string name="preferences_debug_settings_toolbar_redesign" translatable="false">Enable Toolbar Redesign incomplete portions</string>
+    <!-- Label for enabling Felt Privacy -->
+    <string name="preferences_debug_felt_privacy" translatable="false">Enable Felt Privacy</string>
+    <!-- Label for enabling the Debug Drawer -->
+    <string name="preferences_debug_settings_debug_drawer" translatable="false">Enable Debug Drawer</string>
+    <!-- Label for enabling the Tab Strip -->
+    <string name="preferences_debug_settings_tab_strip" translatable="false">Enable Tab Strip</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
@@ -118,10 +126,4 @@
     <string name="review_quality_check_retailer_name_amazon">Amazon</string>
     <string name="review_quality_check_retailer_name_bestbuy">Best Buy</string>
     <string name="review_quality_check_retailer_name_walmart">Walmart</string>
-
-    <string name="translations_bottom_sheet_title">Translate this page?</string>
-    <string name="translations_bottom_sheet_translate_from">Translate from</string>
-    <string name="translations_bottom_sheet_translate_to">Translate to</string>
-    <string name="translations_bottom_sheet_negative_button">Not now</string>
-    <string name="translations_bottom_sheet_positive_button">Translate</string>
 </resources>

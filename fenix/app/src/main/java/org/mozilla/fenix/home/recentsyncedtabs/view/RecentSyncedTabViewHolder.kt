@@ -24,7 +24,7 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
- * @property recentSyncedTabInteractor [RecentSyncedTabInteractor] which will have delegated to all
+ * @param recentSyncedTabInteractor [RecentSyncedTabInteractor] which will have delegated to all
  * recent synced tab user interactions.
  */
 class RecentSyncedTabViewHolder(
@@ -72,7 +72,6 @@ class RecentSyncedTabViewHolder(
 
             RecentSyncedTab(
                 tab = syncedTab,
-                storage = components.core.thumbnailStorage,
                 backgroundColor = wallpaperState.wallpaperCardColor,
                 buttonBackgroundColor = buttonBackgroundColor,
                 buttonTextColor = buttonTextColor,

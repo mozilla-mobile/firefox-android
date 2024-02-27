@@ -51,12 +51,12 @@ projects:
     - service-glean
     - service-location
     - service-nimbus
-    - service-telemetry
     - support-base
     - support-images
     - support-ktx
     - support-license
     - support-locale
+    - support-remotesettings
     - support-rusthttp
     - support-rustlog
     - support-test

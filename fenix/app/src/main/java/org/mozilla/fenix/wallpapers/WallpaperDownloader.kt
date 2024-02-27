@@ -18,9 +18,9 @@ import java.lang.IllegalStateException
 /**
  * Can download wallpapers from a remote host.
  *
- * @property storageRootDirectory The top level app-local storage directory.
- * @property client Required for fetching files from network.
- * @property dispatcher Dispatcher used to execute suspending functions. Default parameter
+ * @param storageRootDirectory The top level app-local storage directory.
+ * @param client Required for fetching files from network.
+ * @param dispatcher Dispatcher used to execute suspending functions. Default parameter
  * should be likely be used except for when under test.
  */
 class WallpaperDownloader(
@@ -73,11 +73,13 @@ class WallpaperDownloader(
         val request = Request(
             url = "$remoteHost/$remotePath",
             method = Request.Method.GET,
+            conservative = true,
         )
 
         return@withContext Result.runCatching {
             val response = client.fetch(request)
             if (!response.isSuccess) {
+                response.close()
                 throw IllegalStateException()
             }
             localFile.parentFile?.mkdirs()

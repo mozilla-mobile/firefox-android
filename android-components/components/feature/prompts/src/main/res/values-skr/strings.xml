@@ -94,6 +94,11 @@
     <!-- Header for the select login prompt to allow users to fill a form with a saved login -->
     <string name="mozac_feature_prompts_saved_logins">تجویز تھئے لاگ ان</string>
 
+    <!-- Content description for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_content_description">تکڑا پاس ورڈ تجویز کرو</string>
+    <!-- Header for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password">تکڑا پاس ورڈ تجویز کرو</string>
+
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">ایں سائٹ تے ڈیٹا ولدا بھیڄوں؟</string>
     <string name="mozac_feature_prompt_repost_message">ایں ورقے کوں تازہ کرݨ نال حالیہ عملاں دی ݙوجھی نقل بݨ سڳدی ہے۔ جیویں جو پیسیاں دی ادائیگی پٹھݨ یا ݙو واری تبصرہ کرݨ۔</string>
@@ -131,10 +136,12 @@
     <!-- Federated Credential Management prompts -->
     <!--Content description for the Account picture in the Select Account FedCM prompt -->
     <string name="mozac_feature_prompts_account_picture">کھاتہ تصویر</string>
-    <!-- Title of the Identity Credential provider dialog choose. -->
+    <!-- Title of the Identity Credential provider dialog chooser. -->
     <string name="mozac_feature_prompts_identity_credentials_choose_provider">لاگ ان مہیا کار چݨو</string>
-    <!-- Title of an account picker dialog for identity credentials. -->
-    <string name="mozac_feature_prompts_identity_credentials_choose_account">کھاتہ چُݨو</string>
     <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
     <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">%1$s کوں لاگ ان مہیاکار دے طور تے ورتو</string>
-    </resources>
+    <!-- Text for the positive button of the Identity Credential dialogs. -->
+    <string name="mozac_feature_prompts_identity_credentials_continue">جاری</string>
+    <!-- Text for the cancel button of the Identity Credential dialogs. -->
+    <string name="mozac_feature_prompts_identity_credentials_cancel">منسوخ</string>
+</resources>

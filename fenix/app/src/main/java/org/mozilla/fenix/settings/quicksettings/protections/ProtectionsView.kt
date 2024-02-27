@@ -33,6 +33,8 @@ import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.databinding.QuicksettingsProtectionsPanelBinding
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.trackingprotection.CookieBannerUIMode
+import org.mozilla.fenix.trackingprotection.CookieBannerUIMode.REQUEST_UNSUPPORTED_SITE_SUBMITTED
+import org.mozilla.fenix.trackingprotection.CookieBannerUIMode.SITE_NOT_SUPPORTED
 import org.mozilla.fenix.trackingprotection.ProtectionsState
 import org.mozilla.fenix.utils.Settings
 
@@ -41,7 +43,7 @@ import org.mozilla.fenix.utils.Settings
  * to additional tracking protection details.
  *
  * @property containerView [ViewGroup] in which this View will inflate itself.
- * @property trackingProtectionDivider trackingProtectionDivider The divider line between tracking protection layout
+ * @param trackingProtectionDivider trackingProtectionDivider The divider line between tracking protection layout
  * and other views from [QuickSettingsSheetDialogFragment].
  * @property interactor [ProtectionsInteractor] which will have delegated to all user interactions.
  * @property settings [Settings] application settings.
@@ -60,7 +62,8 @@ class ProtectionsView(
         bindTrackingProtectionInfo(state.isTrackingProtectionEnabled)
         bindCookieBannerProtection(state.cookieBannerUIMode)
         binding.trackingProtectionSwitch.isVisible = settings.shouldUseTrackingProtection
-        binding.cookieBannerItem.isVisible = shouldShowCookieBanner &&
+        val isPrivateSession = state.tab?.content?.private == true
+        binding.cookieBannerItem.isVisible = isPrivateSession && shouldShowCookieBanner &&
             state.cookieBannerUIMode != CookieBannerUIMode.HIDE
 
         binding.trackingProtectionDetails.setOnClickListener {
@@ -98,16 +101,20 @@ class ProtectionsView(
     )
 
     private val shouldShowCookieBanner: Boolean
-        get() = settings.shouldShowCookieBannerUI && settings.shouldUseCookieBanner
+        get() = settings.shouldShowCookieBannerUI && settings.shouldUseCookieBannerPrivateMode
 
     private fun bindCookieBannerProtection(cookieBannerMode: CookieBannerUIMode) {
         val context = binding.cookieBannerItem.context
-        val label = context.getString(R.string.preferences_cookie_banner_reduction)
+        val label = context.getString(R.string.cookie_banner_blocker)
 
         binding.cookieBannerItem.apply {
             setContent {
                 FirefoxTheme {
-                    if (cookieBannerMode == CookieBannerUIMode.REQUEST_UNSUPPORTED_SITE_SUBMITTED) {
+                    if (cookieBannerMode in listOf(
+                            REQUEST_UNSUPPORTED_SITE_SUBMITTED,
+                            SITE_NOT_SUPPORTED,
+                        )
+                    ) {
                         CookieBannerItem(
                             label = label,
                             cookieBannerUIMode = cookieBannerMode,

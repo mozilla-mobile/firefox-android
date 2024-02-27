@@ -19,10 +19,11 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Controller for the saved logins list
  *
- * @property loginsFragmentStore Store used to hold in-memory collection state.
- * @property navController NavController manages app navigation within a NavHost.
- * @property browserNavigator Controller allowing browser navigation to any Uri.
- * @property settings SharedPreferences wrapper for easier usage.
+ * @param loginsFragmentStore Store used to hold in-memory collection state.
+ * @param navController NavController manages app navigation within a NavHost.
+ * @param browserNavigator Controller allowing browser navigation to any Uri.
+ * @param addLoginCallback Callback used for add login
+ * @param settings SharedPreferences wrapper for easier usage.
  */
 class LoginsListController(
     private val loginsFragmentStore: LoginsFragmentStore,
@@ -32,6 +33,7 @@ class LoginsListController(
         newTab: Boolean,
         from: BrowserDirection,
     ) -> Unit,
+    private val addLoginCallback: () -> Unit,
     private val settings: Settings,
 ) {
 
@@ -46,6 +48,7 @@ class LoginsListController(
 
     fun handleAddLoginClicked() {
         Logins.managementAddTapped.record(NoExtras())
+        addLoginCallback.invoke()
         navController.navigate(
             SavedLoginsFragmentDirections.actionSavedLoginsFragmentToAddLoginFragment(),
         )

@@ -6,6 +6,7 @@ package mozilla.components.feature.addons
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.support.test.mock
@@ -13,6 +14,8 @@ import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -369,16 +372,18 @@ class AddonTest {
         whenever(metadata.developerName).thenReturn("developer-name")
         whenever(metadata.developerUrl).thenReturn("developer-url")
         whenever(metadata.fullDescription).thenReturn("fullDescription")
-        whenever(metadata.homePageUrl).thenReturn("some-url")
+        whenever(metadata.homepageUrl).thenReturn("some-url")
         whenever(metadata.downloadUrl).thenReturn("some-download-url")
         whenever(metadata.updateDate).thenReturn("1970-01-01T00:00:00Z")
         whenever(metadata.reviewUrl).thenReturn("some-review-url")
         whenever(metadata.reviewCount).thenReturn(0)
         whenever(metadata.averageRating).thenReturn(0f)
-        val addon = Addon.newFromWebExtension(extension)
+        whenever(metadata.detailUrl).thenReturn("detail-url")
+        whenever(metadata.incognito).thenReturn(Incognito.NOT_ALLOWED)
 
+        val addon = Addon.newFromWebExtension(extension)
         assertEquals("some-id", addon.id)
-        assertEquals("some-url", addon.siteUrl)
+        assertEquals("some-url", addon.homepageUrl)
         assertEquals("some-download-url", addon.downloadUrl)
         assertEquals(permissions + hostPermissions, addon.permissions)
         assertEquals("", addon.updatedAt)
@@ -390,6 +395,8 @@ class AddonTest {
         assertEquals("some-download-url", addon.downloadUrl)
         assertEquals("some-review-url", addon.ratingUrl)
         assertEquals(0, addon.rating!!.reviews)
+        assertEquals("detail-url", addon.detailUrl)
+        assertEquals(Addon.Incognito.NOT_ALLOWED, addon.incognito)
     }
 
     @Test
@@ -468,5 +475,28 @@ class AddonTest {
 
         assertFalse(addon.isDisabledAsIncompatible())
         assertTrue(blockListedAddon.isDisabledAsIncompatible())
+    }
+
+    @Test
+    fun `provideIcon - should provide the icon from either addon or installedState`() {
+        val addonWithoutIcon = Addon(id = "id")
+
+        assertNull(addonWithoutIcon.icon)
+        assertNull(addonWithoutIcon.installedState?.icon)
+        assertNull(addonWithoutIcon.provideIcon())
+
+        val addonWithIcon = addonWithoutIcon.copy(icon = mock())
+
+        assertNotNull(addonWithIcon.icon)
+        assertNull(addonWithIcon.installedState?.icon)
+        assertNotNull(addonWithIcon.provideIcon())
+
+        val addonWithInstalledStateIcon = addonWithoutIcon.copy(
+            installedState = Addon.InstalledState("id", "1.0", "", icon = mock()),
+        )
+
+        assertNull(addonWithInstalledStateIcon.icon)
+        assertNotNull(addonWithInstalledStateIcon.installedState?.icon)
+        assertNotNull(addonWithInstalledStateIcon.provideIcon())
     }
 }

@@ -54,7 +54,6 @@
     <string name="menu_remove_from_shortcuts">ਸ਼ਾਰਟਕੱਟ ਵਿੱਚੋਂ ਹਟਾਓ</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">ਨਵਾਂ ਕੀ ਹੈ</string>
     <string name="menu_settings">ਸੈਟਿੰਗਾਂ</string>
     <string name="menu_about">ਇਸ ਬਾਰੇ</string>
     <string name="menu_help">ਮਦਦ</string>
@@ -85,10 +84,13 @@
          sharing an URL. -->
     <string name="share_dialog_title">ਇਸ ਰਾਹੀਂ ਸਾਂਝਾ ਕਰੋ</string>
 
-    <!-- While a browsing session is active (in the foreground or background) we will show a notification
-         so that the user doesn't forget about the website still being open. This text is shown in
-         the notification. Clicking the notification will have the same effect as clicking the "erase"
-         button in the application. -->
+    <string name="notification_erase_title_android_14">ਬਰਾਊਜ਼ ਕਰਨ ਦੇ ਅਤੀਤ ਨੂੰ ਮਿਟਾਉਣਾ ਹੈ?</string>
+    <string name="notification_erase_text_android_14" moz:RemovedIn="124" tools:ignore="UnusedResources">ਤੁਹਾਡੇ ਬਰਾਊਜ਼ ਕਰਨ ਦੇ ਅਤੀਤ ਨੂੰ ਸੁਰੱਖਿਅਤ ਢੰਗ ਨਾਲ ਮਿਟਾਉਣ ਲਈ ਇਸ ਨੋਟੀਫਿਕੇਸ਼ਨ ਨੂੰ ਛੂਹੋ ਜਾਂ ਸਾਫ਼ ਕਰੋ।</string>
+
+    <!-- Text shown in the notification description that pops up to remind the user that a browsing session is active
+    for Android 14+. -->
+    <string name="notification_erase_text_android_14_1">ਤੁਹਾਡੇ ਬਰਾਊਜ਼ ਕਰਨ ਦੇ ਅਤੀਤ ਨੂੰ ਸੁਰੱਖਿਅਤ ਢੰਗ ਨਾਲ ਮਿਟਾਉਣ ਲਈ ਇਸ ਨੋਟੀਫਿਕੇਸ਼ਨ ਨੂੰ ਛੂਹੋ ਜਾਂ ਸਰਕਾਓ।</string>
+
     <string name="notification_erase_text">ਬਰਾਊਜ਼ਰ ਕਰਨ ਦੇ ਅਤੀਤ ਨੂੰ ਮਿਟਾਓ</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->
@@ -606,7 +608,7 @@
 
     <!-- If the user decides to open the current page in another browser and if Firefox is not installed then we show this
       item in the list of browsers. Clicking it will open the app store installed on the device (usually that's Google Play). -->
-    <string name="download_firefox">ਫਾਇਰਫਾਕਸ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <string name="download_firefox">Firefox ਡਾਊਨਲੋਡ ਕਰੋ</string>
 
     <!-- Text shown in the "Your rights" screen.
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)-->
@@ -620,7 +622,7 @@
     <!-- Text shown in the "Your rights" screen.
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)
     %2$s will be replaced with a URL linking to the trademark policy (e.g. https://www.mozilla.org/foundation/trademarks/policy/) -->
-    <string name="your_rights_content3"><![CDATA[ਤੁਹਾਨੂੰ Mozilla Foundation ਜਾਂMozilla, Firefox ਜਾਂ %1$s ਨਾਂ ਜਾਂ ਲੋਗੋ ਸਮੇਤ ਕਿਸੇ ਵੀ ਪਾਰਟੀ ਦੇ ਮਾਰਕੇ ਲਈ ਕੋਈ ਅਧਿਕਾਰ ਜਾਂ ਲਸੰਸ ਨਹੀਂ ਮਿਲੇ ਹਨ। ਵਾਧੂ ਜਾਣਕਾਰੀ ਵੀ <a href="%2$s"> ਇੱਥੇ</a>ਮਿਲ ਸਕਦੀ ਹੈ।]]></string>
+    <string name="your_rights_content3"><![CDATA[ਤੁਹਾਨੂੰ Mozilla Foundation ਜਾਂ Mozilla, Firefox ਜਾਂ %1$s ਨਾਂ ਜਾਂ ਲੋਗੋ ਸਮੇਤ ਕਿਸੇ ਵੀ ਪਾਰਟੀ ਦੇ ਮਾਰਕੇ ਲਈ ਕੋਈ ਅਧਿਕਾਰ ਜਾਂ ਲਸੰਸ ਨਹੀਂ ਮਿਲੇ ਹਨ। ਵਾਧੂ ਜਾਣਕਾਰੀ ਵੀ <a href="%2$s"> ਇੱਥੇ</a>ਮਿਲ ਸਕਦੀ ਹੈ।]]></string>
 
     <!-- Text shown in the "Your rights" screen.
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)

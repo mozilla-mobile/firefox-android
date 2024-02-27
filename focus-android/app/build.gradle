@@ -37,11 +37,6 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
     lint {
         lintConfig file("lint.xml")
     }
@@ -97,6 +92,7 @@ android {
     buildFeatures {
         compose true
         viewBinding true
+        buildConfig true
     }
 
     composeOptions {
@@ -161,8 +157,10 @@ android {
         resources {
             pickFirsts += ['META-INF/atomicfu.kotlin_module', 'META-INF/proguard/coroutines.pro']
         }
+        jniLibs {
+            useLegacyPackaging true
+        }
     }
-
 
     namespace 'org.mozilla.focus'
 }
@@ -174,7 +172,6 @@ tasks.withType(KotlinCompile).configureEach {
             "-opt-in=kotlin.RequiresOptIn",
             "-Xjvm-default=all"
     ]
-    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -206,6 +203,9 @@ nimbus {
 }
 
 dependencies {
+    implementation platform(ComponentsDependencies.androidx_compose_bom)
+    androidTestImplementation platform(ComponentsDependencies.androidx_compose_bom)
+
     implementation ComponentsDependencies.androidx_appcompat
     implementation ComponentsDependencies.androidx_browser
     implementation ComponentsDependencies.androidx_cardview
@@ -233,7 +233,7 @@ dependencies {
 
     implementation ComponentsDependencies.google_material
 
-    implementation ComponentsDependencies.thirdparty_sentry_latest
+    implementation ComponentsDependencies.thirdparty_sentry
 
     implementation project(':browser-engine-gecko')
     implementation project(':browser-domains')
@@ -294,8 +294,6 @@ dependencies {
     implementation project(':support-locale')
     implementation project(':compose-cfr')
 
-    implementation project(':service-telemetry')
-
     implementation ComponentsDependencies.kotlin_coroutines
     debugImplementation ComponentsDependencies.leakcanary
 
@@ -324,8 +322,8 @@ dependencies {
     androidTestImplementation FocusDependencies.espresso_intents
 
 
-    androidTestImplementation FocusDependencies.testing_mockwebserver
-    testImplementation FocusDependencies.testing_mockwebserver
+    androidTestImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation project(':lib-fetch-okhttp')
 
     androidTestImplementation FocusDependencies.fastlane
@@ -617,13 +615,13 @@ if (project.hasProperty("coverage")) {
 
             def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
                               '**/*Test*.*', 'android/**/*.*', '**/*$[0-9].*']
-            def kotlinTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
-            def javaTree = fileTree(dir: "$project.buildDir/intermediates/classes/${variant.flavorName}/${variant.buildType.name}",
+            def kotlinTree = fileTree(dir: "$project.layout.buildDirectory/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
+            def javaTree = fileTree(dir: "$project.layout.buildDirectory/intermediates/classes/${variant.flavorName}/${variant.buildType.name}",
                     excludes: fileFilter)
             def mainSrc = "$project.projectDir/src/main/java"
             sourceDirectories.setFrom(files([mainSrc]))
             classDirectories.setFrom(files([kotlinTree, javaTree]))
-            executionData.setFrom(fileTree(dir: project.buildDir, includes: [
+            executionData.setFrom(fileTree(dir: project.layout.buildDirectory, includes: [
                     "jacoco/test${variant.name.capitalize()}UnitTest.exec", 'outputs/code-coverage/connected/*coverage.ec'
             ]))
         }

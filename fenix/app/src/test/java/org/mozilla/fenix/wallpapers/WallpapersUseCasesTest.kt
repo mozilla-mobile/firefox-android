@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.wallpapers
 
+import android.content.res.Configuration
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,7 +31,8 @@ import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_R
 import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_PANDA_WALLPAPER_NAME
 import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_WALLPAPER_TEXT_COLOR
 import java.io.File
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import kotlin.random.Random
 
 class WallpapersUseCasesTest {
@@ -493,6 +495,36 @@ class WallpapersUseCasesTest {
         verify { mockSettings.currentWallpaperTextColor = 321L }
         verify { appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper)) }
     }
+
+    @Test
+    fun `GIVEN the portrait orientation WHEN bitmap is loaded THEN loadWallpaperFromDisk method is called with the correct wallpaper and orientation`() =
+        runTest {
+            val wallpaper: Wallpaper = mockk {
+                every { name } returns "test"
+            }
+            val orientation = Configuration.ORIENTATION_PORTRAIT
+            val defaultLoadBitmapUseCase = spyk(WallpapersUseCases.DefaultLoadBitmapUseCase { mockFolder })
+            coEvery { defaultLoadBitmapUseCase.loadWallpaperFromDisk(wallpaper, orientation) } returns mockk()
+
+            defaultLoadBitmapUseCase.invoke(wallpaper, orientation)
+
+            coVerify { defaultLoadBitmapUseCase.loadWallpaperFromDisk(wallpaper, orientation) }
+        }
+
+    @Test
+    fun `GIVEN the landscape orientation WHEN bitmap is loaded THEN loadWallpaperFromDisk method is called with the correct wallpaper and orientation`() =
+        runTest {
+            val wallpaper: Wallpaper = mockk {
+                every { name } returns "test"
+            }
+            val orientation = Configuration.ORIENTATION_LANDSCAPE
+            val defaultLoadBitmapUseCase = spyk(WallpapersUseCases.DefaultLoadBitmapUseCase { mockFolder })
+            coEvery { defaultLoadBitmapUseCase.loadWallpaperFromDisk(wallpaper, orientation) } returns mockk()
+
+            defaultLoadBitmapUseCase.invoke(wallpaper, orientation)
+
+            coVerify { defaultLoadBitmapUseCase.loadWallpaperFromDisk(wallpaper, orientation) }
+        }
 
     private enum class TimeRelation {
         BEFORE,

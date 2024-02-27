@@ -16,6 +16,7 @@ import mozilla.components.browser.engine.gecko.ext.toCreditCardEntry
 import mozilla.components.browser.engine.gecko.ext.toLoginEntry
 import mozilla.components.concept.engine.prompt.Choice
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.prompt.PromptRequest.File.Companion.DEFAULT_UPLOADS_DIR_NAME
 import mozilla.components.concept.engine.prompt.PromptRequest.MenuChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.MultipleChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.SingleChoice
@@ -26,8 +27,7 @@ import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.CreditCardEntry
 import mozilla.components.concept.storage.Login
 import mozilla.components.concept.storage.LoginEntry
-import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.ktx.android.net.getFileName
+import mozilla.components.support.ktx.android.net.toFileUri
 import mozilla.components.support.ktx.kotlin.toDate
 import mozilla.components.support.utils.TimePicker.shouldShowMillisecondsPicker
 import mozilla.components.support.utils.TimePicker.shouldShowSecondsPicker
@@ -47,10 +47,6 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.Acco
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.PrivacyPolicyPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.PromptResponse
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.security.InvalidParameterException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -290,6 +286,13 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         session: GeckoSession,
         prompt: AutocompleteRequest<Autocomplete.LoginSelectOption>,
     ): GeckoResult<PromptResponse>? {
+        val promptOptions = prompt.options
+        val generatedPassword =
+            if (promptOptions.isNotEmpty() && promptOptions.first().hint == Autocomplete.SelectOption.Hint.GENERATED) {
+                promptOptions.first().value.password
+            } else {
+                null
+            }
         val geckoResult = GeckoResult<PromptResponse>()
         val onConfirmSelect: (Login) -> Unit = { login ->
             if (!prompt.isComplete) {
@@ -301,7 +304,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         }
 
         // `guid` plus exactly one of `httpRealm` and `formSubmitURL` must be present to be a valid login entry.
-        val loginList = prompt.options.filter { option ->
+        val loginList = promptOptions.filter { option ->
             option.value.guid != null && (option.value.formActionOrigin != null || option.value.httpRealm != null)
         }.map { option ->
             Login(
@@ -318,6 +321,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
             onPromptRequest(
                 PromptRequest.SelectLoginPrompt(
                     logins = loginList,
+                    generatedPassword = generatedPassword,
                     onConfirm = onConfirmSelect,
                     onDismiss = onDismiss,
                 ),
@@ -453,7 +457,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
 
         val onSelectMultiple: (Context, Array<Uri>) -> Unit = { context, uris ->
             val filesUris = uris.map {
-                it.toFileUri(context)
+                toFileUri(uri = it, context)
             }.toTypedArray()
             if (!prompt.isComplete) {
                 geckoResult.complete(prompt.confirm(context, filesUris))
@@ -462,7 +466,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
 
         val onSelectSingle: (Context, Uri) -> Unit = { context, uri ->
             if (!prompt.isComplete) {
-                geckoResult.complete(prompt.confirm(context, uri.toFileUri(context)))
+                geckoResult.complete(prompt.confirm(context, toFileUri(uri, context)))
             }
         }
 
@@ -864,30 +868,9 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         return (this and mask) != 0
     }
 
-    private fun Uri.toFileUri(context: Context): Uri {
-        val contentResolver = context.contentResolver
-        val cacheUploadDirectory = java.io.File(context.cacheDir, "/uploads")
-
-        if (!cacheUploadDirectory.exists()) {
-            cacheUploadDirectory.mkdir()
-        }
-
-        val temporalFile = java.io.File(cacheUploadDirectory, getFileName(contentResolver))
-        try {
-            contentResolver.openInputStream(this)!!.use { inStream ->
-                copyFile(temporalFile, inStream)
-            }
-        } catch (e: IOException) {
-            Logger("GeckoPromptDelegate").warn("Could not convert uri to file uri", e)
-        }
-        return Uri.parse("file:///${temporalFile.absolutePath}")
-    }
-
     @VisibleForTesting
-    internal fun copyFile(temporalFile: File, inStream: InputStream): Long {
-        return FileOutputStream(temporalFile).use { outStream ->
-            inStream.copyTo(outStream)
-        }
+    internal fun toFileUri(uri: Uri, context: Context): Uri {
+        return uri.toFileUri(context, dirToCopy = DEFAULT_UPLOADS_DIR_NAME)
     }
 }
 

@@ -7,41 +7,31 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.uiautomator.UiDevice
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
+import org.mozilla.fenix.helpers.AppAndSystemHelper.openAppFromExternalLink
+import org.mozilla.fenix.helpers.DataGenerationHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
 
-class CustomTabsTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
+class CustomTabsTest : TestSetup() {
     private val customMenuItem = "TestMenuItem"
     private val customTabActionButton = "CustomActionButton"
 
@@ -61,46 +51,10 @@ class CustomTabsTest {
         false,
     )
 
-    private val featureSettingsHelper = FeatureSettingsHelperDelegate()
-
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/249659
     @SmokeTest
     @Test
-    fun customTabsOpenExternalLinkTest() {
-        val externalLinkURL = "https://mozilla-mobile.github.io/testapp/downloads"
-
-        intentReceiverActivityTestRule.launchActivity(
-            createCustomTabIntent(
-                externalLinksPWAPage.toUri().toString(),
-                customMenuItem,
-            ),
-        )
-
-        customTabScreen {
-            waitForPageToLoad()
-            clickPageObject(itemContainingText("External link"))
-            waitForPageToLoad()
-            verifyCustomTabToolbarTitle(externalLinkURL)
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun customTabsSaveLoginTest() {
+    fun verifyLoginSaveInCustomTabTest() {
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 loginPage.toUri().toString(),
@@ -131,9 +85,9 @@ class CustomTabsTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334762
     @Test
-    fun customTabCopyToolbarUrlTest() {
+    fun copyCustomTabToolbarUrlTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -161,33 +115,10 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334761
     @SmokeTest
     @Test
-    fun customTabShareTextTest() {
-        val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        intentReceiverActivityTestRule.launchActivity(
-            createCustomTabIntent(
-                customTabPage.url.toString(),
-                customMenuItem,
-            ),
-        )
-
-        customTabScreen {
-            waitForPageToLoad()
-        }
-
-        browserScreen {
-            longClickPageObject(itemContainingText("content"))
-        }.clickShareSelectedText {
-            verifyAndroidShareLayout()
-        }
-    }
-
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807289")
-    @SmokeTest
-    @Test
-    fun customTabDownloadTest() {
+    fun verifyDownloadInACustomTabTest() {
         val customTabPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
         val downloadFile = "web_icon.png"
 
@@ -214,10 +145,11 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/249644
     // Verifies the main menu of a custom tab with a custom menu item
     @SmokeTest
     @Test
-    fun customTabMenuItemsTest() {
+    fun verifyCustomTabMenuItemsTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -241,9 +173,11 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/249645
     // The test opens a link in a custom tab then sends it to the browser
+    @SmokeTest
     @Test
-    fun openCustomTabInBrowserTest() {
+    fun openCustomTabInFirefoxTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -260,8 +194,9 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2239548
     @Test
-    fun shareCustomTabTest() {
+    fun shareCustomTabUsingToolbarButtonTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -276,8 +211,9 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/249643
     @Test
-    fun verifyCustomTabViewTest() {
+    fun verifyCustomTabViewItemsTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -302,8 +238,9 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2239544
     @Test
-    fun verifyPdfCustomTabViewTest() {
+    fun verifyPDFViewerInACustomTabTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
         val pdfFormResource = TestAssetHelper.getPdfFormAsset(mockWebServer)
 
@@ -331,8 +268,9 @@ class CustomTabsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2239117
     @Test
-    fun verifyETPSheetAndToggleTest() {
+    fun verifyCustomTabETPSheetAndToggleTest() {
         val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         intentReceiverActivityTestRule.launchActivity(
@@ -347,6 +285,7 @@ class CustomTabsTest {
             verifyEnhancedTrackingProtectionSheetStatus(status = "ON", state = true)
         }.toggleEnhancedTrackingProtectionFromSheet {
             verifyEnhancedTrackingProtectionSheetStatus(status = "OFF", state = false)
+        }.closeEnhancedTrackingProtectionSheet {
         }
 
         openAppFromExternalLink(customTabPage.url.toString())

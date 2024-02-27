@@ -26,11 +26,10 @@ enum class BrowserDirection(@IdRes val fragmentId: Int) {
     FromAbout(R.id.aboutFragment),
     FromTrackingProtection(R.id.trackingProtectionFragment),
     FromHttpsOnlyMode(R.id.httpsOnlyFragment),
-    FromCookieBanner(R.id.cookieBannerFragment),
     FromTrackingProtectionDialog(R.id.trackingProtectionPanelDialogFragment),
     FromSavedLoginsFragment(R.id.savedLoginsFragment),
     FromAddNewDeviceFragment(R.id.addNewDeviceFragment),
-    FromAddSearchEngineFragment(R.id.addSearchEngineFragment),
+    FromSearchEngineFragment(R.id.searchEngineFragment),
     FromSaveSearchEngineFragment(R.id.saveSearchEngineFragment),
     FromAddonDetailsFragment(R.id.addonDetailsFragment),
     FromStudiesFragment(R.id.studiesFragment),
@@ -40,4 +39,5 @@ enum class BrowserDirection(@IdRes val fragmentId: Int) {
     FromRecentlyClosed(R.id.recentlyClosedFragment),
     FromReviewQualityCheck(R.id.reviewQualityCheckFragment),
     FromAddonsManagementFragment(R.id.addonsManagementFragment),
+    FromTranslationsDialogFragment(R.id.translationsDialogFragment),
 }

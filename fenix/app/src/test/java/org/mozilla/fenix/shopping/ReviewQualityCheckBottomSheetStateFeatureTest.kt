@@ -7,10 +7,9 @@ package org.mozilla.fenix.shopping
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.shopping.store.BottomSheetViewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
@@ -21,13 +20,13 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
     val coroutinesTestRule = MainCoroutineRule()
 
     @Test
-    fun `WHEN store state changes to not opted in from any other state THEN callback is not invoked`() {
-        val store = ReviewQualityCheckStore(emptyList())
-        var isInvoked = false
+    fun `WHEN store state changes to not opted in from any other state THEN callback is invoked with half state`() {
+        val store = ReviewQualityCheckStore(middleware = emptyList())
+        var updatedState: BottomSheetViewState? = null
         val tested = ReviewQualityCheckBottomSheetStateFeature(
             store = store,
-            onRequestStateExpanded = {
-                isInvoked = true
+            onRequestStateUpdate = {
+                updatedState = it
             },
         )
 
@@ -35,22 +34,26 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
         store.dispatch(
             ReviewQualityCheckAction.OptInCompleted(
                 isProductRecommendationsEnabled = true,
+                productRecommendationsExposure = true,
                 productVendor = ReviewQualityCheckState.ProductVendor.WALMART,
+                isHighlightsExpanded = false,
+                isInfoExpanded = false,
+                isSettingsExpanded = false,
             ),
         ).joinBlocking()
         store.dispatch(ReviewQualityCheckAction.OptOutCompleted(emptyList())).joinBlocking()
 
-        assertFalse(isInvoked)
+        assertEquals(BottomSheetViewState.HALF_VIEW, updatedState)
     }
 
     @Test
-    fun `WHEN store state changes to not opted in from initial state THEN callback is invoked`() {
-        val store = ReviewQualityCheckStore(emptyList())
-        var isInvoked = false
+    fun `WHEN store state changes to not opted in from initial state THEN callback is invoked with full state`() {
+        val store = ReviewQualityCheckStore(middleware = emptyList())
+        var updatedState: BottomSheetViewState? = null
         val tested = ReviewQualityCheckBottomSheetStateFeature(
             store = store,
-            onRequestStateExpanded = {
-                isInvoked = true
+            onRequestStateUpdate = {
+                updatedState = it
             },
         )
         assertEquals(ReviewQualityCheckState.Initial, store.state)
@@ -58,6 +61,6 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
         tested.start()
         store.dispatch(ReviewQualityCheckAction.OptOutCompleted(emptyList())).joinBlocking()
 
-        assertTrue(isInvoked)
+        assertEquals(BottomSheetViewState.FULL_VIEW, updatedState)
     }
 }

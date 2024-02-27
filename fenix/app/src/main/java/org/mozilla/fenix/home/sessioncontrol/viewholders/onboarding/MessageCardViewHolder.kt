@@ -29,7 +29,7 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
- * @property interactor [SessionControlInteractor] which will have delegated to all user
+ * @param interactor [SessionControlInteractor] which will have delegated to all user
  * interactions.
  */
 class MessageCardViewHolder(
@@ -77,9 +77,9 @@ class MessageCardViewHolder(
         )
 
         MessageCard(
-            messageText = message.data.text,
-            titleText = message.data.title,
-            buttonText = message.data.buttonLabel,
+            messageText = message.text,
+            titleText = message.title,
+            buttonText = message.buttonLabel,
             messageColors = messageCardColors,
             onClick = { interactor.onMessageClicked(message) },
             onCloseButtonClick = { interactor.onMessageClosedClicked(message) },

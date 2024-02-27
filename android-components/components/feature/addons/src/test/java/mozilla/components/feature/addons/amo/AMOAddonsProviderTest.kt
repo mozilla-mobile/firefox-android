@@ -26,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import java.io.File
 import java.io.IOException
@@ -62,7 +63,7 @@ class AMOAddonsProviderTest {
         assertEquals("", addon.createdAt)
         assertEquals("", addon.updatedAt)
         assertEquals("", addon.iconUrl)
-        assertEquals("", addon.siteUrl)
+        assertEquals("", addon.homepageUrl)
         assertEquals("", addon.version)
         assertEquals("", addon.downloadUrl)
         assertTrue(addon.permissions.isEmpty())
@@ -70,6 +71,7 @@ class AMOAddonsProviderTest {
         assertTrue(addon.translatableSummary.isEmpty())
         assertEquals("", addon.translatableDescription.getValue("ca"))
         assertEquals(Addon.DEFAULT_LOCALE, addon.defaultLocale)
+        assertEquals("", addon.detailUrl)
 
         // Author
         assertNull(addon.author)
@@ -78,6 +80,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "7e8d6dc651b54ab385fb8791bf9dac/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -105,7 +108,7 @@ class AMOAddonsProviderTest {
         )
         assertEquals(
             "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/",
-            addon.siteUrl,
+            addon.homepageUrl,
         )
         assertEquals(
             "https://addons.mozilla.org/firefox/downloads/file/3719054/ublock_origin-1.33.2-an+fx.xpi",
@@ -138,13 +141,14 @@ class AMOAddonsProviderTest {
 
         // Ratings
         assertEquals(4.7003F, addon.rating!!.average, 0.7003F)
-        assertEquals(13324, addon.rating!!.reviews)
+        assertEquals(4433, addon.rating!!.reviews)
 
         verify(client).fetch(
             Request(
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "7e8d6dc651b54ab385fb8791bf9dac/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY_DESC.value}&lang=en",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -162,6 +166,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "7e8d6dc651b54ab385fb8791bf9dac/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(5, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
         Unit
@@ -236,7 +241,8 @@ class AMOAddonsProviderTest {
         whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = false)).thenReturn(Date().time)
         whenever(provider.cacheExpired(testContext, null, useFallbackFile = false)).thenReturn(false)
         whenever(provider.readFromDiskCache(null, useFallbackFile = false)).thenReturn(cachedAddons)
-        assertSame(cachedAddons, provider.getFeaturedAddons(allowCache = true))
+        whenever(provider.readFromDiskCache(null, useFallbackFile = false)).thenReturn(cachedAddons)
+        assertEquals(cachedAddons, provider.getFeaturedAddons(allowCache = true))
     }
 
     @Test
@@ -358,7 +364,7 @@ class AMOAddonsProviderTest {
     }
 
     @Test
-    fun `getAddonIconBitmap - with a successful status will return a bitmap`() = runTest {
+    fun `loadIconAsync - with a successful status will return a bitmap`() = runTest {
         val mockedClient = mock<Client>()
         val mockedResponse = mock<Response>()
         val stream: InputStream = javaClass.getResourceAsStream("/png/mozac.png")!!.buffered()
@@ -369,33 +375,33 @@ class AMOAddonsProviderTest {
         whenever(mockedClient.fetch(any())).thenReturn(mockedResponse)
 
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
-        val addon = Addon(
-            id = "id",
-            downloadUrl = "https://example.com",
-            version = "version",
-            iconUrl = "https://example.com/image.png",
-            createdAt = "0",
-            updatedAt = "0",
-        )
 
-        val bitmap = provider.getAddonIconBitmap(addon)
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
         assertTrue(bitmap is Bitmap)
     }
 
     @Test
-    fun `getAddonIconBitmap - with an unsuccessful status will return null`() = runTest {
+    fun `loadIconAsync - will return bitmap from the cache when available`() = runTest {
+        val mockedClient = mock<Client>()
+        val expectedIcon = mock<Bitmap>()
+
+        val provider = AMOAddonsProvider(testContext, client = mockedClient)
+
+        provider.iconsCache["id"] = expectedIcon
+
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
+
+        verify(mockedClient, times(0)).fetch(any())
+        assertEquals(expectedIcon, bitmap)
+        assertTrue(bitmap is Bitmap)
+    }
+
+    @Test
+    fun `loadIconAsync - with an unsuccessful status will return null`() = runTest {
         val mockedClient = prepareClient(status = 500)
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
-        val addon = Addon(
-            id = "id",
-            downloadUrl = "https://example.com",
-            version = "version",
-            iconUrl = "https://example.com/image.png",
-            createdAt = "0",
-            updatedAt = "0",
-        )
 
-        val bitmap = provider.getAddonIconBitmap(addon)
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
         assertNull(bitmap)
     }
 
@@ -416,6 +422,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -441,6 +448,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -458,6 +466,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -475,6 +484,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.NAME.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -492,6 +502,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.NAME_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -509,6 +520,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.DATE_ADDED.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -526,6 +538,7 @@ class AMOAddonsProviderTest {
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
                     "$collectionName/addons/?page_size=$PAGE_SIZE&sort=${SortOption.DATE_ADDED_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -552,6 +565,7 @@ class AMOAddonsProviderTest {
                     "?page_size=$PAGE_SIZE" +
                     "&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -578,6 +592,7 @@ class AMOAddonsProviderTest {
                     "?page_size=$PAGE_SIZE" +
                     "&sort=${SortOption.POPULARITY_DESC.value}",
                 readTimeout = Pair(DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+                conservative = true,
             ),
         )
 
@@ -613,7 +628,7 @@ class AMOAddonsProviderTest {
         )
         assertEquals(
             "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/",
-            addon.siteUrl,
+            addon.homepageUrl,
         )
         assertEquals(
             "https://addons.mozilla.org/firefox/downloads/file/4141256/ublock_origin-1.51.0.xpi",
@@ -642,10 +657,14 @@ class AMOAddonsProviderTest {
         )
         // Ratings
         assertEquals(4.7825F, addon.rating!!.average, 0.7825F)
-        assertEquals(15799, addon.rating!!.reviews)
+        assertEquals(4101, addon.rating!!.reviews)
         assertEquals(
             "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/reviews/",
             addon.ratingUrl,
+        )
+        assertEquals(
+            "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/",
+            addon.detailUrl,
         )
     }
 

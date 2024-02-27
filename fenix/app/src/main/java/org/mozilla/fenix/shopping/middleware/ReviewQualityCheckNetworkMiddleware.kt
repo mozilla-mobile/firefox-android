@@ -11,6 +11,7 @@ import mozilla.components.lib.state.Store
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.FetchProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.RetryProductAnalysis
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.UpdateRecommendedProduct
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
@@ -19,9 +20,9 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 /**
  * Middleware that handles network requests for the review quality check feature.
  *
- * @property reviewQualityCheckService The service that handles the network requests.
- * @property networkChecker The [NetworkChecker] instance to check the network status.
- * @property scope The [CoroutineScope] that will be used to launch coroutines.
+ * @param reviewQualityCheckService The service that handles the network requests.
+ * @param networkChecker The [NetworkChecker] instance to check the network status.
+ * @param scope The [CoroutineScope] that will be used to launch coroutines.
  */
 class ReviewQualityCheckNetworkMiddleware(
     private val reviewQualityCheckService: ReviewQualityCheckService,
@@ -55,65 +56,130 @@ class ReviewQualityCheckNetworkMiddleware(
         scope.launch {
             when (action) {
                 FetchProductAnalysis, RetryProductAnalysis -> {
-                    val productReviewState = fetchAnalysis()
-                    store.updateProductReviewState(productReviewState)
+                    store.onFetch()
                 }
 
-                ReviewQualityCheckAction.ReanalyzeProduct, ReviewQualityCheckAction.AnalyzeProduct -> {
-                    val reanalysis = reviewQualityCheckService.reanalyzeProduct()
+                ReviewQualityCheckAction.ReanalyzeProduct,
+                ReviewQualityCheckAction.AnalyzeProduct,
+                ReviewQualityCheckAction.RestoreReanalysis,
+                -> {
+                    store.onReanalyze()
+                }
 
-                    if (reanalysis == null) {
-                        store.updateProductReviewState(ProductReviewState.Error.GenericError)
-                        return@launch
+                ReviewQualityCheckAction.ReportProductBackInStock -> {
+                    val status = reviewQualityCheckService.reportBackInStock()
+                    if (status == ReportBackInStockStatusDto.NOT_DELETED) {
+                        store.onFetch()
                     }
+                }
 
-                    val status = pollForAnalysisStatus()
-
-                    if (status == null ||
-                        status == AnalysisStatusDto.PENDING ||
-                        status == AnalysisStatusDto.IN_PROGRESS
+                ReviewQualityCheckAction.ToggleProductRecommendation -> {
+                    val state = store.state
+                    if (state is ReviewQualityCheckState.OptedIn &&
+                        state.productReviewState is ProductReviewState.AnalysisPresent &&
+                        state.productRecommendationsPreference == true
                     ) {
-                        // poll failed, reset to previous state
-                        val state = store.state
-                        if (state is ReviewQualityCheckState.OptedIn) {
-                            if (state.productReviewState is ProductReviewState.NoAnalysisPresent) {
-                                store.updateProductReviewState(ProductReviewState.NoAnalysisPresent())
-                            } else if (state.productReviewState is ProductReviewState.AnalysisPresent) {
-                                store.updateProductReviewState(
-                                    state.productReviewState.copy(
-                                        analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
-                                    ),
-                                )
-                            }
-                        }
-                    } else {
-                        // poll succeeded, update state
-                        store.updateProductReviewState(status.toProductReviewState())
+                        store.updateRecommendedProductState()
                     }
                 }
             }
         }
     }
 
-    private suspend fun fetchAnalysis(): ProductReviewState =
-        reviewQualityCheckService.fetchProductReview().toProductReviewState()
+    private suspend fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.onFetch() {
+        val productAnalysis = reviewQualityCheckService.fetchProductReview()
+        val productReviewState = productAnalysis.toProductReviewState()
 
-    private suspend fun pollForAnalysisStatus(): AnalysisStatusDto? =
-        retry(
-            predicate = { it == AnalysisStatusDto.PENDING || it == AnalysisStatusDto.IN_PROGRESS },
-            block = { reviewQualityCheckService.analysisStatus() },
-        )
-
-    private suspend fun AnalysisStatusDto.toProductReviewState(): ProductReviewState =
-        when (this) {
-            AnalysisStatusDto.COMPLETED -> fetchAnalysis()
-            AnalysisStatusDto.NOT_ANALYZABLE -> ProductReviewState.Error.UnsupportedProductTypeError
-            else -> ProductReviewState.Error.GenericError
+        // Here the ProductReviewState should only updated after the analysis status API
+        // returns a result. This makes sure that the UI doesn't show the reanalyse
+        // button in case the product analysis is already in progress on the backend.
+        if (productReviewState.isAnalysisPresentOrNoAnalysisPresent() &&
+            reviewQualityCheckService.analysisStatus()?.status.isPendingOrInProgress()
+        ) {
+            updateProductReviewState(productReviewState, true)
+            dispatch(ReviewQualityCheckAction.RestoreReanalysis)
+        } else {
+            updateProductReviewState(productReviewState)
         }
+
+        if (productReviewState is ProductReviewState.AnalysisPresent) {
+            updateRecommendedProductState()
+        }
+    }
+
+    private suspend fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.onReanalyze() {
+        val reanalysis = reviewQualityCheckService.reanalyzeProduct()
+
+        if (reanalysis == null) {
+            updateProductReviewState(ProductReviewState.Error.GenericError)
+            return
+        }
+
+        val statusProgress = pollForAnalysisStatus {
+            dispatch(ReviewQualityCheckAction.UpdateAnalysisProgress(it))
+        }
+
+        if (statusProgress == null ||
+            statusProgress.status == AnalysisStatusDto.PENDING ||
+            statusProgress.status == AnalysisStatusDto.IN_PROGRESS
+        ) {
+            // poll failed, reset to previous state
+            val state = this.state
+            if (state is ReviewQualityCheckState.OptedIn) {
+                if (state.productReviewState is ProductReviewState.NoAnalysisPresent) {
+                    updateProductReviewState(ProductReviewState.NoAnalysisPresent())
+                } else if (state.productReviewState is ProductReviewState.AnalysisPresent) {
+                    updateProductReviewState(
+                        state.productReviewState.copy(analysisStatus = AnalysisStatus.NeedsAnalysis),
+                    )
+                }
+            }
+        } else {
+            // poll succeeded, update state
+            val productAnalysis = reviewQualityCheckService.fetchProductReview()
+            val productReviewState = productAnalysis.toProductReviewState()
+            updateProductReviewState(productReviewState)
+        }
+    }
+
+    private suspend fun pollForAnalysisStatus(
+        onEachSuccessfulPoll: (progress: Double) -> Unit,
+    ): AnalysisStatusProgressDto? =
+        retry(
+            predicate = { it?.status.isPendingOrInProgress() },
+            block = {
+                reviewQualityCheckService.analysisStatus()?.also {
+                    onEachSuccessfulPoll(it.progress)
+                }
+            },
+        )
 
     private fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.updateProductReviewState(
         productReviewState: ProductReviewState,
+        restoreAnalysis: Boolean = false,
     ) {
-        dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState))
+        dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState, restoreAnalysis))
     }
+
+    private fun ProductReviewState.isAnalysisPresentOrNoAnalysisPresent() =
+        this is ProductReviewState.AnalysisPresent || this is ProductReviewState.NoAnalysisPresent
+
+    private suspend fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.updateRecommendedProductState() {
+        val currentState = state
+        if (currentState is ReviewQualityCheckState.OptedIn &&
+            (currentState.productRecommendationsExposure || (currentState.productRecommendationsPreference == true))
+        ) {
+            val productRecommendation = reviewQualityCheckService.productRecommendation(
+                currentState.productRecommendationsPreference ?: false,
+            )
+            if (currentState.productRecommendationsPreference == true) {
+                productRecommendation.toRecommendedProductState().also {
+                    dispatch(UpdateRecommendedProduct(it))
+                }
+            }
+        }
+    }
+
+    private fun AnalysisStatusDto?.isPendingOrInProgress(): Boolean =
+        this == AnalysisStatusDto.PENDING || this == AnalysisStatusDto.IN_PROGRESS
 }

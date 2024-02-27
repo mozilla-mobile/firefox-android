@@ -6,19 +6,24 @@ package org.mozilla.fenix.settings
 
 import android.os.Bundle
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.GleanMetrics.DebugDrawer as DebugDrawerMetrics
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
 
@@ -28,6 +33,11 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        val debugSettingsRepository = DefaultDebugSettingsRepository(
+            context = requireContext(),
+            writeScope = lifecycleScope,
+        )
+
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
         requirePreference<SwitchPreference>(R.string.pref_key_allow_third_party_root_certs).apply {
@@ -48,6 +58,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
+        requirePreference<SwitchPreference>(R.string.pref_key_toolbar_use_redesign_incomplete).apply {
+            isVisible = Config.channel.isDebug
+            isChecked = context.settings().enableIncompleteToolbarRedesign
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
         requirePreference<SwitchPreference>(R.string.pref_key_enable_tabs_tray_to_compose).apply {
             isVisible = true
             isChecked = context.settings().enableTabsTrayToCompose
@@ -57,12 +73,6 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         requirePreference<SwitchPreference>(R.string.pref_key_enable_compose_top_sites).apply {
             isVisible = Config.channel.isNightlyOrDebug
             isChecked = context.settings().enableComposeTopSites
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_shopping_experience).apply {
-            isVisible = Config.channel.isNightlyOrDebug
-            isChecked = context.settings().enableShoppingExperience
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
@@ -78,7 +88,8 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                     val newBooleanValue = newValue as? Boolean ?: return false
-                    val ingestionScheduler = requireContext().components.fxSuggest.ingestionScheduler
+                    val ingestionScheduler =
+                        requireContext().components.fxSuggest.ingestionScheduler
                     if (newBooleanValue) {
                         ingestionScheduler.startPeriodicIngestion()
                     } else {
@@ -92,6 +103,27 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        requirePreference<SwitchPreference>(R.string.pref_key_should_enable_felt_privacy).apply {
+            isVisible = true
+            isChecked = context.settings().feltPrivateBrowsingEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        lifecycleScope.launch {
+            requirePreference<SwitchPreference>(R.string.pref_key_enable_debug_drawer).apply {
+                isVisible = true
+                isChecked = debugSettingsRepository.debugDrawerEnabled.first()
+                onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _, newValue ->
+                        debugSettingsRepository.setDebugDrawerEnabled(enabled = newValue as Boolean)
+                        DebugDrawerMetrics.debugDrawerEnabled.set(newValue)
+                        true
+                    }
+            }
+        }
+
+        setupTabStripPreference()
+
         // for performance reasons, this is only available in Nightly or Debug builds
         requirePreference<EditTextPreference>(R.string.pref_key_custom_glean_server_url).apply {
             isVisible = Config.channel.isNightlyOrDebug && BuildConfig.GLEAN_CUSTOM_URL.isNullOrEmpty()
@@ -99,6 +131,20 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
 
         requirePreference<Preference>(R.string.pref_key_custom_sponsored_stories_parameters).apply {
             isVisible = Config.channel.isNightlyOrDebug
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_remote_server_prod).apply {
+            isVisible = true
+            isChecked = context.settings().useProductionRemoteSettingsServer
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupTabStripPreference() {
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_tab_strip).apply {
+            isVisible = Config.channel.isNightlyOrDebug && context.resources.getBoolean(R.bool.tablet)
+            isChecked = context.settings().isTabStripEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }
 

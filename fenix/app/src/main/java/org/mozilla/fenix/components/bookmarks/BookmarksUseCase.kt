@@ -29,13 +29,18 @@ class BookmarksUseCase(
          * one with the identical [url] already exists.
          */
         @WorkerThread
-        suspend operator fun invoke(url: String, title: String, position: UInt? = null): Boolean {
+        suspend operator fun invoke(
+            url: String,
+            title: String,
+            position: UInt? = null,
+            parentGuid: String? = null,
+        ): Boolean {
             return try {
                 val canAdd = storage.getBookmarksWithUrl(url).firstOrNull { it.url == url } == null
 
                 if (canAdd) {
                     storage.addItem(
-                        BookmarkRoot.Mobile.id,
+                        parentGuid ?: BookmarkRoot.Mobile.id,
                         url = url,
                         title = title,
                         position = position,
@@ -51,8 +56,8 @@ class BookmarksUseCase(
     /**
      * Uses for retrieving recently added bookmarks.
      *
-     * @property bookmarksStorage [BookmarksStorage] to retrieve the bookmark data.
-     * @property historyStorage Optional [HistoryStorage] to retrieve the preview image of a visited
+     * @param bookmarksStorage [BookmarksStorage] to retrieve the bookmark data.
+     * @param historyStorage Optional [HistoryStorage] to retrieve the preview image of a visited
      * page associated with a bookmark.
      */
     class RetrieveRecentBookmarksUseCase internal constructor(

@@ -392,7 +392,7 @@ data class Metadata(
      * Url of extension's homepage:
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/homepage_url
      */
-    val homePageUrl: String?,
+    val homepageUrl: String?,
 
     /**
      * Options page:
@@ -465,6 +465,17 @@ data class Metadata(
      * such as web-ext, and won't be retained when the application exits.
      */
     val temporary: Boolean = false,
+
+    /**
+     * The URL to the detail page of this extension.
+     */
+    val detailUrl: String?,
+
+    /**
+     * Indicates how this extension works with private browsing windows.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/incognito
+     */
+    val incognito: Incognito,
 )
 
 /**
@@ -509,6 +520,41 @@ class DisabledFlags internal constructor(val value: Int) {
      * @param flag the flag to check.
      */
     fun contains(flag: Int) = (value and flag) != 0
+}
+
+/**
+ * Incognito values that control how an extension works with private browsing windows.
+ */
+enum class Incognito {
+    /**
+     * The extension will see events from private and non-private windows and tabs.
+     */
+    SPANNING,
+
+    /**
+     * The extension will be split between private and non-private windows.
+     */
+    SPLIT,
+
+    /**
+     * Private tabs and windows are invisible to the extension.
+     */
+    NOT_ALLOWED,
+
+    ;
+
+    companion object {
+        /**
+         * Safely returns an Incognito value based on the input nullable string.
+         */
+        fun fromString(value: String?): Incognito {
+            return when (value) {
+                "split" -> SPLIT
+                "not_allowed" -> NOT_ALLOWED
+                else -> SPANNING
+            }
+        }
+    }
 }
 
 /**
@@ -598,5 +644,11 @@ sealed class WebExtensionInstallException(
      * The extension install failed with an unknown error.
      */
     class Unknown(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+
+    /**
+     * The extension install failed because the extension type is not supported.
+     */
+    class UnsupportedAddonType(override val extensionName: String? = null, throwable: Throwable) :
         WebExtensionInstallException(throwable = throwable)
 }

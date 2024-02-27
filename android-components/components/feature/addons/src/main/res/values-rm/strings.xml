@@ -22,6 +22,8 @@
      then we will show another collapsed entry saying "Access your data on 2 other domains". This entry it's for the plural case, when the add-on is accessing more than one extra domain.
      %1$d will be replaced by an integer indicating the number of additional domains for which this web extension is requesting permission. -->
     <string name="mozac_feature_addons_permissions_extra_domains_description_plural" tools:ignore="PluralsCandidate">Acceder a tias datas per %1$d autras domenas</string>
+    <!-- Content description for a permission item, for an installed add-on details page. %1$s will be replaced with the permission text name, %2$d will be replaced with the permission position in the list and %3$d will be replaced with the total number of permissions in the list.Taking as an example "Read and modify privacy settings" the whole text will read Read and modify privacy settings, 2 of 6. -->
+    <string name="mozac_feature_addons_permissions_content_description_item">%1$s, %2$d da %3$d</string>
     <!-- Description for tabs add-on permission. -->
     <string name="mozac_feature_addons_permissions_tabs_description">Acceder als tabs dal navigatur</string>
     <!-- Description for unlimited_storage permission. -->
@@ -72,8 +74,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Extender ils utensils per sviluppaders per acceder a tias datas en ils tabs averts</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Versiun</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Autur(a)</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Auturs</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">Auturs</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Ultima actualisaziun</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +86,8 @@
     <string name="mozac_feature_addons_learn_more">Vegnir a savair dapli davart permissiuns</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Valitaziun</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Dapli davart quest supplement</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Parameters</string>
     <!-- Indicates the add-on is enabled. -->
@@ -110,14 +116,24 @@
     <string name="mozac_feature_addons_details">Detagls</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">Autorisaziuns</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">Allontanar</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">Rapportar</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Agiuntar %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s dumonda ulteriuras autorisaziuns.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Basegna l\'autorisaziun per:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">L\'extensiun vul:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Agiuntar</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Permetter</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Refusar</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Interrumper</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +148,14 @@
     <string name="mozac_feature_addons_addons">Supplements</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Administraziun da supplements</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Ils supplements èn deactivads temporarmain</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">In u plirs supplements na funcziunan betg pli e rendan il sistem instabel.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Reaviar ils supplements</string>
+    <!-- Button in the add-ons manager that opens AMO in a tab -->
+    <string name="mozac_feature_addons_find_more_addons_button_text">Chattar ulteriurs supplements</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
     <string name="mozac_feature_addons_updater_notification_allow_button">Permetter</string>
     <!-- The label of the deny button on a notification, this will be shown to the user when an add-on needs new permissions. Indicates the user denies the new permissions and prevents the add-on from be updated-->
@@ -182,8 +206,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">Impussibel dad installar %1$s pervia dad incumpatibilitad cun %2$s %3$s.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">Impussibel dad installar %1$s perquai che la ristga è gronda ch\'i dat problems da stabilitad u da segirezza.</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">Impussibel dad installar %1$s perquai che la ristga è gronda ch\'i dat problems da stabilitad u da segirezza</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Activà cun success %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->
@@ -226,4 +248,12 @@
     <string name="mozac_feature_addons_installed_dialog_description">Avrir en il menu</string>
     <!-- Confirmation button text for the dialog when add-on installation is completed. -->
     <string name="mozac_feature_addons_installed_dialog_okay_button">Ok, chapì</string>
+    <!-- "Learn more" link displayed below an add-on status message. -->
+    <string name="mozac_feature_addons_status_learn_more">Ulteriuras infurmaziuns</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_blocklisted">%1$s è vegnì deactivà pervia da problems da segirezza u da stabilitad.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on hasn't been signed correctly. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_unsigned">%1$s n’ha betg pudì vegnir verifitgà sco segir ed è vegnì deactivà.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on isn't compatible with the application version. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
+    <string name="mozac_feature_addons_status_incompatible">%1$s n\'è betg cumpatibel cun tia versiun da %2$s (versiun %3$s).</string>
 </resources>

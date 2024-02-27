@@ -39,9 +39,9 @@ interface BrowserToolbarInteractor {
     fun onShoppingCfrActionClicked()
 
     /**
-     * Updates the settings for the shopping CFR. Called when the user dismisses the shopping cfr action.
+     * Updates the settings for the shopping CFR. Called when the user is shown the CFR.
      */
-    fun onShoppingCfrDismiss()
+    fun onShoppingCfrDisplayed()
 
     /**
      * Opens the translation bottom sheet. Called when the user interacts with the translation
@@ -53,9 +53,9 @@ interface BrowserToolbarInteractor {
 /**
  * The default implementation of [BrowserToolbarInteractor].
  *
- * @property browserToolbarController [BrowserToolbarController] to which user actions can be
+ * @param browserToolbarController [BrowserToolbarController] to which user actions can be
  * delegated for all interactions on the browser toolbar.
- * @property menuController [BrowserToolbarMenuController] to which user actions can be delegated
+ * @param menuController [BrowserToolbarMenuController] to which user actions can be delegated
  * for all interactions on the the browser toolbar menu.
  */
 class DefaultBrowserToolbarInteractor(
@@ -107,8 +107,8 @@ class DefaultBrowserToolbarInteractor(
         browserToolbarController.handleShoppingCfrActionClick()
     }
 
-    override fun onShoppingCfrDismiss() {
-        browserToolbarController.handleShoppingCfrDismiss()
+    override fun onShoppingCfrDisplayed() {
+        browserToolbarController.handleShoppingCfrDisplayed()
     }
 
     override fun onTranslationsButtonClicked() {
