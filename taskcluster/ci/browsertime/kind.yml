@@ -45,7 +45,7 @@ task-defaults:
             - android-hw-p6-13-0-android-aarch64-shippable-qr/opt
             - android-hw-s21-13-0-android-aarch64-shippable-qr/opt
     worker-type:
-        by-platform:
+        by-platforms:
             - android-hw-a51-11-0-aarch64-shippable-qr/opt: t-bitbar-gw-perf-a51
             - android-hw-p6-13-0-android-aarch64-shippable-qr/opt: t-bitbar-gw-perf-p6
             - android-hw-s21-13-0-android-aarch64-shippable-qr/opt: t-bitbar-gw-perf-s21
