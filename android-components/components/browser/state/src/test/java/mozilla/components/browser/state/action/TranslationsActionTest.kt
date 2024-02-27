@@ -80,6 +80,7 @@ class TranslationsActionTest {
     fun `WHEN a TranslateStateChangeAction is dispatched THEN the translation status updates accordingly`() {
         assertNull(tabState().translationsState.translationEngineState)
         assertFalse(tabState().translationsState.isTranslated)
+        assertFalse(tabState().translationsState.isExpectedTranslate)
 
         val translatedEngineState = TranslationEngineState(
             detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = true, userPreferredLangTag = "en"),
@@ -94,6 +95,7 @@ class TranslationsActionTest {
         // Translated state
         assertEquals(translatedEngineState, tabState().translationsState.translationEngineState)
         assertTrue(tabState().translationsState.isTranslated)
+        assertFalse(tabState().translationsState.isExpectedTranslate)
 
         val nonTranslatedEngineState = TranslationEngineState(
             detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = true, userPreferredLangTag = "en"),
@@ -108,6 +110,46 @@ class TranslationsActionTest {
         // Non-translated state
         assertEquals(nonTranslatedEngineState, tabState().translationsState.translationEngineState)
         assertFalse(tabState().translationsState.isTranslated)
+        assertFalse(tabState().translationsState.isExpectedTranslate)
+    }
+
+    @Test
+    fun `WHEN a TranslateStateChangeAction is dispatched THEN the isExpectedTranslate status updates accordingly`() {
+        // Initial State
+        assertNull(tabState().translationsState.translationEngineState)
+
+        // Sending an initial request to set state; however, the engine hasn't decided if it is an
+        // expected state
+        var translatedEngineState = TranslationEngineState(
+            detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = true, userPreferredLangTag = "en"),
+            error = null,
+            isEngineReady = true,
+            requestedTranslationPair = TranslationPair(fromLanguage = "es", toLanguage = "en"),
+        )
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertFalse(tabState().translationsState.isExpectedTranslate)
+
+        // Engine is sending a translation expected action
+        store.dispatch(TranslationsAction.TranslateExpectedAction(tabId = tab.id))
+            .joinBlocking()
+
+        // Initial expected translation state
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertTrue(tabState().translationsState.isExpectedTranslate)
+
+        // Not expected translation state, because it is no longer supported
+        translatedEngineState = TranslationEngineState(
+            detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = false, userPreferredLangTag = "en"),
+            error = null,
+            isEngineReady = true,
+            requestedTranslationPair = TranslationPair(fromLanguage = "es", toLanguage = "en"),
+        )
+
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertFalse(tabState().translationsState.isExpectedTranslate)
     }
 
     @Test
@@ -471,6 +513,9 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_OFFER_POPUP THEN set page settings for alwaysOfferPopup `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysOfferPopup)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -486,6 +531,10 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_TRANSLATE_LANGUAGE THEN set page settings for alwaysTranslateLanguage `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -502,6 +551,10 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_NEVER_TRANSLATE_LANGUAGE THEN set page settings for alwaysTranslateLanguage `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -518,6 +571,9 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_NEVER_TRANSLATE_SITE THEN set page settings for neverTranslateSite`() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -532,7 +588,59 @@ class TranslationsActionTest {
     }
 
     @Test
+    fun `WHEN an UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_TRANSLATE_LANGUAGE AND UPDATE_ALWAYS_TRANSLATE_LANGUAGE THEN must be opposites of each other or both must be false `() {
+        // Initial state
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
+        // Action started to update the always offer setting to true
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_ALWAYS_TRANSLATE_LANGUAGE,
+                setting = true,
+            ),
+        ).joinBlocking()
+
+        // When always is true, never should be false
+        assertTrue(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertFalse(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+
+        // Action started to update the never offer setting to true
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_LANGUAGE,
+                setting = true,
+            ),
+        ).joinBlocking()
+
+        // When never is true, always should be false
+        assertFalse(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertTrue(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+
+        // Action started to update the never language setting to false
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_LANGUAGE,
+                setting = false,
+            ),
+        ).joinBlocking()
+
+        // When never is false, always may also be false
+        assertFalse(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertFalse(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+    }
+
+    @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for each option THEN the page setting is consistent`() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysOfferPopup)
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateSite)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
