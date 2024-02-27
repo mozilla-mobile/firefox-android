@@ -40,13 +40,14 @@ task-defaults:
     treeherder:
         kind: test
         tier: 2
-        platform:
-            - android-hw-a51-11-0-aarch64-shippable-qr/opt,
-            - android-hw-p6-13-0-android-aarch64-shippable-qr/opt,
-            - android-hw-s21-13-0-android-aarch64-shippable-qr/opt
+        abi:
+            by-platform:
+                - android-hw-a51-11-0-aarch64-shippable-qr/opt: arm64-v8a
+                - android-hw-p6-13-0-android-aarch64-shippable-qr/opt: arm64-v8a
+                - android-hw-s21-13-0-android-aarch64-shippable-qr/opt: arm64-v8a
     worker-type:
-        - t-bitbar-gw-perf-a51,
-        - t-bitbar-gw-perf-p6,
+        - t-bitbar-gw-perf-a51
+        - t-bitbar-gw-perf-p6
         - t-bitbar-gw-perf-s21
     worker:
         max-run-time: 3600
