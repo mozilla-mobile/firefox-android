@@ -8,6 +8,7 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
 import androidx.core.view.isVisible
 import io.mockk.mockk
 import io.mockk.verify
@@ -66,9 +67,17 @@ class AddonDetailsBindingDelegateTest {
                 ),
             ),
         )
-        assertEquals("4.30/5", binding.ratingView.contentDescription)
         assertEquals(4.5f, binding.ratingView.rating)
         assertEquals("100", binding.reviewCount.text)
+
+        val ratingContentDescription = testContext.getString(R.string.mozac_feature_addons_rating_content_description_2)
+        var formattedRatting = String.format(ratingContentDescription, 4.3f)
+        assertEquals(formattedRatting, binding.ratingLabel.contentDescription)
+        assertEquals(IMPORTANT_FOR_ACCESSIBILITY_NO, binding.ratingView.importantForAccessibility)
+
+        val reviewContentDescription = testContext.getString(R.string.mozac_feature_addons_user_rating_count_2)
+        formattedRatting = String.format(reviewContentDescription, 100)
+        assertEquals(formattedRatting, binding.reviewCount.contentDescription)
     }
 
     @Test
@@ -79,7 +88,7 @@ class AddonDetailsBindingDelegateTest {
                 ratingUrl = "https://example.org/",
             ),
         )
-        assertEquals("100", binding.reviewCount.text)
+        assertEquals("100", binding.reviewCount.text.toString())
 
         binding.reviewCount.performClick()
 
@@ -104,6 +113,9 @@ class AddonDetailsBindingDelegateTest {
         detailsBindingDelegate.bind(baseAddon)
 
         assertEquals("Nov 23, 2020", binding.lastUpdatedText.text)
+        val expectedContentDescription = binding.lastUpdatedLabel.text.toString() + " " + "Nov 23, 2020"
+        assertEquals(expectedContentDescription, binding.lastUpdatedLabel.contentDescription)
+        assertEquals(IMPORTANT_FOR_ACCESSIBILITY_NO, binding.lastUpdatedText.importantForAccessibility)
     }
 
     @Test
@@ -130,6 +142,9 @@ class AddonDetailsBindingDelegateTest {
         assertEquals("2.0.0", binding.versionText.text)
         binding.versionText.performLongClick()
         verify { interactor.showUpdaterDialog(addon2) }
+        val expectedContentDescription = binding.versionLabel.text.toString() + " 2.0.0"
+        assertEquals(expectedContentDescription, binding.versionLabel.contentDescription)
+        assertEquals(IMPORTANT_FOR_ACCESSIBILITY_NO, binding.versionText.importantForAccessibility)
     }
 
     @Test
@@ -140,6 +155,9 @@ class AddonDetailsBindingDelegateTest {
 
         assertEquals("Sarah Jane", binding.authorText.text)
         assertNotEquals(testContext.getColorFromAttr(R.attr.textAccent), binding.authorText.currentTextColor)
+        val expectedContentDescription = binding.authorLabel.text.toString() + " Sarah Jane"
+        assertEquals(expectedContentDescription, binding.authorLabel.contentDescription)
+        assertEquals(IMPORTANT_FOR_ACCESSIBILITY_NO, binding.authorText.importantForAccessibility)
     }
 
     @Test
@@ -148,7 +166,7 @@ class AddonDetailsBindingDelegateTest {
             baseAddon.copy(author = Addon.Author(name = "Sarah Jane", url = "https://example.org/")),
         )
 
-        assertEquals("Sarah Jane", binding.authorText.text)
+        assertEquals("Sarah Jane", binding.authorText.text.toString())
         assertEquals(testContext.getColorFromAttr(R.attr.textAccent), binding.authorText.currentTextColor)
 
         binding.authorText.performClick()

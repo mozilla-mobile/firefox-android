@@ -23,6 +23,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.GleanMetrics.DebugDrawer as DebugDrawerMetrics
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
 
@@ -87,7 +88,8 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                     val newBooleanValue = newValue as? Boolean ?: return false
-                    val ingestionScheduler = requireContext().components.fxSuggest.ingestionScheduler
+                    val ingestionScheduler =
+                        requireContext().components.fxSuggest.ingestionScheduler
                     if (newBooleanValue) {
                         ingestionScheduler.startPeriodicIngestion()
                     } else {
@@ -114,10 +116,13 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
                 onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { _, newValue ->
                         debugSettingsRepository.setDebugDrawerEnabled(enabled = newValue as Boolean)
+                        DebugDrawerMetrics.debugDrawerEnabled.set(newValue)
                         true
                     }
             }
         }
+
+        setupTabStripPreference()
 
         // for performance reasons, this is only available in Nightly or Debug builds
         requirePreference<EditTextPreference>(R.string.pref_key_custom_glean_server_url).apply {
@@ -126,6 +131,20 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
 
         requirePreference<Preference>(R.string.pref_key_custom_sponsored_stories_parameters).apply {
             isVisible = Config.channel.isNightlyOrDebug
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_remote_server_prod).apply {
+            isVisible = true
+            isChecked = context.settings().useProductionRemoteSettingsServer
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupTabStripPreference() {
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_tab_strip).apply {
+            isVisible = Config.channel.isNightlyOrDebug && context.resources.getBoolean(R.bool.tablet)
+            isChecked = context.settings().isTabStripEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }
 

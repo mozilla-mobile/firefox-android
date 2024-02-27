@@ -233,12 +233,20 @@
     <string name="browser_menu_edit">Edit</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Customize homepage</string>
+
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Home screen</string>
     <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
          history and go back to the home screen. -->
     <string name="browser_toolbar_erase">Erase browsing history</string>
+    <!-- Content description for the translate page toolbar button that opens the translations dialog when no translation has occurred. -->
+    <string name="browser_toolbar_translate">Translate page</string>
+    <!-- Content description (not visible, for screen readers etc.) for the translate page toolbar button that opens the translations dialog when the page is translated successfully.
+         The first parameter is the name of the language that is displayed in the original page. (For example: English)
+         The second parameter is the name of the language which the page was translated to. (For example: French) -->
+    <string name="browser_toolbar_translated_successfully">Page translated from %1$s to %2$s.</string>
+
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Selected language</string>
@@ -310,11 +318,21 @@
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Description for learning more about our privacy notice. -->
     <string name="juno_onboarding_privacy_notice_text">Firefox privacy notice</string>
-    <!-- Text for the button to set firefox as default browser on the device -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text_2" tools:ignore="UnusedResources">Learn more in our privacy notice</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">We love keeping you safe</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus_3" tools:ignore="UnusedResources">Find out why millions love Firefox</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_4" tools:ignore="UnusedResources">Safe browsing with more choices</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_description_nimbus_3">Our non-profit backed browser helps stop companies from secretly following you around the web.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_4" tools:ignore="UnusedResources">More than 100 million people protect their privacy by choosing a browser that’s backed by a nonprofit.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_5" tools:ignore="UnusedResources">Known trackers? Blocked automatically. Extensions? Try all 700. PDFs? Our built-in reader makes them easy to manage.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Our non-profit backed browser helps stop companies from secretly following you around the web.\n\nLearn more in our privacy notice.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
@@ -1808,7 +1826,7 @@
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_message">Set up a device lock pattern, PIN, or password to protect your saved credit cards from being accessed if someone else has your device.</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="credit_cards_warning_dialog_message_2" tools:ignore="UnusedResources">Set up a device lock pattern, PIN, or password to protect your saved cards from being accessed if someone else has your device.</string>
+    <string name="credit_cards_warning_dialog_message_3" tools:ignore="UnusedResources">Set up a device lock pattern, PIN, or password to protect your saved payment methods from being accessed if someone else has your device.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Set up now</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1826,11 +1844,13 @@
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Manage addresses</string>
     <!-- The header for the first name of an address -->
-    <string name="addresses_first_name">First Name</string>
+    <string name="addresses_first_name" moz:removedIn="124" tools:ignore="UnusedResources">First Name</string>
     <!-- The header for the middle name of an address -->
-    <string name="addresses_middle_name">Middle Name</string>
+    <string name="addresses_middle_name" moz:removedIn="124" tools:ignore="UnusedResources">Middle Name</string>
     <!-- The header for the last name of an address -->
-    <string name="addresses_last_name">Last Name</string>
+    <string name="addresses_last_name" moz:removedIn="124" tools:ignore="UnusedResources">Last Name</string>
+    <!-- The header for the name of an address. Name represents a person's full name, typically made up of a first, middle and last name, e.g. John Joe Doe. -->
+    <string name="addresses_name">Name</string>
     <!-- The header for the street address of an address -->
     <string name="addresses_street_address">Street Address</string>
     <!-- The header for the city of an address -->
@@ -1965,12 +1985,12 @@
     <string name="login_options_menu_2" tools:ignore="UnusedResources">Password options</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">The editable text field for the web address of the login.</string>
-    <!--  The editable text field for a password's website address. -->
-    <string name="saved_login_hostname_description_2" tools:ignore="UnusedResources">The editable text field for the website address of the password.</string>
+    <!--  The editable text field for a website address. -->
+    <string name="saved_login_hostname_description_3" tools:ignore="UnusedResources">The editable text field for the website address.</string>
     <!--  The editable text field for a login's username. -->
     <string name="saved_login_username_description">The editable text field for the username of the login.</string>
-    <!--  The editable text field for a password's username. -->
-    <string name="saved_login_username_description_2" tools:ignore="UnusedResources">The editable text field for the username of the password.</string>
+    <!--  The editable text field for a username. -->
+    <string name="saved_login_username_description_3" tools:ignore="UnusedResources">The editable text field for the username.</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">The editable text field for the password of the login.</string>
     <!--  The editable text field for a login's password. -->
@@ -2085,6 +2105,9 @@
     <string name="other_default_search_engine_suggestion_header">%s search</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Switch your default browser</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Set links from websites, emails, and messages to open automatically in Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
@@ -2094,7 +2117,7 @@
     <string name="radio_preference_info_content_description">Click for more details</string>
 
     <!-- Content description for the action bar "up" button -->
-    <string name="action_bar_up_description">Navigate up</string>
+    <string name="action_bar_up_description" moz:removedIn="124" tools:ignore="UnusedResources">Navigate up</string>
 
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Close</string>
@@ -2133,8 +2156,6 @@
     <string name="review_quality_check_grade_title">How reliable are these reviews?</string>
     <!-- Title for when the rating has been updated by the review checker -->
     <string name="review_quality_check_adjusted_rating_title">Adjusted rating</string>
-    <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
-    <string name="review_quality_check_adjusted_rating_description" moz:RemovedIn="122" tools:ignore="UnusedResources">Unreliable reviews removed</string>
     <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
     <string name="review_quality_check_adjusted_rating_description_2">Based on reliable reviews</string>
     <!-- Title for list of highlights from a product's review emphasizing a product's important traits. -->
@@ -2191,10 +2212,6 @@
     <string name="review_quality_check_product_availability_warning_body">If you see this product is back in stock, report it and we’ll work on checking the reviews.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
     <string name="review_quality_check_product_availability_warning_action_2">Report product is in stock</string>
-    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
-    <string name="review_quality_check_reanalysis_in_progress_warning_title" moz:RemovedIn="122">Checking review quality</string>
-    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_title" moz:RemovedIn="122">Checking review quality</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. The parameter is the percentage progress (0-100%) of the analysis process (e.g. 56%). -->
     <string name="review_quality_check_analysis_in_progress_warning_title_2">Checking review quality (%s)</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
@@ -2240,13 +2257,19 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Learn more</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption">By selecting “Yes, try it” you agree to %1$s by Mozilla’s %2$s and %3$s.</string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="123" tools:ignore="UnusedResources">By selecting “Yes, try it” you agree to %1$s by Mozilla’s %2$s and %3$s.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
     <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">By selecting “Yes, try it” you agree to the following from %1$s:</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_3" moz:RemovedIn="124" tools:ignore="UnusedResources">By selecting “Yes, try it” you agree to %1$s\'s %2$s and %3$s\'s %4$s.</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_4">By selecting “Yes, try it” you agree to %1$s\’s %2$s and %3$s\’s %4$s.</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">privacy policy</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="123" tools:ignore="UnusedResources">privacy policy</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
     <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Privacy policy</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy notice. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_3">privacy notice</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
     <string name="review_quality_check_contextual_onboarding_terms_use">terms of use</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
@@ -2315,6 +2338,10 @@
     <!-- Translation request dialog -->
     <!-- Title for the translation dialog that allows a user to translate the webpage. -->
     <string name="translations_bottom_sheet_title">Translate this page?</string>
+    <!-- Title for the translation dialog after a translation was completed successfully.
+    The first parameter is the name of the language that the page was translated from, for example, "French".
+    The second parameter is the name of the language that the page was translated to, for example, "English". -->
+    <string name="translations_bottom_sheet_title_translation_completed">Page translated from %1$s to %2$s</string>
     <!-- Title for the translation dialog that allows a user to translate the webpage when a user uses the translation feature the first time. The first parameter is the name of the application, for example, "Fenix". -->
     <string name="translations_bottom_sheet_title_first_time">Try private translations in %1$s</string>
     <!-- Additional information on the translation dialog that appears when a user uses the translation feature the first time. The first parameter is clickable text with a link, for example, "Learn more". -->
@@ -2327,6 +2354,8 @@
     <string name="translations_bottom_sheet_translate_to">Translate to</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">Not now</string>
+    <!-- Button text on the translations dialog to restore the translated website back to the original untranslated version. -->
+    <string name="translations_bottom_sheet_negative_button_restore">Show original</string>
     <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button_error">Done</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
@@ -2347,6 +2376,8 @@
     <string name="translation_error_language_not_supported_warning_text">Sorry, we don’t support %1$s yet.</string>
     <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
     <string name="translation_error_language_not_supported_learn_more">Learn more</string>
+    <!-- Snackbar title shown if the user closes the Translation Request dialogue and a translation is in progress. -->
+    <string name="translation_in_progress_snackbar">Translating…</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->

@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference
  * Interface to be implemented by components that provide browser toolbar functionality.
  */
 @Suppress("TooManyFunctions")
-interface Toolbar {
+interface Toolbar : ScrollableToolbar {
     /**
      * Sets/Gets the title to be displayed on the toolbar.
      */
@@ -174,6 +174,16 @@ interface Toolbar {
     fun removeEditActionEnd(action: Action)
 
     /**
+     * Hides the menu button in display mode.
+     */
+    fun hideMenuButton()
+
+    /**
+     * Shows the menu button in display mode.
+     */
+    fun showMenuButton()
+
+    /**
      * Casts this toolbar to an Android View object.
      */
     fun asView(): View = this as View
@@ -200,29 +210,6 @@ interface Toolbar {
      * Dismisses the display toolbar popup menu
      */
     fun dismissMenu()
-
-    /**
-     * Enable scrolling of the dynamic toolbar. Restore this functionality after [disableScrolling] stopped it.
-     *
-     * The toolbar may have other intrinsic checks depending on which the toolbar will be animated or not.
-     */
-    fun enableScrolling()
-
-    /**
-     * Completely disable scrolling of the dynamic toolbar.
-     * Use [enableScrolling] to restore the functionality.
-     */
-    fun disableScrolling()
-
-    /**
-     * Force the toolbar to expand.
-     */
-    fun expand()
-
-    /**
-     * Force the toolbar to collapse. Only if dynamic.
-     */
-    fun collapse()
 
     /**
      * Listener to be invoked when the user edits the URL.
@@ -292,26 +279,46 @@ interface Toolbar {
         private val longClickListener: (() -> Unit)? = null,
         private val listener: () -> Unit,
     ) : Action {
+        private var view: WeakReference<AppCompatImageButton>? = null
 
-        override fun createView(parent: ViewGroup): View = AppCompatImageButton(parent.context).also { imageButton ->
-            imageButton.setImageDrawable(imageDrawable)
-            imageButton.contentDescription = contentDescription
-            imageButton.setTintResource(iconTintColorResource)
-            imageButton.setOnClickListener { listener.invoke() }
-            imageButton.setOnLongClickListener {
-                longClickListener?.invoke()
-                true
+        override fun createView(parent: ViewGroup): View =
+            AppCompatImageButton(parent.context).also { imageButton ->
+                view = WeakReference(imageButton)
+
+                imageButton.setImageDrawable(imageDrawable)
+                imageButton.contentDescription = contentDescription
+                imageButton.setTintResource(iconTintColorResource)
+                imageButton.setOnClickListener { listener.invoke() }
+                imageButton.setOnLongClickListener {
+                    longClickListener?.invoke()
+                    true
+                }
+                imageButton.isLongClickable = longClickListener != null
+
+                val backgroundResource = if (background == 0) {
+                    parent.context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless)
+                } else {
+                    background
+                }
+
+                imageButton.setBackgroundResource(backgroundResource)
+                padding?.let { imageButton.setPadding(it) }
             }
-            imageButton.isLongClickable = longClickListener != null
 
-            val backgroundResource = if (background == 0) {
-                parent.context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless)
-            } else {
-                background
+        /**
+         * Changes the content description and the tint colour of the view.
+         *
+         * @param contentDescription The content description to use.
+         * @param tintColorResource ID of color resource to tint the icon.
+         */
+        fun updateView(
+            contentDescription: String? = null,
+            @ColorRes tintColorResource: Int = ViewGroup.NO_ID,
+        ) {
+            view?.get()?.let {
+                it.contentDescription = contentDescription
+                it.setTintResource(tintColorResource)
             }
-
-            imageButton.setBackgroundResource(backgroundResource)
-            padding?.let { imageButton.setPadding(it) }
         }
 
         override fun bind(view: View) = Unit

@@ -18,6 +18,8 @@
     <string name="mozac_feature_prompt_password_hint">Ewan tzij</string>
     <!-- Negative confirmation that we should not save the new or updated login -->
     <string name="mozac_feature_prompt_dont_save">Man tiyak</string>
+    <!-- Negative confirmation that we should not save the new or updated login -->
+    <string name="mozac_feature_prompt_dont_save_2" tools:ignore="UnusedResources">Wakami mani</string>
     <!-- Negative confirmation that we should never save a login for this site -->
     <string name="mozac_feature_prompt_never_save">Majub\'ey tiyak</string>
     <!-- Negative confirmation that we should not save a credit card for this site -->
@@ -26,16 +28,26 @@
     <string name="mozac_feature_prompt_save_confirmation">Tiyak</string>
     <!-- Negative confirmation that we should not save the updated login -->
     <string name="mozac_feature_prompt_dont_update">Man tik\'ex ruwäch</string>
+    <!-- Negative confirmation that we should not save the updated login -->
+    <string name="mozac_feature_prompt_dont_update_2" tools:ignore="UnusedResources">Wakami mani</string>
     <!-- Positive confirmation that we should save the updated login -->
     <string name="mozac_feature_prompt_update_confirmation">Tik\'ex</string>
     <!-- Error text displayed underneath the password field when it is in an error case -->
     <string name="mozac_feature_prompt_error_empty_password">Man tikirel ta kowöl ri ruk\'ojlem ewan tzij</string>
     <!-- Error text displayed underneath the password field when it is in an error case -->
+    <string name="mozac_feature_prompt_error_empty_password_2" tools:ignore="UnusedResources">Titz\'ib\'äx jun ewan tzij</string>
+    <!-- Error text displayed underneath the login field when it is in an error case -->
     <string name="mozac_feature_prompt_error_unknown_cause">Man xtikïr ta xyak rutikirib\'al molojri\'ïl</string>
+    <!-- Error text displayed underneath the password field when it is in an error case -->
+    <string name="mozac_feature_prompt_error_unknown_cause_2" tools:ignore="UnusedResources">Man tikirel ta niyak ri ewan tzij</string>
     <!-- Prompt message displayed when app detects a user has entered a new username and password and user decides if app should save the new login. -->
     <string name="mozac_feature_prompt_login_save_headline">¿La niyak rutikirib\'al re moloj re\'?</string>
+    <!-- Prompt message displayed when app detects a user has entered a new username and password and user decides if app should save the new password. -->
+    <string name="mozac_feature_prompt_login_save_headline_2" tools:ignore="UnusedResources">¿La niyak ewan tzij?</string>
     <!-- Prompt message displayed when app detects a user has entered a new password for an existing login and user decides if app should update the login. -->
     <string name="mozac_feature_prompt_login_update_headline">¿La nik\'ex rutikirib\'al re moloj re\'?</string>
+    <!-- Prompt message displayed when app detects a user has entered a new password for an existing login and user decides if app should update the password. -->
+    <string name="mozac_feature_prompt_login_update_headline_2" tools:ignore="UnusedResources">¿La nik\'ex ri ewan tzij?</string>
     <!-- Prompt message displayed when app detects a user has entered a username for an existing login without a username and user decides if app should update the login. -->
     <string name="mozac_feature_prompt_login_add_username_headline">¿La nitz\'aqatisäx rub\'i\' winäq pa ri ewan tzij yakon?</string>
     <!-- Text for a label for the field when prompt requesting a text is shown. -->
@@ -85,12 +97,28 @@
     <string name="mozac_feature_prompts_set_time">Tib\'an ruk\'ojlem wakami</string>
     <!-- Option in expanded select login prompt that links to login settings -->
     <string name="mozac_feature_prompts_manage_logins">Tinuk\'samajïx rutikirib\'al molojri\'ïl</string>
+    <!-- Option in expanded select password prompt that links to password settings -->
+    <string name="mozac_feature_prompts_manage_logins_2" tools:ignore="UnusedResources">Kenuk\'samajïx ewan taq tzij</string>
     <!-- Content description for expanding the saved logins options in the select login prompt -->
     <string name="mozac_feature_prompts_expand_logins_content_description">Kerik\' ri chilab\'en tikirib\'äl taq molojri\'ïl</string>
+    <!-- Content description for expanding the saved passwords options in the select password prompt -->
+    <string name="mozac_feature_prompts_expand_logins_content_description_2" tools:ignore="UnusedResources">Kerik\' kij ri yakon ewan taq tzij</string>
     <!-- Content description for collapsing the saved logins options in the select login prompt -->
     <string name="mozac_feature_prompts_collapse_logins_content_description">Kek\'ol ri chilab\'en tikirib\'äl taq molojri\'ïl</string>
+    <!-- Content description for collapsing the saved passwords options in the select password prompt -->
+    <string name="mozac_feature_prompts_collapse_logins_content_description_2" tools:ignore="UnusedResources">Kek\'ol ri yakon ewan taq tzij</string>
     <!-- Header for the select login prompt to allow users to fill a form with a saved login -->
     <string name="mozac_feature_prompts_saved_logins">Chilab\'en taq molojri\'ïl</string>
+
+    <!-- Header for the select password prompt to allow users to fill a form with a saved password -->
+    <string name="mozac_feature_prompts_saved_logins_2" tools:ignore="UnusedResources">Xeyak ewan taq tzij</string>
+
+    <!-- Content description for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_content_description">Tichilab\'ëx ütz ewan tzij</string>
+    <!-- Header for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password">Tichilab\'ëx ütz ewan tzij</string>
+    <!-- Title for using the suggest strong password confirmation dialog. %1$s will be replaced with the generated password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_message">Ke\'awokisaj ütz ewan taq tzij: %1$s</string>
 
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">¿La nitaq chik tzij chi re re ruxaq?</string>
@@ -103,13 +131,21 @@
     <!-- Credit Card Autofill -->
     <!-- Header for the select credit card prompt to allow users to fill a form with a saved credit card. -->
     <string name="mozac_feature_prompts_select_credit_card">Ticha\' rutarjeta\' kre\'ito\'</string>
+    <!-- Header for the select card prompt to allow users to fill a form with a saved card. -->
+    <string name="mozac_feature_prompts_select_credit_card_2" tools:ignore="UnusedResources">Tokisäx yakon tarjeta\'</string>
     <!-- Content description for expanding the select credit card options in the select credit card prompt. -->
     <string name="mozac_feature_prompts_expand_credit_cards_content_description">Kerik\' ri chilab\'en rutarjeta\' kre\ito\'</string>
+    <!-- Content description for expanding the saved card options in the select card prompt. -->
+    <string name="mozac_feature_prompts_expand_credit_cards_content_description_2" tools:ignore="UnusedResources">Kerik yakon taq tarjeta\'</string>
     <!-- Content description for collapsing the select credit card options in the select credit prompt. -->
     <string name="mozac_feature_prompts_collapse_credit_cards_content_description">Kek\'ol ri chilab\'en rutarjeta\' kre\ito\'</string>
+    <!-- Content description for collapsing the saved card options in the select prompt. -->
+    <string name="mozac_feature_prompts_collapse_credit_cards_content_description_2" tools:ignore="UnusedResources">Kek\'ol yakon taq tarjeta\'</string>
     <!-- Option in the expanded select credit card prompt that links to credit cards settings. -->
     <string name="mozac_feature_prompts_manage_credit_cards">Kenuk\'samajïx kikre\'ito\' taq tarjeta\'</string>
 
+    <!-- Option in the expanded select card prompt that links to cards settings. -->
+    <string name="mozac_feature_prompts_manage_credit_cards_2" tools:ignore="UnusedResources">Kenuk\'samajïx taq tarjeta\'</string>
     <!-- Text for the title of a save credit card dialog. -->
     <string name="mozac_feature_prompts_save_credit_card_prompt_title">¿Jikïl tayaka\' re tarjeta\' re\'?</string>
     <!-- Text for the title of an update credit card dialog. -->
@@ -123,8 +159,12 @@
     <string name="mozac_feature_prompts_select_address_2">Ticha\' ochochib\'äl</string>
     <!-- Content description for expanding the select addresses options in the select address prompt. -->
     <string name="mozac_feature_prompts_expand_address_content_description">Kerik\' ri chilab\'en ochochib\'äl</string>
+    <!-- Content description for expanding the saved addresses options in the select address prompt. -->
+    <string name="mozac_feature_prompts_expand_address_content_description_2" tools:ignore="UnusedResources">Kerik\' yakon taq ochochib\'äl</string>
     <!-- Content description for collapsing the select address options in the select address prompt. -->
     <string name="mozac_feature_prompts_collapse_address_content_description">Kek\'ol ri chilab\'en ochochib\'äl</string>
+    <!-- Content description for collapsing the saved address options in the select address prompt. -->
+    <string name="mozac_feature_prompts_collapse_address_content_description_2" tools:ignore="UnusedResources">Kek\'ol yakon taq ochochib\'äl</string>
     <!-- Text for the manage addresses button. -->
     <string name="mozac_feature_prompts_manage_address">Kenuk\'samajïx taq ochochib\'äl</string>
 

@@ -121,7 +121,6 @@ import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.messaging.FenixMessageSurfaceId
-import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessageNotificationWorker
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
@@ -225,7 +224,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
         // Setup nimbus-cli tooling. This is a NOOP when launching normally.
-        components.analytics.experiments.initializeTooling(applicationContext, intent)
+        components.nimbus.sdk.initializeTooling(applicationContext, intent)
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
@@ -233,8 +232,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            // Theme setup should always be called before super.onCreate
-            setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
+            // Browsing mode & theme setup should always be called before super.onCreate.
+            setupBrowsingMode(getModeFromIntentOrLastKnown(intent))
+            setupTheme()
+
             super.onCreate(savedInstanceState)
         }
 
@@ -352,7 +353,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 ?.also {
                     Events.appOpened.record(Events.AppOpenedExtra(it))
                     // This will record an event in Nimbus' internal event store. Used for behavioral targeting
-                    components.analytics.experiments.recordEvent("app_opened")
+                    components.nimbus.events.recordEvent("app_opened")
 
                     if (safeIntent.action.equals(ACTION_OPEN_PRIVATE_TAB) && it == APP_ICON) {
                         AppIcon.newPrivateTabTapped.record(NoExtras())
@@ -445,8 +446,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             var maxDurationReached = false
             val delay = FxNimbus.features.splashScreen.value().maximumDurationMs.toLong()
             splashScreen.setKeepOnScreenCondition {
-                val dataFetched = components.settings.utmParamsKnown &&
-                    components.settings.nimbusExperimentsFetched
+                val dataFetched = components.settings.nimbusExperimentsFetched
+
                 val keepOnScreen = !maxDurationReached && !dataFetched
                 if (!keepOnScreen) {
                     SplashScreen.firstLaunchExtended.record(
@@ -612,7 +613,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         privateNotificationObserver?.stop()
         components.notificationsDelegate.unBindActivity(this)
 
-        if (this !is ExternalAppBrowserActivity) {
+        val activityStartedWithLink = startupPathProvider.startupPathForActivity == StartupPathProvider.StartupPath.VIEW
+        if (this !is ExternalAppBrowserActivity && !activityStartedWithLink) {
             stopMediaSession()
         }
     }
@@ -869,12 +871,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
-    private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
+    private fun setupBrowsingMode(mode: BrowsingMode) {
         settings().lastKnownMode = mode
         browsingModeManager = createBrowsingModeManager(mode)
+    }
+
+    private fun setupTheme() {
         themeManager = createThemeManager()
-        themeManager.setActivityTheme(this)
-        themeManager.applyStatusBarTheme(this)
+        // ExternalAppBrowserActivity handles it's own theming as it can be customized.
+        if (this !is ExternalAppBrowserActivity) {
+            themeManager.setActivityTheme(this)
+            themeManager.applyStatusBarTheme(this)
+        }
     }
 
     // Stop active media when activity is destroyed.
@@ -1212,21 +1220,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     private suspend fun showFullscreenMessageIfNeeded(context: Context) {
-        val messagingStorage = context.components.analytics.messagingStorage
-        val messages = messagingStorage.getMessages()
-        val nextMessage =
-            messagingStorage.getNextMessage(FenixMessageSurfaceId.SURVEY, messages)
-                ?: return
-
-        val fenixNimbusMessagingController = FenixNimbusMessagingController(messagingStorage)
+        val messaging = context.components.nimbus.messaging
+        val nextMessage = messaging.getNextMessage(FenixMessageSurfaceId.SURVEY) ?: return
         val researchSurfaceDialogFragment = ResearchSurfaceDialogFragment.newInstance(
-            keyMessageText = nextMessage.data.text,
-            keyAcceptButtonText = nextMessage.data.buttonLabel,
+            keyMessageText = nextMessage.text,
+            keyAcceptButtonText = nextMessage.buttonLabel,
             keyDismissButtonText = null,
         )
 
         researchSurfaceDialogFragment.onAccept = {
-            processIntent(fenixNimbusMessagingController.getIntentForMessage(nextMessage))
+            processIntent(messaging.getIntentForMessage(nextMessage))
             components.appStore.dispatch(AppAction.MessagingAction.MessageClicked(nextMessage))
         }
 
@@ -1243,15 +1246,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // Update message as displayed.
         val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
-        val updatedMessage =
-            fenixNimbusMessagingController.updateMessageAsDisplayed(
-                nextMessage,
-                currentBootUniqueIdentifier,
-            )
 
-        fenixNimbusMessagingController.onMessageDisplayed(updatedMessage)
-
-        return
+        messaging.onMessageDisplayed(nextMessage, currentBootUniqueIdentifier)
     }
 
     companion object {

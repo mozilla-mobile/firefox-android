@@ -34,6 +34,8 @@
     <string name="preferences_debug_settings">Secret Settings</string>
     <!-- Label for the secret settings preference -->
     <string name="preferences_debug_info" translatable="false">Secret Debug Info</string>
+    <!-- Label for using remote settings server url -->
+    <string name="preferences_debug_settings_remote_settings_server" translatable="false">Use Remote Settings Production server \n(Staging will be used when disabled) \n(requires restart)</string>
     <!-- Label for allowing third party root certificates from the Android OS CA store preference -->
     <string name="preferences_debug_settings_allow_third_party_root_certs">Use third party CA certificates</string>
     <!-- Label for a longer description of allowing third party root certificates from the Android OS CA store preference -->
@@ -76,6 +78,8 @@
     <string name="preferences_debug_felt_privacy" translatable="false">Enable Felt Privacy</string>
     <!-- Label for enabling the Debug Drawer -->
     <string name="preferences_debug_settings_debug_drawer" translatable="false">Enable Debug Drawer</string>
+    <!-- Label for enabling the Tab Strip -->
+    <string name="preferences_debug_settings_tab_strip" translatable="false">Enable Tab Strip</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>

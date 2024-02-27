@@ -12,16 +12,12 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.state.state.content.DownloadState
-import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
-import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.ui.widgets.VerticalSwipeRefreshLayout
+import mozilla.components.ui.widgets.behavior.EngineViewClippingBehavior
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.ext.components
@@ -92,22 +88,23 @@ class BaseBrowserFragmentTest {
     }
 
     @Test
-    fun `initializeEngineView should set EngineViewBrowserToolbarBehavior when dynamic toolbar is enabled`() {
+    fun `initializeEngineView should set EngineViewClippingBehavior when dynamic toolbar is enabled`() {
         every { settings.shouldUseFixedTopToolbar } returns false
         every { settings.isDynamicToolbarEnabled } returns true
         val params: CoordinatorLayout.LayoutParams = mockk(relaxed = true)
         every { params.behavior } returns mockk(relaxed = true)
         every { swipeRefreshLayout.layoutParams } returns params
-        val behavior = slot<EngineViewBrowserToolbarBehavior>()
+        val behavior = slot<EngineViewClippingBehavior>()
 
         fragment.initializeEngineView(13)
 
-        // EngineViewBrowserToolbarBehavior constructor parameters are not properties, we cannot check them.
+        // EngineViewClippingBehavior constructor parameters are not properties, we cannot check them.
         // Ensure just that the right behavior is set.
         verify { params.behavior = capture(behavior) }
     }
 
     @Test
+    @Suppress("ktlint:standard:max-line-length")
     fun `initializeEngineView should set toolbar height as EngineView parent's bottom margin when using bottom toolbar`() {
         every { settings.isDynamicToolbarEnabled } returns false
         every { settings.shouldUseBottomToolbar } returns true
@@ -118,7 +115,7 @@ class BaseBrowserFragmentTest {
     }
 
     @Test
-    fun `initializeEngineView should set toolbar height as EngineView parent's bottom margin if top toolbar is forced for a11y`() {
+    fun `initializeEngineView set toolbar height as EngineView parent's bottom margin if top toolbar`() {
         every { settings.shouldUseBottomToolbar } returns false
         every { settings.shouldUseFixedTopToolbar } returns true
 
@@ -128,76 +125,14 @@ class BaseBrowserFragmentTest {
     }
 
     @Test
-    fun `initializeEngineView should set toolbar height as EngineView parent's bottom margin if bottom toolbar is forced for a11y`() {
+    @Suppress("MaxLineLength")
+    fun `initializeEngineView set toolbar height as EngineView parent's bottom margin if bottom toolbar`() {
         every { settings.shouldUseBottomToolbar } returns true
         every { settings.shouldUseFixedTopToolbar } returns true
 
         fragment.initializeEngineView(13)
 
         verify { (swipeRefreshLayout.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = 13 }
-    }
-
-    @Test
-    fun `WHEN status is equals to FAILED or COMPLETED and it is the same tab then shouldShowCompletedDownloadDialog will be true`() {
-        every { fragment.getCurrentTab() } returns createTab(id = "1", url = "")
-
-        val download = DownloadState(
-            url = "",
-            sessionId = "1",
-            destinationDirectory = "/",
-        )
-
-        val status = DownloadState.Status.values()
-            .filter { it == DownloadState.Status.COMPLETED && it == DownloadState.Status.FAILED }
-
-        status.forEach {
-            val result =
-                fragment.shouldShowCompletedDownloadDialog(download, it)
-
-            assertTrue(result)
-        }
-    }
-
-    @Test
-    fun `WHEN status is different from FAILED or COMPLETED then shouldShowCompletedDownloadDialog will be false`() {
-        every { fragment.getCurrentTab() } returns createTab(id = "1", url = "")
-
-        val download = DownloadState(
-            url = "",
-            sessionId = "1",
-            destinationDirectory = "/",
-        )
-
-        val status = DownloadState.Status.values()
-            .filter { it != DownloadState.Status.COMPLETED && it != DownloadState.Status.FAILED }
-
-        status.forEach {
-            val result =
-                fragment.shouldShowCompletedDownloadDialog(download, it)
-
-            assertFalse(result)
-        }
-    }
-
-    @Test
-    fun `WHEN the tab is different from the initial one then shouldShowCompletedDownloadDialog will be false`() {
-        every { fragment.getCurrentTab() } returns createTab(id = "1", url = "")
-
-        val download = DownloadState(
-            url = "",
-            sessionId = "2",
-            destinationDirectory = "/",
-        )
-
-        val status = DownloadState.Status.values()
-            .filter { it != DownloadState.Status.COMPLETED && it != DownloadState.Status.FAILED }
-
-        status.forEach {
-            val result =
-                fragment.shouldShowCompletedDownloadDialog(download, it)
-
-            assertFalse(result)
-        }
     }
 }
 

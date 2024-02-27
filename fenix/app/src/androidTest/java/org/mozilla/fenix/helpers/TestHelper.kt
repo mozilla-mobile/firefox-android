@@ -8,7 +8,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.view.View
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
@@ -34,9 +33,12 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeVeryShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.clickPageObject
 
@@ -49,8 +51,10 @@ object TestHelper {
 
     fun scrollToElementByText(text: String): UiScrollable {
         val appView = UiScrollable(UiSelector().scrollable(true))
+        Log.i(TAG, "scrollToElementByText: Waiting for app view")
         appView.waitForExists(waitingTime)
         appView.scrollTextIntoView(text)
+        Log.i(TAG, "scrollToElementByText: Scrolled to element with text: $text")
         return appView
     }
 
@@ -101,14 +105,7 @@ object TestHelper {
         ).waitUntilGone(waitingTime)
     }
 
-    fun verifySnackBarText(expectedText: String) {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .textContains(expectedText),
-            ).waitForExists(waitingTime),
-        )
-    }
+    fun verifySnackBarText(expectedText: String) = assertUIObjectExists(itemContainingText(expectedText))
 
     fun verifyUrl(urlSubstring: String, resourceName: String, resId: Int) {
         waitUntilObjectIsFound(resourceName)
@@ -118,11 +115,12 @@ object TestHelper {
 
     // exit from Menus to home screen or browser
     fun exitMenu() {
-        val toolbar =
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
-        while (!toolbar.waitForExists(waitingTimeShort)) {
+        val menuToolbar =
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/navigationToolbar"))
+        while (menuToolbar.waitForExists(waitingTimeShort)) {
+            Log.i(TAG, "exitMenu: Trying to press the device back button to return to the app home/browser view")
             mDevice.pressBack()
-            Log.i(TAG, "exitMenu: Exiting app settings menus using device back button")
+            Log.i(TAG, "exitMenu: Pressed the device back button to return to the app home/browser view")
         }
     }
 
@@ -145,4 +143,10 @@ object TestHelper {
         assertFalse("Light theme not selected", expected)
 
     fun verifyDarkThemeApplied(expected: Boolean) = assertTrue("Dark theme not selected", expected)
+
+    fun waitForAppWindowToBeUpdated() {
+        Log.i(TAG, "waitForAppWindowToBeUpdated: Waiting for $waitingTimeVeryShort ms for $packageName window to be updated")
+        mDevice.waitForWindowUpdate(packageName, waitingTimeVeryShort)
+        Log.i(TAG, "waitForAppWindowToBeUpdated: Waited for $waitingTimeVeryShort ms for $packageName window to be updated")
+    }
 }

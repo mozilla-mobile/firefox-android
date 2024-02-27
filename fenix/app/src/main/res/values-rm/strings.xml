@@ -239,6 +239,7 @@
 
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Persunalisar la pagina da partenza</string>
+
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Visur da partenza</string>
@@ -246,6 +247,9 @@
     <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
          history and go back to the home screen. -->
     <string name="browser_toolbar_erase">Stizzar la cronologia</string>
+    <!-- Content description for the translate page toolbar button that opens the translations dialog when no translation has occurred. -->
+    <string name="browser_toolbar_translate">Translatar la pagina</string>
+
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Lingua tschernida</string>
@@ -257,8 +261,6 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Scannar</string>
-    <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Maschina da tschertgar</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Parameters da la maschina da tschertgar</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -312,24 +314,29 @@
     <!-- Notification pre-permission dialog -->
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_title">Communicaziuns ta gidan da far dapli cun %s</string>
+    <string name="onboarding_home_enable_notifications_title" moz:removedIn="124" tools:ignore="UnusedResources">Communicaziuns ta gidan da far dapli cun %s</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_description">Sincronisescha tes tabs tranter apparats, administrescha las telechargiadas, retschaiva tips per profitar il meglier da la protecziun da datas da %s ed auter pli.</string>
+    <string name="onboarding_home_enable_notifications_description" moz:removedIn="124" tools:ignore="UnusedResources">Sincronisescha tes tabs tranter apparats, administrescha las telechargiadas, retschaiva tips per profitar il meglier da la protecziun da datas da %s ed auter pli.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="onboarding_home_enable_notifications_positive_button">Cuntinuar</string>
+    <string name="onboarding_home_enable_notifications_positive_button" moz:removedIn="124" tools:ignore="UnusedResources">Cuntinuar</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
-    <string name="onboarding_home_enable_notifications_negative_button">Betg ussa</string>
+    <string name="onboarding_home_enable_notifications_negative_button" moz:removedIn="124" tools:ignore="UnusedResources">Betg ussa</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Las directivas da Firefox per la protecziun da datas</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Nus ta protegin cun plaschair</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Noss navigatur dad in\'organisaziun senza finamira da profit, gida ad evitar che interpresas ta persequiteschian a la zuppada en il web.\n
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Noss navigatur dad in’organisaziun senza finamira da profit, gida ad evitar che interpresas ta persequiteschian a la zuppada en il web.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Noss navigatur dad in\'organisaziun senza finamira da profit, gida ad evitar che interpresas ta persequiteschian a la zuppada en il web.\n
 \nLegia dapli dal tema en nossas infurmaziuns davart la protecziun da datas.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">infurmaziuns davart la protecziun da datas</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">infurmaziuns davart la protecziun da datas</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Definir sco navigatur da standard</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -432,21 +439,11 @@
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Modus mo HTTPS</string>
 
-    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Reducziun da bandieras da cookies</string>
     <!-- Label for cookie banner section in quick settings panel. -->
     <string name="cookie_banner_blocker">Bloccada da bandieras da cookies</string>
     <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
     <string name="preferences_cookie_banner_reduction_private_mode">Bloccada da bandieras da cookies en il modus privat</string>
-    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Reducir las bandieras da cookies</string>
-    <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Deactivà</string>
-    <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">Activà</string>
 
-    <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s emprova da refusar automaticamain dumondas da deponer cookies cura ch\'ina bandiera da cookies sa mussa.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Deactivà per questa website</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -465,33 +462,15 @@
     <string name="reduce_cookie_banner_unsupported_site">Questa website na vegn actualmain betg sustegnida</string>
 
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Activar la reducziun da bandieras da cookies per %1$s?</string>
-    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Activar la bloccada da bandieras da cookies per %1$s?</string>
-    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Deactivar la reducziun da bandieras da cookies per %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Deactivar la bloccada da bandieras da cookies per %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s na po betg refusar automaticamain dumondas da deponer cookies da questa website. Ti pos trametter ina dumonda da sustegnair questa website en avegnir.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s vegn a stizzar ils cookies da questa website ed actualisar la pagina. Cun stizzar tut ils cookies vegns ti eventualmain deconnectà da websites ed i po dar che chanasters da cumpras vegnan svidads.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Suenter la deactivaziun vegn %1$s ad allontanar ils cookies e rechargiar questa website. Quai po ta deconnectar da la website e svidar eventuals chanasters da cumpras.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s emprova da refusar automaticamain tut las dumondas da deponer cookies da paginas sustegnidas.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Activescha la bloccada e %1$s vegn ad empruvar da refusar automaticamain tut las bandieras da cookies sin questa website.</string>
-    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">Permetter a %1$s da refusar bandieras da cookies?</string>
-    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s po refusar automaticamain bleras dumondas da bandieras da cookies.</string>
-    <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Betg ussa</string>
-    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Ti vegns a vesair damain dumondas da cookies</string>
-    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Permetter</string>
 
     <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
     <string name="cookie_banner_cfr_title">%1$s ha refusà cookies per tai</string>
@@ -707,6 +686,8 @@
     <string name="preferences_sync_bookmarks">Segnapaginas</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Infurmaziuns d\'annunzia</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Pleds-clav</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Tabs averts</string>
     <!-- Preference for signing out -->
@@ -733,6 +714,8 @@
 
     <!-- Preference for syncing credit cards -->
     <string name="preferences_sync_credit_cards">Cartas da credit</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Metodas da pajament</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Adressas</string>
 
@@ -1266,8 +1249,6 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Serrar</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Impussibel da stampar</string>
-    <!-- Text for error message when printing a page and it fails. -->
     <string name="unable_to_print_page_error">Impussibel da stampar questa pagina</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Stampar</string>
@@ -1680,8 +1661,12 @@
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Infurmaziuns d\'annunzia e pleds-clav</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Pleds-clav</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Memorisar las infurmaziuns d\'annunzia ed ils pleds-clav</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Memorisar ils pleds-clav</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Dumandar per memorisar</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1699,27 +1684,46 @@
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Agiuntar infurmaziuns d\'annunzia</string>
 
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Agiuntar in pled-clav</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincronisar las infurmaziuns d\'annunzia</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Sincronisar ils pleds-clav</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Sincronisar las datas d\'annunzia tranter tes apparats</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2" tools:ignore="UnusedResources">Sincronisar ils pleds-clav sin tut ils apparats</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Infurmaziuns d\'annunzia memorisadas</string>
 
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Pleds-clav memorisads</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Las infurmaziuns d\'annunzia che ti memoriseschas u sincroniseschas cun %s vegnan mussadas qua.</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2" tools:ignore="UnusedResources">Ils pleds-clav che ti memoriseschas en u sincroniseschas cun %s vegnan mussads qua. Tut ils pleds-clav che ti memoriseschas èn criptads.</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Vegnir a savair dapli davart Sync.</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2" tools:ignore="UnusedResources">Vegnir a savair dapli davart la sincronisaziun</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Excepziuns</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description_empty">Las infurmaziuns d\'annunzia ed ils pleds-clav betg memorisads vegnan mussadas qua.</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2" tools:ignore="UnusedResources">%s na vegn betg a memorisar pleds-clav per websites inditgadas qua.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Las infurmaziuns d\'annunzia ed ils pleds-clav na vegnan betg memorisads per questas paginas.</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2" tools:ignore="UnusedResources">%s na vegn betg a memorisar pleds-clav per questas websites.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Stizzar tut las excepziuns</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Tschertgar datas d\'annunzia</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Tschertgar en ils pleds-clav</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Website</string>
     <!-- The header for the username for a login -->
@@ -1749,11 +1753,17 @@
     <string name="saved_login_hide_password">Zuppentar il pled-clav</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Debloccar per vesair las infurmaziuns d\'annunzia memorisadas</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2" tools:ignore="UnusedResources">Debloccar per vesair tes pleds-clav memorisads</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Protegia las infurmaziuns d\'annunzia ed ils pleds-clav</string>
 
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2" tools:ignore="UnusedResources">Protegia tes pleds-clav memorisads</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message">Definescha in muster per debloccar l\'apparat, in PIN u in pled-clav per proteger tias infurmaziuns d\'annunzia e tes pleds-clav da persunas che han access a tes apparat.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2" tools:ignore="UnusedResources">Endrizza in muster per bloccar l’apparat, in PIN u pled-clav per evitar ch’ina autra persuna possia acceder a tes pleds-clav memorisads sch’ella ha tes apparat.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Pli tard</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1772,6 +1782,9 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Zavrar il menu da las datas d\'annunzia</string>
 
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2" tools:ignore="UnusedResources">Menu per zavrar ils pleds-clav</string>
+
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
     <string name="preferences_autofill">Endataziun automatica</string>
@@ -1779,10 +1792,16 @@
     <string name="preferences_addresses">Adressas</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Cartas da credit</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Metodas da pajament</string>
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards">Emplenir automaticamain las datas da la carta da credit</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Memorisar ed endatar automaticamain las metodas da pajament</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Las datas èn criptadas</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2" tools:ignore="UnusedResources">%s criptescha tut las metodas da pajament che ti memoriseschas</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Sincronisar las cartas tranter ils apparats</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
@@ -1790,16 +1809,25 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Agiuntar ina carta da credit</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2" tools:ignore="UnusedResources">Agiuntar ina carta</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Administrar las cartas memorisadas</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2" tools:ignore="UnusedResources">Administrar las cartas</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Agiuntar ina adressa</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Administrar las adressas</string>
     <!-- Preference for saving and autofilling addresses -->
     <string name="preferences_addresses_save_and_autofill_addresses">Memorisar ed emplenir automaticamain las adressas</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2" tools:ignore="UnusedResources">Memorisar ed endatar automaticamain las adressas</string>
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary">Includer infurmaziuns sco numers, adressas dad e-mail ed adressas postalas</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2" tools:ignore="UnusedResources">Cuntegna numers da telefon ed adressas dad e-mail</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Agiuntar ina carta</string>
@@ -1821,6 +1849,8 @@
     <string name="credit_cards_delete_card_button">Stizzar la carta</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">Vuls ti propi stizzar questa carta da credit?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2" tools:ignore="UnusedResources">Stizzar la carta?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Stizzar</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1835,14 +1865,22 @@
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Endatescha per plaschair in numer da carta da credit valid</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2" tools:ignore="UnusedResources">Endatescha in numer da carta valid</string>
     <!-- Error message for credit card name on card validation -->
     <string name="credit_cards_name_on_card_validation_error_message">Emplenescha per plaschair quest champ</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2" tools:ignore="UnusedResources">Agiuntescha in num</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Debloccar per vesair tias cartas memorisadas</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_title">Protegia tias cartas da credit</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title_2" tools:ignore="UnusedResources">Protegia tias metodas da pajament memorisadas</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_message">Endrizza in muster per bloccar l\'apparat, in PIN u pled-clav per evitar ch\'ina autra persuna possia acceder a tias cartas da credit memorisadas sch\'ella ha tes apparat.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message_3" tools:ignore="UnusedResources">Endrizza in muster per bloccar l\'apparat, in PIN u pled-clav per evitar ch’ina autra persuna possia acceder a tias metodas da pajament memorisadas sch’ella ha tes apparat.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Ussa endrizzar</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1853,6 +1891,8 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Debloccar per utilisar las datas da cartas da credit memorisadas</string>
 
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored payment method information -->
+    <string name="credit_cards_biometric_prompt_unlock_message_2" tools:ignore="UnusedResources">Debloccar per utilisar las metodas da pajament memorisadas</string>
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Agiuntar ina adressa</string>
     <!-- Title of the "Edit address" screen -->
@@ -1890,6 +1930,8 @@
 
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Vuls ti propi stizzar questa adressa?</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2" tools:ignore="UnusedResources">Stizzar questa adressa?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Stizzar</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -1988,6 +2030,8 @@
     <string name="login_menu_edit_button">Modifitgar</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Vuls ti propi stizzar questa infurmaziun d\'annunzia?</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2" tools:ignore="UnusedResources">Vuls ti propi stizzar quest pled-clav?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Stizzar</string>
 
@@ -1995,24 +2039,44 @@
     <string name="dialog_delete_negative">Interrumper</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Opziuns per datas d\'annunzia</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2" tools:ignore="UnusedResources">Opziuns da pleds-clav</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Il champ modifitgabel per l\'adressa web da las datas d\'annunzia.</string>
+    <!--  The editable text field for a website address. -->
+    <string name="saved_login_hostname_description_3" tools:ignore="UnusedResources">Il champ da text modifitgabel per l’adressa da la website.</string>
     <!--  The editable text field for a login's username. -->
     <string name="saved_login_username_description">Il champ modifitgabel per il num d\'utilisader da las datas d\'annunzia.</string>
+    <!--  The editable text field for a username. -->
+    <string name="saved_login_username_description_3" tools:ignore="UnusedResources">Il champ da text modifitgabel per il num d’utilisader.</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">Il champ modifitgabel per il pled-clav da las datas d\'annunzia.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description_2" tools:ignore="UnusedResources">Il champ da text modifitgabel per il pled-clav.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Memorisar las midadas da las datas d\'annunzia.</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2" tools:ignore="UnusedResources">Memorisar las midadas.</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Modifitgar</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2" tools:ignore="UnusedResources">Modifitgar il pled-clav</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Agiuntar novas datas d\'annunzia</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2" tools:ignore="UnusedResources">Agiuntar in pled-clav</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Pled-clav obligatoric</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2" tools:ignore="UnusedResources">Endatar in pled-clav</string>
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Num d\'utilisader obligatoric</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2" tools:ignore="UnusedResources">Endatar in num d’utilisader</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Num dal server obligatoric</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Endatar ina adressa web</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Tschertga vocala</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2108,6 +2172,9 @@
     <string name="other_default_search_engine_suggestion_header">Tschertga %s</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Mida tes navigatur standard</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Definescha che colliaziuns da websites, e-mails e messadis vegnan averts automaticamain en Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
@@ -2181,8 +2248,6 @@
     <string name="review_quality_check_explanation_body_highlights"><![CDATA[Ils elements <b>accentuads</b> derivan da las recensiun sin %s dals ultims 80 dis che nus tegnain per fidablas.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Ulteriuras infurmaziuns davart %s.</string>
-    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">co %s da Mozilla determinescha la qualitad da las recensiuns</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_info_learn_more_link_2">co %s determinescha la qualitad da las recensiuns</string>
     <!-- Text for title of settings section. -->
@@ -2364,6 +2429,8 @@
     <string name="translations_bottom_sheet_translating_in_progress">Translatar</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Translaziun en elavuraziun</string>
+    <!-- Default dropdown option when initially selecting a language from the translations dialog language selection dropdown. -->
+    <string name="translations_bottom_sheet_default_dropdown_selection">Tscherner ina lingua</string>
     <!-- The title of the warning card informs the user that a translation could not be completed. -->
     <string name="translation_error_could_not_translate_warning_text">Igl ha dà in problem cun translatar. Emprova per plaschair anc ina giada.</string>
     <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
@@ -2384,6 +2451,10 @@
     <string name="translation_option_bottom_sheet_never_translate_in_language">Mai translatar %1$s</string>
     <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
     <string name="translation_option_bottom_sheet_never_translate_site">Mai translatar questa website</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Remplazza tut ils auters parameters</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Remplazza las offertas da translaziun</string>
     <!-- Button text for the button that will take the user to the translation settings dialog. -->
     <string name="translation_option_bottom_sheet_translation_settings">Parameters da translaziun</string>
     <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
