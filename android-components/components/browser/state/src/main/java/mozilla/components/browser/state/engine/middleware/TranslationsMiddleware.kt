@@ -11,9 +11,12 @@ import mozilla.components.browser.state.action.InitAction
 import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.translate.Language
 import mozilla.components.concept.engine.translate.LanguageSetting
+import mozilla.components.concept.engine.translate.TranslationDownloadSize
 import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationPageSettingOperation
@@ -34,6 +37,7 @@ class TranslationsMiddleware(
 ) : Middleware<BrowserState, BrowserAction> {
     private val logger = Logger("TranslationsMiddleware")
 
+    @Suppress("LongMethod")
     override fun invoke(
         context: MiddlewareContext<BrowserState, BrowserAction>,
         next: (BrowserAction) -> Unit,
@@ -43,8 +47,14 @@ class TranslationsMiddleware(
         when (action) {
             is InitAction ->
                 scope.launch {
-                    requestEngineSupport(context)
+                    requestEngineSupportAndInit(context)
                 }
+
+            is TranslationsAction.InitTranslationsBrowserState -> {
+                scope.launch {
+                    requestSupportedLanguages(context)
+                }
+            }
 
             is TranslationsAction.OperationRequestedAction -> {
                 when (action.operation) {
@@ -68,6 +78,18 @@ class TranslationsMiddleware(
                     -> Unit
                 }
             }
+
+            is TranslationsAction.FetchTranslationDownloadSizeAction -> {
+                scope.launch {
+                    requestTranslationSize(
+                        context = context,
+                        tabId = action.tabId,
+                        fromLanguage = action.fromLanguage,
+                        toLanguage = action.toLanguage,
+                    )
+                }
+            }
+
             is TranslationsAction.RemoveNeverTranslateSiteAction -> {
                 scope.launch {
                     removeNeverTranslateSite(context, action.tabId, action.origin)
@@ -125,14 +147,22 @@ class TranslationsMiddleware(
 
     /**
      * Checks if the translations engine supports the device architecture and updates the state.
+     * When the device does support the translations engine, then the engine will request
+     * initialization of translations data for the [BrowserState.translationEngine] via
+     * [TranslationsAction.InitTranslationsBrowserState].
      *
      * @param context Context to use to dispatch to the store.
      */
-    private fun requestEngineSupport(
+    private fun requestEngineSupportAndInit(
         context: MiddlewareContext<BrowserState, BrowserAction>,
     ) {
         engine.isTranslationsEngineSupported(
             onSuccess = { isEngineSupported ->
+                if (isEngineSupported) {
+                    context.store.dispatch(
+                        TranslationsAction.InitTranslationsBrowserState,
+                    )
+                }
                 context.store.dispatch(
                     TranslationsAction.SetEngineSupportedAction(
                         isEngineSupported = isEngineSupported,
@@ -153,23 +183,33 @@ class TranslationsMiddleware(
     }
 
     /**
-     * Retrieves the list of supported languages using [scope] and dispatches the result to the
-     * store via [TranslationsAction.SetSupportedLanguagesAction] or else dispatches the failure
-     * [TranslationsAction.TranslateExceptionAction].
+     * Retrieves the list of supported languages and dispatches the result to the
+     * [BrowserState.translationEngine] via [TranslationsAction.SetSupportedLanguagesAction] or
+     * else dispatches the failure.
+     *
+     * For failure dispatching:
+     * If a tab ID is not provided, then only [TranslationsAction.EngineExceptionAction] will be
+     * dispatched to set the error on the [BrowserState.translationEngine].
+     *
+     * If a tab ID is provided, then  [TranslationsAction.EngineExceptionAction]
+     * AND [TranslationsAction.TranslateExceptionAction] will be dispatched
+     * to set the error both on the [BrowserState.translationEngine] and
+     * [SessionState.translationsState].
      *
      * @param context Context to use to dispatch to the store.
-     * @param tabId Tab ID associated with the request.
+     * @param tabId If a Tab ID associated with the request for error handling.
+     * If null, this will only dispatch errors on the global translations browser state.
+     *
      */
     private fun requestSupportedLanguages(
         context: MiddlewareContext<BrowserState, BrowserAction>,
-        tabId: String,
+        tabId: String? = null,
     ) {
         engine.getSupportedTranslationLanguages(
 
             onSuccess = {
                 context.store.dispatch(
                     TranslationsAction.SetSupportedLanguagesAction(
-                        tabId = tabId,
                         supportedLanguages = it,
                     ),
                 )
@@ -178,12 +218,21 @@ class TranslationsMiddleware(
 
             onError = {
                 context.store.dispatch(
-                    TranslationsAction.TranslateExceptionAction(
-                        tabId = tabId,
-                        operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
-                        translationError = TranslationError.CouldNotLoadLanguagesError(it),
+                    TranslationsAction.EngineExceptionAction(
+                        error = TranslationError.CouldNotLoadLanguagesError(it),
                     ),
                 )
+
+                if (tabId != null) {
+                    context.store.dispatch(
+                        TranslationsAction.TranslateExceptionAction(
+                            tabId = tabId,
+                            operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
+                            translationError = TranslationError.CouldNotLoadLanguagesError(it),
+                        ),
+                    )
+                }
+
                 logger.error("Error requesting supported languages: ", it)
             },
         )
@@ -363,6 +412,58 @@ class TranslationsMiddleware(
                 },
             )
         }
+    }
+
+    /**
+     * Retrieves the download size and dispatches the result to the
+     * [SessionState.translationsState] on the [BrowserStore]
+     * via [TranslationsAction.SetTranslationDownloadSizeAction].
+     *
+     * @param context Context to use to dispatch to the store.
+     * @param tabId Tab ID associated with the request.
+     * @param fromLanguage The from language to request the translation download size for.
+     * @param toLanguage The to language to request the translation download size for.
+     */
+    private fun requestTranslationSize(
+        context: MiddlewareContext<BrowserState, BrowserAction>,
+        tabId: String,
+        fromLanguage: Language,
+        toLanguage: Language,
+    ) {
+        engine.getTranslationsPairDownloadSize(
+            fromLanguage = fromLanguage.code,
+            toLanguage = toLanguage.code,
+
+            onSuccess = { size ->
+                context.store.dispatch(
+                    TranslationsAction.SetTranslationDownloadSizeAction(
+                        tabId = tabId,
+                        translationSize = TranslationDownloadSize(
+                            fromLanguage = fromLanguage,
+                            toLanguage = toLanguage,
+                            size = size,
+                            error = null,
+                        ),
+                    ),
+                )
+                logger.info("Success requesting download size.")
+            },
+
+            onError = { error ->
+                context.store.dispatch(
+                    TranslationsAction.SetTranslationDownloadSizeAction(
+                        tabId = tabId,
+                        translationSize = TranslationDownloadSize(
+                            fromLanguage = fromLanguage,
+                            toLanguage = toLanguage,
+                            size = null,
+                            error = TranslationError.CouldNotDetermineDownloadSizeError(null),
+                        ),
+                    ),
+                )
+                logger.error("Error requesting download size: ", error)
+            },
+        )
     }
 
     /**

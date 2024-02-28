@@ -45,6 +45,8 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.search.SearchRequest
+import mozilla.components.concept.engine.translate.Language
+import mozilla.components.concept.engine.translate.TranslationDownloadSize
 import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
@@ -454,7 +456,11 @@ sealed class ContentAction : BrowserAction() {
     /**
      * Updates the URL of the [ContentState] with the given [sessionId].
      */
-    data class UpdateUrlAction(val sessionId: String, val url: String) : ContentAction()
+    data class UpdateUrlAction(
+        val sessionId: String,
+        val url: String,
+        val hasUserGesture: Boolean = false,
+    ) : ContentAction()
 
     /**
      * Updates the progress of the [ContentState] with the given [sessionId].
@@ -848,6 +854,13 @@ sealed class ContentAction : BrowserAction() {
  * [BrowserAction] implementations related to translating a web content page.
  */
 sealed class TranslationsAction : BrowserAction() {
+
+    /**
+     * Requests that the initialization data for the global translations engine state
+     * be fetched from the translations engine and set on [BrowserState.translationEngine].
+     */
+    object InitTranslationsBrowserState : TranslationsAction()
+
     /**
      * Indicates that the translations engine expects the user may want to translate the page on
      * the given [tabId].
@@ -913,6 +926,32 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction(), ActionWithTab
 
     /**
+     * Fetch the translation download size for the given [tabId]. Will use the specified
+     * [fromLanguage] and [toLanguage] to query the download size.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should set the state on.
+     * @property fromLanguage The from [Language] in the translation pair.
+     * @property toLanguage The to [Language] in the translation pair.
+     */
+    data class FetchTranslationDownloadSizeAction(
+        override val tabId: String,
+        val fromLanguage: Language,
+        val toLanguage: Language,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Set the [TranslationDownloadSize] for the given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should set the state on.
+     * @property translationSize The [TranslationDownloadSize] that contains a to/from translations
+     * pair and a download size.
+     */
+    data class SetTranslationDownloadSizeAction(
+        override val tabId: String,
+        val translationSize: TranslationDownloadSize,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
      * Indicates the given [tabId] was successful in translating or restoring the page
      * or acquiring a necessary resource.
      *
@@ -970,15 +1009,14 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction()
 
     /**
-     * Sets the languages that are supported by the translations engine.
+     * Sets the languages that are supported by the translations engine on the
+     * [BrowserState.translationEngine].
      *
-     * @property tabId The ID of the tab the [EngineSession] that requested the list.
      * @property supportedLanguages The languages the engine supports for translation.
      */
     data class SetSupportedLanguagesAction(
-        override val tabId: String,
         val supportedLanguages: TranslationSupport?,
-    ) : TranslationsAction(), ActionWithTab
+    ) : TranslationsAction()
 
     /**
      * Sets the given page settings on the page on the given [tabId]'s store.

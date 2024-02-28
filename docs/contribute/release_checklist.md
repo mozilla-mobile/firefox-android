@@ -112,22 +112,17 @@ Now that we made the Beta cut, we can remove all the unused strings marked moz:r
 
 ### [Dev Team] Renew telemetry
 
-After the Beta cut, another task is to renew/remove all soon to expire telemetry probes. What we're looking for is to create a list of telemetry that will expire in `[nightly_version add 2]`.  See [Firefox Release Calendar](https://whattrainisitnow.com/calendar/) for the current Release version.  There is a script that will help with finding these soon to expire telemetry.
+After the Beta cut, another task is to remove all soon to expire telemetry probes. What we're looking for is to create a list of telemetry that will expire in `[nightly_version add 1]`.  See [Firefox Release Calendar](https://whattrainisitnow.com/calendar/) for the current Release version.  There is a script that will help with finding these soon to expire telemetry.
 
-1. Use the helper in tools folder `python3 data_renewal_generate.py [nightly_version add 2]` to detected and generate files that will help create the following files:
-    - `[nightly_version add 2]`_expiry_list.csv
-    - `[nightly_version add 2]`_renewal_request.txt
-2. Upload the `[nightly_version add 2]`_expiry_list.csv to Google sheet in this [shared Google Drive](https://drive.google.com/drive/folders/1_ertMvn59eE9JmN721RqOjW6nNtxq9oS?usp=sharing) and contact product to review.  For each telemetry listed answer decide for:
-    - Renew the metric (Recommendation is to use nightly_version + 12)
-    - Choose not to renew (but not delete)
-    - Choose to remove the metric
-    - Renew the metric and set to never expire (this should only be for business critical metrics)
-3. Note that `metrics.yaml` is also modified.  Once the review is over, continue to modify `metrics.yaml` to match the decision made in the Google sheet.  Make sure to add the PR link and if the telemetry never expires, add the email of the owner as contact.
-4. File an issue for telemetry renewal so that a patch can target it and assign the issue to Product for increased visibility, as a reminder to to address the expiring metrics. See [issue 28190](https://github.com/mozilla-mobile/fenix/issues/28190) for an example.
-5. Create a PR for review.  Modify `[nightly_version add 2]`_renewal_request.txt and paste it to the PR for data review. This comment can be auto-generated using the filled `[nightly_version add 2]`_expiry_list.csv and the `tools/data_renewal_request.py` helper. Copy the filled CSV into the tools directory and run the script to create a `[nightly_version add 2]`_filled_renewal_request.txt file that will contain the text required for data review. Make sure it includes (or add manually if necessary):
- - When will this collection now expire?
- - Why was the initial period of collection insufficient?
-6. Please also check if you're responsible for Focus telemetry renewal.
+1. Use the helper in tools folder `python3 data_renewal_generate.py [nightly_version add 1]` to detected and generate files that will help create the following files:
+    - `[nightly_version add 1]`_expiry_list.csv
+2. File an issue for removing expired telemetry to address the expired metrics. See [Bug 1881336](https://bugzilla.mozilla.org/show_bug.cgi?id=1881336) for an example.
+3. Remove the expired metrics.  See [example](https://github.com/mozilla-mobile/firefox-android/pull/5700).
+
+### [Dev Team] Add SERP Telemetry json dump
+
+After the beta cut, another task is to add SERP telemetry json to the [search-telemetry-v2.json](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/components/feature/search/src/main/assets/search/search_telemetry_v2.json)
+The dump is to be fetched from the desktop telemetry dump located at [desktop-search-telemetry-v2.json](https://searchfox.org/mozilla-central/source/services/settings/dumps/main/search-telemetry-v2.json)
 
 ### Ask for Help
 

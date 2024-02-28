@@ -4,13 +4,13 @@
 
 package org.mozilla.fenix.messaging
 
-import androidx.core.net.toUri
+import android.content.Intent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.service.nimbus.messaging.MessageData
-import mozilla.components.service.nimbus.messaging.NimbusMessagingController
+import mozilla.components.service.nimbus.messaging.NimbusMessagingControllerInterface
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Before
@@ -30,7 +30,7 @@ class DefaultMessageControllerTest {
     val gleanTestRule = GleanTestRule(testContext)
 
     private val homeActivity: HomeActivity = mockk(relaxed = true)
-    private val messagingController: NimbusMessagingController = mockk(relaxed = true)
+    private val messagingController: NimbusMessagingControllerInterface = mockk(relaxed = true)
     private lateinit var defaultMessageController: DefaultMessageController
     private val appStore: AppStore = mockk(relaxed = true)
 
@@ -46,12 +46,11 @@ class DefaultMessageControllerTest {
     @Test
     fun `WHEN calling onMessagePressed THEN process the action intent and update the app store`() {
         val message = mockMessage()
-        val uri = "action".toUri()
-        every { messagingController.processMessageActionToUri(message) }.returns(uri)
+        every { messagingController.getIntentForMessage(message) }.returns(Intent())
 
         defaultMessageController.onMessagePressed(message)
 
-        verify { messagingController.processMessageActionToUri(message) }
+        verify { messagingController.getIntentForMessage(message) }
         verify { homeActivity.processIntent(any()) }
         verify { appStore.dispatch(MessageClicked(message)) }
     }
@@ -70,7 +69,8 @@ class DefaultMessageControllerTest {
         data = data,
         style = mockk(relaxed = true),
         action = "action",
-        triggers = emptyList(),
+        triggerIfAll = emptyList(),
+        excludeIfAny = emptyList(),
         metadata = Message.Metadata(
             id = "id",
             displayCount = 0,
