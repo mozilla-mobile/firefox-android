@@ -42,7 +42,7 @@ import org.mozilla.fenix.tabstray.browser.compose.DragItemContainer
 import org.mozilla.fenix.tabstray.browser.compose.createGridReorderState
 import org.mozilla.fenix.tabstray.browser.compose.createListReorderState
 import org.mozilla.fenix.tabstray.browser.compose.detectGridPressAndDragGestures
-import org.mozilla.fenix.tabstray.browser.compose.detectVerticalPressAndDrag
+import org.mozilla.fenix.tabstray.browser.compose.detectListPressAndDrag
 import org.mozilla.fenix.tabstray.ext.MIN_COLUMN_WIDTH_DP
 import org.mozilla.fenix.tabstray.ext.numberOfGridColumns
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -283,7 +283,7 @@ private fun TabList(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .detectVerticalPressAndDrag(
+            .detectListPressAndDrag(
                 listState = state,
                 reorderState = reorderState,
                 shouldLongPressToDrag = shouldLongPress,
