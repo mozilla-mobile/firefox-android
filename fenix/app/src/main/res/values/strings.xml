@@ -581,6 +581,17 @@
     <!-- Summary for notification preference indicating notifications are not allowed -->
     <string name="notifications_not_allowed_summary">Not allowed</string>
 
+    <!-- Add-on Permissions -->
+    <!-- The title of one the section with required permissions from addon's permissions screen -->
+    <string name="mozac_feature_addons_permissions_heading_required">Required</string>
+    <!-- The title of one the section with optional permissions from addon's permissions screen -->
+    <string name="mozac_feature_addons_permissions_heading_optional">Optional</string>
+    <!-- The title of one the section with websites that have permissions granted from addon's permissions screen -->
+    <string name="mozac_feature_addons_permissions_heading_read_and_change_website_data">Read and change website data</string>
+    <!-- The description of the "X" icon that can delete one of the websites displayed  -->
+    <string name="mozac_feature_addons_permissions_icon_description_detele_website">Delete website</string>
+
+
     <!-- Add-on Preferences -->
     <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
     <string name="preferences_customize_amo_collection">Custom Add-on collection</string>
