@@ -41,6 +41,7 @@ class NimbusMessagingStorage(
     private val nimbus: NimbusMessagingInterface,
     private val messagingFeature: FeatureHolder<Messaging>,
     private val attributeProvider: JexlAttributeProvider? = null,
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) {
     /**
      * Contains all malformed messages where they key can be the value or a trigger of the message
@@ -90,8 +91,10 @@ class NimbusMessagingStorage(
             "CONTROL_ACTION"
         }
 
-        val trigger = sanitizeTriggers(message.trigger, featureValue.triggers) ?: return null
+        val triggerIfAll = sanitizeTriggers(message.triggerIfAll, featureValue.triggers) ?: return null
+        val excludeIfAny = sanitizeTriggers(message.excludeIfAny, featureValue.triggers) ?: return null
         val style = sanitizeStyle(message.style, featureValue.styles) ?: return null
+
         val storageMetadata = metadataStorage.getMetadata()
 
         return Message(
@@ -99,8 +102,9 @@ class NimbusMessagingStorage(
             data = message,
             action = action,
             style = style,
+            triggerIfAll = triggerIfAll,
+            excludeIfAny = excludeIfAny,
             metadata = storageMetadata[key] ?: addMetadata(key),
-            triggers = trigger,
         )
     }
 
@@ -177,30 +181,26 @@ class NimbusMessagingStorage(
     ): Message? {
         val message = availableMessages
             .filter { !excluded.contains(it.id) }
-            .firstOrNull { isMessageEligible(it, helper) } ?: return null
-
-        val slug = message.data.experiment
-        if (slug != null) {
-            // We know that it's experimental, and we know which experiment it came from.
-            messagingFeature.recordExperimentExposure(slug)
-        } else if (message.data.isControl) {
-            // It's not experimental, but it is a control. This is obviously malformed.
-            reportMalformedMessage(message.id)
-        }
+            .firstOrNull {
+                try {
+                    isMessageEligible(it, helper)
+                } catch (e: NimbusException) {
+                    reportMalformedMessage(it.id)
+                    false
+                }
+            } ?: return null
 
         // If this is an experimental message, but not a placebo, then just return the message.
         if (!message.data.isControl) {
             return message
         }
 
-        // If a message is a control then it's considered as displayed
-        val updatedMetadata = message.metadata.copy(
-            displayCount = message.metadata.displayCount + 1,
-            lastTimeShown = System.currentTimeMillis(),
-        )
-
+        // This is a control message which we're definitely not going to show to anyone,
+        // however, we need to do the bookkeeping and as if we were.
+        //
+        // Since no one is going to see it, then we need to do it ourselves, here.
         runBlocking {
-            updateMetadata(updatedMetadata)
+            onMessageDisplayed(message)
         }
 
         // This is a control, so we need to either return the next message (there may not be one)
@@ -239,6 +239,38 @@ class NimbusMessagingStorage(
             val url = helper.stringFormat(action, uuid)
             Pair(uuid, url)
         }
+
+    /**
+     * Record the time and optional [bootIdentifier] of the display of the given message.
+     *
+     * If the message is part of an experiment, then record an exposure event for that
+     * experiment.
+     *
+     * This is determined by the value in the [message.data.experiment] property.
+     */
+    suspend fun onMessageDisplayed(message: Message, bootIdentifier: String? = null): Message {
+        // Record an exposure event if this is an experimental message.
+        val slug = message.data.experiment
+        if (slug != null) {
+            // We know that it's experimental, and we know which experiment it came from.
+            messagingFeature.recordExperimentExposure(slug)
+        } else if (message.data.isControl) {
+            // It's not experimental, but it is a control. This is obviously malformed.
+            reportMalformedMessage(message.id)
+        }
+
+        // Now update the display counts.
+        val updatedMetadata = message.metadata.copy(
+            displayCount = message.metadata.displayCount + 1,
+            lastTimeShown = now(),
+            latestBootIdentifier = bootIdentifier,
+        )
+        val nextMessage = message.copy(
+            metadata = updatedMetadata,
+        )
+        updateMetadata(nextMessage.metadata)
+        return nextMessage
+    }
 
     /**
      * Updated the provided [metadata] in the storage.
@@ -297,20 +329,28 @@ class NimbusMessagingStorage(
         message: Message,
         helper: NimbusMessagingHelperInterface,
     ): Boolean {
-        return message.triggers.all { condition ->
-            try {
-                if (malFormedMap.containsKey(condition)) {
-                    return false
-                }
-                helper.evalJexl(condition)
-            } catch (e: NimbusException.EvaluationException) {
-                reportMalformedMessage(message.id)
-                malFormedMap[condition] = message.id
-                logger.info("Unable to evaluate $condition")
-                false
-            }
+        return message.triggerIfAll.all { condition ->
+            evalJexl(message, helper, condition)
+        } && !message.excludeIfAny.any { condition ->
+            evalJexl(message, helper, condition)
         }
     }
+
+    private fun evalJexl(
+        message: Message,
+        helper: NimbusMessagingHelperInterface,
+        condition: String,
+    ): Boolean =
+        try {
+            if (malFormedMap.containsKey(condition)) {
+                throw NimbusException.EvaluationException(condition)
+            }
+            helper.evalJexl(condition)
+        } catch (e: NimbusException) {
+            malFormedMap[condition] = message.id
+            logger.info("Unable to evaluate ${message.id} trigger: $condition")
+            throw NimbusException.EvaluationException(condition)
+        }
 
     @VisibleForTesting
     internal fun getOnControlBehavior(): ControlMessageBehavior = messagingFeature.value().onControl
