@@ -130,6 +130,7 @@ class CustomTabsToolbarFeature(
     internal fun init(config: CustomTabConfig) {
         // Don't allow clickable toolbar so a custom tab can't switch to edit mode.
         toolbar.display.onUrlClicked = { false }
+        toolbar.display.hidePageActionSeparator()
 
         if (updateTheme) {
             config.colorScheme?.toNightMode()?.let { AppCompatDelegate.setDefaultNightMode(it) }
