@@ -22,6 +22,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.appservices.places.uniffi.PlacesApiException
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -58,6 +60,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.BrowserThumbnails
+import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
@@ -128,11 +131,13 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.MetricsUtils
+import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
@@ -202,6 +207,8 @@ abstract class BaseBrowserFragment :
     @VisibleForTesting
     internal val browserToolbarView: BrowserToolbarView
         get() = _browserToolbarView!!
+
+    internal lateinit var browserToolbar: BrowserToolbar
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
     protected val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
@@ -447,7 +454,40 @@ abstract class BaseBrowserFragment :
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner,
-        )
+        ).also {
+            browserToolbar = it.view
+        }
+
+        if (IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+            val isToolbarAtBottom = context.components.settings.toolbarPosition == ToolbarPosition.BOTTOM
+
+            // The toolbar view has already been added directly to the container.
+            // We should remove it and add the view to the navigation bar container.
+            // Should refactor this so there is no added view to remove to begin with:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=1870976
+            if (isToolbarAtBottom) {
+                binding.browserLayout.removeView(browserToolbar)
+            }
+
+            // We need a second menu button, but we could reuse the existing builder.
+            val menuButton = MenuButton(requireContext()).apply {
+                menuBuilder = browserToolbarView.menuToolbar.menuBuilder
+                setColorFilter(
+                    ContextCompat.getColor(
+                        context,
+                        ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                    ),
+                )
+            }
+
+            BottomToolbarContainerView(
+                context = context,
+                container = binding.browserLayout,
+                androidToolbarView = if (isToolbarAtBottom) browserToolbar else null,
+                menuButton = menuButton,
+                browsingModeManager = activity.browsingModeManager,
+            )
+        }
 
         toolbarIntegration.set(
             feature = browserToolbarView.toolbarIntegration,
@@ -999,7 +1039,7 @@ abstract class BaseBrowserFragment :
     private fun showBiometricPrompt(context: Context) {
         if (BiometricPromptFeature.canUseFeature(context)) {
             biometricPromptFeature.get()
-                ?.requestAuthentication(getString(R.string.credit_cards_biometric_prompt_unlock_message))
+                ?.requestAuthentication(getString(R.string.credit_cards_biometric_prompt_unlock_message_2))
             return
         }
 
@@ -1024,7 +1064,7 @@ abstract class BaseBrowserFragment :
     private fun showPinVerification(manager: KeyguardManager) {
         val intent = manager.createConfirmDeviceCredentialIntent(
             getString(R.string.credit_cards_biometric_prompt_message_pin),
-            getString(R.string.credit_cards_biometric_prompt_unlock_message),
+            getString(R.string.credit_cards_biometric_prompt_unlock_message_2),
         )
 
         startForResult.launch(intent)
@@ -1035,8 +1075,8 @@ abstract class BaseBrowserFragment :
      */
     private fun showPinDialogWarning(context: Context) {
         AlertDialog.Builder(context).apply {
-            setTitle(getString(R.string.credit_cards_warning_dialog_title))
-            setMessage(getString(R.string.credit_cards_warning_dialog_message))
+            setTitle(getString(R.string.credit_cards_warning_dialog_title_2))
+            setMessage(getString(R.string.credit_cards_warning_dialog_message_3))
 
             setNegativeButton(getString(R.string.credit_cards_warning_dialog_later)) { _: DialogInterface, _ ->
                 promptsFeature.get()?.onBiometricResult(isAuthenticated = false)
