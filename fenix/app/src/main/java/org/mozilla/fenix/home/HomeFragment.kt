@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -91,6 +92,8 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
@@ -430,6 +433,36 @@ class HomeFragment : Fragment() {
             context = requireContext(),
             interactor = sessionControlInteractor,
         )
+
+        if (IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
+            val isToolbarAtBottom = requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM
+
+            // The toolbar view has already been added directly to the container.
+            // We should remove it and add the view to the navigation bar container.
+            // Should refactor this so there is no added view to remove to begin with:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=1870976
+            if (isToolbarAtBottom) {
+                binding.root.removeView(binding.toolbarLayout)
+            }
+
+            val menuButton = MenuButton(requireContext())
+            HomeMenuView(
+                view = binding.root,
+                context = requireContext(),
+                lifecycleOwner = viewLifecycleOwner,
+                homeActivity = activity,
+                navController = findNavController(),
+                menuButton = WeakReference(menuButton),
+            ).also { it.build() }
+
+            BottomToolbarContainerView(
+                context = requireContext(),
+                container = binding.homeLayout,
+                androidToolbarView = if (isToolbarAtBottom) binding.toolbarLayout else null,
+                menuButton = menuButton,
+                browsingModeManager = browsingModeManager,
+            )
+        }
 
         sessionControlView = SessionControlView(
             containerView = binding.sessionControlRecyclerView,
