@@ -229,7 +229,7 @@ class TranslationsActionTest {
     @Test
     fun `WHEN a SetSupportedLanguagesAction is dispatched AND successful THEN update supportedLanguages`() {
         // Initial
-        assertEquals(null, tabState().translationsState.supportedLanguages)
+        assertNull(store.state.translationEngine.supportedLanguages)
 
         // Action started
         val toLanguage = Language("de", "German")
@@ -237,14 +237,13 @@ class TranslationsActionTest {
         val supportedLanguages = TranslationSupport(listOf(fromLanguage), listOf(toLanguage))
         store.dispatch(
             TranslationsAction.SetSupportedLanguagesAction(
-                tabId = tab.id,
                 supportedLanguages = supportedLanguages,
             ),
         )
             .joinBlocking()
 
         // Action success
-        assertEquals(supportedLanguages, tabState().translationsState.supportedLanguages)
+        assertEquals(supportedLanguages, store.state.translationEngine.supportedLanguages)
     }
 
     @Test
@@ -318,15 +317,25 @@ class TranslationsActionTest {
         assertEquals(restoreError, tabState().translationsState.translationError)
 
         // FETCH_LANGUAGES usage
-        val fetchError = TranslationError.CouldNotLoadLanguagesError(null)
+        val fetchLanguagesError = TranslationError.CouldNotLoadLanguagesError(null)
+
+        // Testing setting tab level error
         store.dispatch(
             TranslationsAction.TranslateExceptionAction(
                 tabId = tab.id,
                 operation = TranslationOperation.FETCH_SUPPORTED_LANGUAGES,
-                translationError = fetchError,
+                translationError = fetchLanguagesError,
             ),
         ).joinBlocking()
-        assertEquals(fetchError, tabState().translationsState.translationError)
+        assertEquals(fetchLanguagesError, tabState().translationsState.translationError)
+
+        // Testing setting browser level error
+        store.dispatch(
+            TranslationsAction.EngineExceptionAction(
+                error = fetchLanguagesError,
+            ),
+        ).joinBlocking()
+        assertEquals(fetchLanguagesError, store.state.translationEngine.engineError)
     }
 
     @Test
@@ -483,7 +492,7 @@ class TranslationsActionTest {
     @Test
     fun `WHEN a OperationRequestedAction is dispatched for FETCH_SUPPORTED_LANGUAGES THEN clear supportLanguages`() {
         // Setting first to have a more robust initial state
-        assertNull(tabState().translationsState.supportedLanguages)
+        assertNull(store.state.translationEngine.supportedLanguages)
 
         val supportLanguages = TranslationSupport(
             fromLanguages = listOf(Language("en", "English")),
@@ -492,12 +501,11 @@ class TranslationsActionTest {
 
         store.dispatch(
             TranslationsAction.SetSupportedLanguagesAction(
-                tabId = tab.id,
                 supportedLanguages = supportLanguages,
             ),
         ).joinBlocking()
 
-        assertEquals(supportLanguages, tabState().translationsState.supportedLanguages)
+        assertEquals(supportLanguages, store.state.translationEngine.supportedLanguages)
 
         // Action started
         store.dispatch(
@@ -508,11 +516,14 @@ class TranslationsActionTest {
         ).joinBlocking()
 
         // Action success
-        assertNull(tabState().translationsState.supportedLanguages)
+        assertNull(store.state.translationEngine.supportedLanguages)
     }
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_OFFER_POPUP THEN set page settings for alwaysOfferPopup `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysOfferPopup)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -528,6 +539,10 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_TRANSLATE_LANGUAGE THEN set page settings for alwaysTranslateLanguage `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -544,6 +559,10 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_NEVER_TRANSLATE_LANGUAGE THEN set page settings for alwaysTranslateLanguage `() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -560,6 +579,9 @@ class TranslationsActionTest {
 
     @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for UPDATE_NEVER_TRANSLATE_SITE THEN set page settings for neverTranslateSite`() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -574,7 +596,59 @@ class TranslationsActionTest {
     }
 
     @Test
+    fun `WHEN an UpdatePageSettingAction is dispatched for UPDATE_ALWAYS_TRANSLATE_LANGUAGE AND UPDATE_ALWAYS_TRANSLATE_LANGUAGE THEN must be opposites of each other or both must be false `() {
+        // Initial state
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+
+        // Action started to update the always offer setting to true
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_ALWAYS_TRANSLATE_LANGUAGE,
+                setting = true,
+            ),
+        ).joinBlocking()
+
+        // When always is true, never should be false
+        assertTrue(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertFalse(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+
+        // Action started to update the never offer setting to true
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_LANGUAGE,
+                setting = true,
+            ),
+        ).joinBlocking()
+
+        // When never is true, always should be false
+        assertFalse(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertTrue(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+
+        // Action started to update the never language setting to false
+        store.dispatch(
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_LANGUAGE,
+                setting = false,
+            ),
+        ).joinBlocking()
+
+        // When never is false, always may also be false
+        assertFalse(tabState().translationsState.pageSettings?.alwaysTranslateLanguage!!)
+        assertFalse(tabState().translationsState.pageSettings?.neverTranslateLanguage!!)
+    }
+
+    @Test
     fun `WHEN a UpdatePageSettingAction is dispatched for each option THEN the page setting is consistent`() {
+        // Initial State
+        assertNull(tabState().translationsState.pageSettings?.alwaysOfferPopup)
+        assertNull(tabState().translationsState.pageSettings?.alwaysTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateLanguage)
+        assertNull(tabState().translationsState.pageSettings?.neverTranslateSite)
+
         // Action started
         store.dispatch(
             TranslationsAction.UpdatePageSettingAction(
@@ -616,6 +690,7 @@ class TranslationsActionTest {
         assertTrue(tabState().translationsState.pageSettings?.neverTranslateSite!!)
     }
 
+    @Test
     fun `WHEN a SetEngineSupportAction is dispatched THEN the browser store is updated to match`() {
         // Initial state
         assertNull(store.state.translationEngine.isEngineSupported)

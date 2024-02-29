@@ -7,14 +7,11 @@ package org.mozilla.fenix.ui
 import android.os.Build
 import android.view.autofill.AutofillManager
 import androidx.core.net.toUri
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
@@ -29,6 +26,7 @@ import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.helpers.TestHelper.waitForAppWindowToBeUpdated
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clearTextFieldItem
 import org.mozilla.fenix.ui.robots.clickPageObject
@@ -42,20 +40,14 @@ import org.mozilla.fenix.ui.robots.setPageObjectText
  * - save login prompts.
  * - saving logins based on the user's preferences.
  */
-class LoginsTest {
-    private lateinit var mockWebServer: MockWebServer
-
+class LoginsTest : TestSetup() {
     @get:Rule
     val activityTestRule =
         HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-
+    override fun setUp() {
+        super.setUp()
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
             val autofillManager: AutofillManager =
                 TestHelper.appContext.getSystemService(AutofillManager::class.java)
@@ -63,20 +55,15 @@ class LoginsTest {
         }
     }
 
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092713
-    // Tests the Logins and passwords menu items and default values
+    // Tests the Passwords menu items and default values
     @Test
     fun loginsAndPasswordsSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
             // Necessary to scroll a little bit for all screen sizes
-            scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
             verifyAutofillInFirefoxToggle(true)
@@ -93,7 +80,7 @@ class LoginsTest {
         }.openThreeDotMenu {
         }.openSettings {
             // Necessary to scroll a little bit for all screen sizes
-            scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
         }.openSavedLogins {
@@ -111,7 +98,7 @@ class LoginsTest {
         }.openThreeDotMenu {
         }.openSettings {
             // Necessary to scroll a little bit for all screen sizes
-            scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Passwords")
         }.openLoginsAndPasswordSubMenu {
         }.openSyncLogins {
             verifyReadyToScanOption()
@@ -145,7 +132,7 @@ class LoginsTest {
         browserScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
         }.openSavedLogins {
@@ -235,7 +222,7 @@ class LoginsTest {
             clickPageObject(itemWithText("Update"))
         }.openThreeDotMenu {
         }.openSettings {
-            scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Passwords")
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             verifySecurityPromptForLogins()

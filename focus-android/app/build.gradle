@@ -37,9 +37,12 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+    bundle {
+        language {
+            // Because we have runtime language selection we will keep all strings and languages
+            // in the base APKs.
+            enableSplit = false
+        }
     }
 
     lint {
@@ -167,7 +170,6 @@ android {
         }
     }
 
-
     namespace 'org.mozilla.focus'
 }
 
@@ -178,7 +180,6 @@ tasks.withType(KotlinCompile).configureEach {
             "-opt-in=kotlin.RequiresOptIn",
             "-Xjvm-default=all"
     ]
-    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
