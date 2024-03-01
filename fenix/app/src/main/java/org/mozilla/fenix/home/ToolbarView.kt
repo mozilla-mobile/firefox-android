@@ -12,9 +12,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.settings
@@ -57,6 +59,10 @@ class ToolbarView(
     }
 
     private fun updateLayout(view: View) {
+        val redesignEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+        binding.menuButton.isVisible = !redesignEnabled
+        binding.tabButton.isVisible = !redesignEnabled
+
         when (context.settings().toolbarPosition) {
             ToolbarPosition.TOP -> {
                 binding.toolbarLayout.layoutParams = CoordinatorLayout.LayoutParams(
@@ -66,16 +72,27 @@ class ToolbarView(
                     gravity = Gravity.TOP
                 }
 
+                val isTabletAndTabStripEnabled = context.settings().isTabletAndTabStripEnabled
                 ConstraintSet().apply {
                     clone(binding.toolbarLayout)
                     clear(binding.bottomBar.id, ConstraintSet.BOTTOM)
                     clear(binding.bottomBarShadow.id, ConstraintSet.BOTTOM)
-                    connect(
-                        binding.bottomBar.id,
-                        ConstraintSet.TOP,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.TOP,
-                    )
+
+                    if (isTabletAndTabStripEnabled) {
+                        connect(
+                            binding.bottomBar.id,
+                            ConstraintSet.TOP,
+                            binding.tabStripView.id,
+                            ConstraintSet.BOTTOM,
+                        )
+                    } else {
+                        connect(
+                            binding.bottomBar.id,
+                            ConstraintSet.TOP,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.TOP,
+                        )
+                    }
                     connect(
                         binding.bottomBarShadow.id,
                         ConstraintSet.TOP,
@@ -98,7 +115,12 @@ class ToolbarView(
 
                 binding.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     topMargin =
-                        context.resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
+                        context.resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin) +
+                        if (isTabletAndTabStripEnabled) {
+                            context.resources.getDimensionPixelSize(R.dimen.tab_strip_height)
+                        } else {
+                            0
+                        }
                 }
             }
 

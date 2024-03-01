@@ -359,6 +359,18 @@ data class Metadata(
     val permissions: List<String>,
 
     /**
+     * Optional permissions requested or granted to this extension:
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/optional_permissions
+     */
+    val optionalPermissions: List<String>,
+
+    /**
+     * Optional origin permissions requested or granted to this extension:
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/optional_permissions
+     */
+    val optionalOrigins: List<String>,
+
+    /**
      * Required host permissions:
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#Host_permissions
      */
@@ -470,6 +482,12 @@ data class Metadata(
      * The URL to the detail page of this extension.
      */
     val detailUrl: String?,
+
+    /**
+     * Indicates how this extension works with private browsing windows.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/incognito
+     */
+    val incognito: Incognito,
 )
 
 /**
@@ -514,6 +532,41 @@ class DisabledFlags internal constructor(val value: Int) {
      * @param flag the flag to check.
      */
     fun contains(flag: Int) = (value and flag) != 0
+}
+
+/**
+ * Incognito values that control how an extension works with private browsing windows.
+ */
+enum class Incognito {
+    /**
+     * The extension will see events from private and non-private windows and tabs.
+     */
+    SPANNING,
+
+    /**
+     * The extension will be split between private and non-private windows.
+     */
+    SPLIT,
+
+    /**
+     * Private tabs and windows are invisible to the extension.
+     */
+    NOT_ALLOWED,
+
+    ;
+
+    companion object {
+        /**
+         * Safely returns an Incognito value based on the input nullable string.
+         */
+        fun fromString(value: String?): Incognito {
+            return when (value) {
+                "split" -> SPLIT
+                "not_allowed" -> NOT_ALLOWED
+                else -> SPANNING
+            }
+        }
+    }
 }
 
 /**

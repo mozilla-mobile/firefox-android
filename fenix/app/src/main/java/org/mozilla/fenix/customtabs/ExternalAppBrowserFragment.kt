@@ -5,7 +5,6 @@
 package org.mozilla.fenix.customtabs
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
@@ -15,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.manifest.getOrNull
 import mozilla.components.concept.engine.permission.SitePermissions
@@ -28,7 +26,6 @@ import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
-import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
@@ -58,7 +55,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
         val customTabSessionId = customTabSessionId ?: return
         val activity = requireActivity()
         val components = activity.components
-        val toolbar = binding.root.findViewById<BrowserToolbar>(R.id.toolbar)
 
         val manifest =
             args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
@@ -67,7 +63,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
             feature = CustomTabsIntegration(
                 store = requireComponents.core.store,
                 useCases = requireComponents.useCases.customTabsUseCases,
-                toolbar = toolbar,
+                toolbar = browserToolbar,
                 sessionId = customTabSessionId,
                 activity = activity,
                 onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
@@ -80,21 +76,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
         )
 
         windowFeature.set(
-            feature = CustomTabWindowFeature(
-                activity,
-                components.core.store,
-                customTabSessionId,
-            ) { uri ->
-                val intent =
-                    Intent.parseUri("${BuildConfig.DEEP_LINK_SCHEME}://open?url=$uri", 0)
-                if (intent.action == Intent.ACTION_VIEW) {
-                    intent.addCategory(Intent.CATEGORY_BROWSABLE)
-                    intent.component = null
-                    intent.selector = null
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                activity.startActivity(intent)
-            },
+            feature = CustomTabWindowFeature(activity, components.core.store, customTabSessionId),
             owner = this,
             view = view,
         )
@@ -116,7 +98,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
                 }
             },
             owner = this,
-            view = toolbar,
+            view = browserToolbar,
         )
 
         if (manifest != null) {

@@ -37,13 +37,17 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+    bundle {
+        language {
+            // Because we have runtime language selection we will keep all strings and languages
+            // in the base APKs.
+            enableSplit = false
+        }
     }
 
     lint {
         lintConfig file("lint.xml")
+        baseline file("lint-baseline.xml")
     }
 
     // We have a three dimensional build configuration:
@@ -167,7 +171,6 @@ android {
         }
     }
 
-
     namespace 'org.mozilla.focus'
 }
 
@@ -178,7 +181,6 @@ tasks.withType(KotlinCompile).configureEach {
             "-opt-in=kotlin.RequiresOptIn",
             "-Xjvm-default=all"
     ]
-    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -210,6 +212,9 @@ nimbus {
 }
 
 dependencies {
+    implementation platform(ComponentsDependencies.androidx_compose_bom)
+    androidTestImplementation platform(ComponentsDependencies.androidx_compose_bom)
+
     implementation ComponentsDependencies.androidx_appcompat
     implementation ComponentsDependencies.androidx_browser
     implementation ComponentsDependencies.androidx_cardview
@@ -351,6 +356,7 @@ dependencies {
     androidTestImplementation ComponentsDependencies.androidx_test_runner
     androidTestUtil FocusDependencies.androidx_orchestrator
 
+    lintChecks project(':tooling-lint')
 }
 // -------------------------------------------------------------------------------------------------
 //  Dynamically set versionCode (See tools/build/versionCode.gradle

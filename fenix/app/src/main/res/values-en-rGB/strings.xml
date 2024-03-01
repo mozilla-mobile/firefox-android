@@ -496,7 +496,7 @@
     <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
     <string name="errorpage_httpsonly_title">Secure site not available</string>
     <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
-    <string name="errorpage_httpsonly_message_title">Most likely, the web site simply does not support HTTPs.</string>
+    <string name="errorpage_httpsonly_message_title">Most likely, the web site simply does not support HTTPS.</string>
     <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
     <string name="errorpage_httpsonly_message_summary">However, it’s also possible that an attacker is involved. If you continue to the web site, you should not enter any sensitive info. If you continue, HTTPS-Only mode will be turned off temporarily for the site.</string>
     <!-- Preference for accessibility -->
@@ -2162,6 +2162,9 @@
     <string name="other_default_search_engine_suggestion_header">%s search</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Switch your default browser</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Set links from web sites, emails, and messages to open automatically in Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->

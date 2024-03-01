@@ -22,6 +22,7 @@ import mozilla.components.feature.addons.ui.updatedAtDate
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnDetailsBinding
+import org.mozilla.fenix.ext.addUnderline
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.Locale
@@ -63,18 +64,22 @@ class AddonDetailsBindingDelegate(
     private fun bindRating(addon: Addon) {
         addon.rating?.let { rating ->
             val resources = binding.root.resources
-            val ratingContentDescription = resources.getString(R.string.mozac_feature_addons_rating_content_description)
+            val ratingContentDescription =
+                resources.getString(R.string.mozac_feature_addons_rating_content_description_2)
+            binding.ratingLabel.contentDescription = String.format(ratingContentDescription, rating.average)
             binding.ratingView.rating = rating.average
 
+            val reviewCount = resources.getString(R.string.mozac_feature_addons_user_rating_count_2)
+            binding.reviewCount.contentDescription = String.format(reviewCount, numberFormatter.format(rating.reviews))
             binding.reviewCount.text = numberFormatter.format(rating.reviews)
 
             if (addon.ratingUrl.isNotBlank()) {
                 binding.reviewCount.setTextColor(binding.root.context.getColorFromAttr(R.attr.textAccent))
+                binding.reviewCount.addUnderline()
                 binding.reviewCount.setOnClickListener {
                     interactor.openWebsite(addon.ratingUrl.toUri())
                 }
             }
-            binding.ratingLabel.joinContextDescriptions(String.format(ratingContentDescription, rating.average))
         }
     }
 
@@ -85,6 +90,7 @@ class AddonDetailsBindingDelegate(
             return
         }
 
+        binding.homePageLabel.addUnderline()
         binding.homePageLabel.setOnClickListener {
             interactor.openWebsite(addon.homepageUrl.toUri())
         }
@@ -100,7 +106,7 @@ class AddonDetailsBindingDelegate(
 
         val formattedDate = dateFormatter.format(addon.updatedAtDate)
         binding.lastUpdatedText.text = formattedDate
-        binding.lastUpdatedLabel.joinContextDescriptions(formattedDate)
+        binding.lastUpdatedLabel.joinContentDescriptions(formattedDate)
     }
 
     private fun bindVersion(addon: Addon) {
@@ -118,7 +124,7 @@ class AddonDetailsBindingDelegate(
         } else {
             binding.versionText.setOnLongClickListener(null)
         }
-        binding.versionLabel.joinContextDescriptions(version)
+        binding.versionLabel.joinContentDescriptions(version)
     }
 
     private fun bindAuthor(addon: Addon) {
@@ -134,11 +140,12 @@ class AddonDetailsBindingDelegate(
 
         if (author.url.isNotBlank()) {
             binding.authorText.setTextColor(binding.root.context.getColorFromAttr(R.attr.textAccent))
+            binding.authorText.addUnderline()
             binding.authorText.setOnClickListener {
                 interactor.openWebsite(author.url.toUri())
             }
         }
-        binding.authorLabel.joinContextDescriptions(author.name)
+        binding.authorLabel.joinContentDescriptions(author.name)
     }
 
     private fun bindDetails(addon: Addon) {
@@ -181,13 +188,14 @@ class AddonDetailsBindingDelegate(
             return
         }
 
+        binding.detailUrl.addUnderline()
         binding.detailUrl.setOnClickListener {
             interactor.openWebsite(addon.detailUrl.toUri())
         }
     }
 
     @VisibleForTesting
-    internal fun TextView.joinContextDescriptions(text: String) {
+    internal fun TextView.joinContentDescriptions(text: String) {
         this.contentDescription = "${this.text} $text"
     }
 }

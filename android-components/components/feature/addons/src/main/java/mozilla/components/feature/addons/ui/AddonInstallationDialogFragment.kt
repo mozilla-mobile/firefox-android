@@ -22,6 +22,7 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.R
@@ -136,18 +137,29 @@ class AddonInstallationDialogFragment : AddonDialogFragment() {
 
         val binding = MozacFeatureAddonsFragmentDialogAddonInstalledBinding.bind(rootView)
 
+        val addonName = addon.translateName(requireContext())
         rootView.findViewById<TextView>(R.id.title).text =
             requireContext().getString(
                 R.string.mozac_feature_addons_installed_dialog_title,
-                addon.translateName(requireContext()),
+                addonName,
+                requireContext().appName,
+            )
+        rootView.findViewById<TextView>(R.id.description).text =
+            requireContext().getString(
+                R.string.mozac_feature_addons_installed_dialog_description_2,
+                addonName,
                 requireContext().appName,
             )
 
         loadIcon(addon = addon, iconView = binding.icon)
 
         val allowedInPrivateBrowsing = rootView.findViewById<AppCompatCheckBox>(R.id.allow_in_private_browsing)
-        allowedInPrivateBrowsing.setOnCheckedChangeListener { _, isChecked ->
-            allowPrivateBrowsing = isChecked
+        if (addon.incognito == Addon.Incognito.NOT_ALLOWED) {
+            allowedInPrivateBrowsing.isVisible = false
+        } else {
+            allowedInPrivateBrowsing.setOnCheckedChangeListener { _, isChecked ->
+                allowPrivateBrowsing = isChecked
+            }
         }
 
         val confirmButton = rootView.findViewById<Button>(R.id.confirm_button)

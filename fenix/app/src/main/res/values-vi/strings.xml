@@ -498,7 +498,7 @@
     <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
     <string name="errorpage_httpsonly_title">Trang web an toàn không khả dụng</string>
     <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
-    <string name="errorpage_httpsonly_message_title">Rất có thể, trang web chỉ đơn giản là không hỗ trợ HTTPs.</string>
+    <string name="errorpage_httpsonly_message_title">Rất có thể, trang web chỉ đơn giản là không hỗ trợ HTTPS.</string>
     <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
     <string name="errorpage_httpsonly_message_summary">Tuy nhiên, cũng có thể có kẻ tấn công tham gia. Nếu bạn tiếp tục vào trang web, bạn không nên nhập bất kỳ thông tin nhạy cảm nào. Nếu bạn tiếp tục, chế độ chỉ HTTPS sẽ tạm thời bị tắt cho trang web.</string>
     <!-- Preference for accessibility -->
@@ -2161,6 +2161,9 @@
     <string name="other_default_search_engine_suggestion_header">Tìm kiếm trên %s</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Đặt làm trình duyệt mặc định của bạn</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Đặt các liên kết từ trang web, email và tin nhắn để tự động mở trong Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->

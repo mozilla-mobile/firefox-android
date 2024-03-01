@@ -12,12 +12,15 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.thumbnails.loader.ThumbnailLoader
 import mozilla.components.concept.base.images.ImageLoadRequest
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.TabPreviewBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -34,7 +37,7 @@ class TabPreview @JvmOverloads constructor(
     private val thumbnailLoader = ThumbnailLoader(context.components.core.thumbnailStorage)
 
     init {
-        if (!context.settings().shouldUseBottomToolbar) {
+        if (context.settings().toolbarPosition == ToolbarPosition.TOP) {
             binding.fakeToolbar.updateLayoutParams<LayoutParams> {
                 gravity = Gravity.TOP
             }
@@ -44,6 +47,10 @@ class TabPreview @JvmOverloads constructor(
                 ThemeManager.resolveAttribute(R.attr.bottomBarBackgroundTop, context),
             )
         }
+
+        val isNavBarEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+        binding.tabButton.isVisible = !isNavBarEnabled
+        binding.menuButton.isVisible = !isNavBarEnabled
 
         // Change view properties to avoid confusing the UI tests
         binding.tabButton.findViewById<View>(R.id.counter_box).id = View.NO_ID
@@ -59,7 +66,7 @@ class TabPreview @JvmOverloads constructor(
             binding.tabButton.setCount(count)
         }
 
-        binding.previewThumbnail.translationY = if (!context.settings().shouldUseBottomToolbar) {
+        binding.previewThumbnail.translationY = if (context.settings().toolbarPosition == ToolbarPosition.TOP) {
             binding.fakeToolbar.height.toFloat()
         } else {
             0f

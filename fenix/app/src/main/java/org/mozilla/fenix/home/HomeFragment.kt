@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -53,6 +54,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -77,6 +79,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.ui.colors.PhotonColors
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
@@ -84,10 +87,13 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.tabstrip.TabStrip
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
@@ -117,7 +123,6 @@ import org.mozilla.fenix.home.toolbar.SearchSelectorBinding
 import org.mozilla.fenix.home.toolbar.SearchSelectorMenuBinding
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.messaging.DefaultMessageController
-import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingFeature
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
@@ -360,7 +365,7 @@ class HomeFragment : Fragment() {
                 engine = components.core.engine,
                 messageController = DefaultMessageController(
                     appStore = components.appStore,
-                    messagingController = FenixNimbusMessagingController(components.analytics.messagingStorage),
+                    messagingController = components.nimbus.messaging,
                     homeActivity = activity,
                 ),
                 store = store,
@@ -428,6 +433,36 @@ class HomeFragment : Fragment() {
             context = requireContext(),
             interactor = sessionControlInteractor,
         )
+
+        if (IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
+            val isToolbarAtBottom = requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM
+
+            // The toolbar view has already been added directly to the container.
+            // We should remove it and add the view to the navigation bar container.
+            // Should refactor this so there is no added view to remove to begin with:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=1870976
+            if (isToolbarAtBottom) {
+                binding.root.removeView(binding.toolbarLayout)
+            }
+
+            val menuButton = MenuButton(requireContext())
+            HomeMenuView(
+                view = binding.root,
+                context = requireContext(),
+                lifecycleOwner = viewLifecycleOwner,
+                homeActivity = activity,
+                navController = findNavController(),
+                menuButton = WeakReference(menuButton),
+            ).also { it.build() }
+
+            BottomToolbarContainerView(
+                context = requireContext(),
+                container = binding.homeLayout,
+                androidToolbarView = if (isToolbarAtBottom) binding.toolbarLayout else null,
+                menuButton = menuButton,
+                browsingModeManager = browsingModeManager,
+            )
+        }
 
         sessionControlView = SessionControlView(
             containerView = binding.sessionControlRecyclerView,
@@ -577,6 +612,9 @@ class HomeFragment : Fragment() {
         )
 
         toolbarView?.build()
+        if (requireContext().settings().isTabletAndTabStripEnabled) {
+            initTabStrip()
+        }
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(newMode)
@@ -652,6 +690,27 @@ class HomeFragment : Fragment() {
             profilerStartTime,
             "HomeFragment.onViewCreated",
         )
+    }
+
+    private fun initTabStrip() {
+        binding.tabStripView.isVisible = true
+        binding.tabStripView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                FirefoxTheme {
+                    TabStrip(
+                        onHome = true,
+                        onAddTabClick = {
+                            sessionControlInteractor.onNavigateSearch()
+                        },
+                        onSelectedTabClick = {
+                            (requireActivity() as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+                        },
+                        onLastTabClose = {},
+                    )
+                }
+            }
+        }
     }
 
     /**

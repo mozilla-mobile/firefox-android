@@ -13,6 +13,7 @@ import android.view.Window
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.forEach
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +36,7 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.CustomTabsUseCases
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.ext.joinBlocking
@@ -404,7 +406,7 @@ class CustomTabsToolbarFeatureTest {
     }
 
     @Test
-    fun `action button is scaled to 24 width and 24 height`() {
+    fun `GIVEN a square icon larger than the max drawable size WHEN adding action button to toolbar THEN the icon is scaled to fit`() {
         val captor = argumentCaptor<Toolbar.ActionButton>()
         val size = 48
         val pendingIntent: PendingIntent = mock()
@@ -439,6 +441,84 @@ class CustomTabsToolbarFeatureTest {
         val button = captor.value.createView(FrameLayout(testContext))
         assertEquals(24, (button as ImageButton).drawable.intrinsicHeight)
         assertEquals(24, button.drawable.intrinsicWidth)
+    }
+
+    @Test
+    fun `GIVEN a wide icon larger than the max drawable size WHEN adding action button to toolbar THEN the icon is scaled to fit`() {
+        val captor = argumentCaptor<Toolbar.ActionButton>()
+        val width = 96
+        val height = 48
+        val pendingIntent: PendingIntent = mock()
+        val tab = createCustomTab(
+            "https://www.mozilla.org",
+            id = "mozilla",
+            config = CustomTabConfig(
+                actionButtonConfig = CustomTabActionButtonConfig(
+                    description = "Button",
+                    icon = Bitmap.createBitmap(IntArray(width * height), width, height, Bitmap.Config.ARGB_8888),
+                    pendingIntent = pendingIntent,
+                ),
+            ),
+        )
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+        val toolbar = spy(BrowserToolbar(testContext))
+        val useCases = CustomTabsUseCases(
+            store = store,
+            loadUrlUseCase = SessionUseCases(store).loadUrl,
+        )
+        val feature = spy(CustomTabsToolbarFeature(store, toolbar, sessionId = "mozilla", useCases = useCases) {})
+
+        feature.start()
+
+        verify(feature).addActionButton(anyInt(), any())
+        verify(toolbar).addBrowserAction(captor.capture())
+
+        val button = captor.value.createView(FrameLayout(testContext))
+        assertEquals(24, (button as ImageButton).drawable.intrinsicHeight)
+        assertEquals(48, button.drawable.intrinsicWidth)
+    }
+
+    @Test
+    fun `GIVEN a tall icon larger than the max drawable size WHEN adding action button to toolbar THEN the icon is scaled to fit`() {
+        val captor = argumentCaptor<Toolbar.ActionButton>()
+        val width = 24
+        val height = 48
+        val pendingIntent: PendingIntent = mock()
+        val tab = createCustomTab(
+            "https://www.mozilla.org",
+            id = "mozilla",
+            config = CustomTabConfig(
+                actionButtonConfig = CustomTabActionButtonConfig(
+                    description = "Button",
+                    icon = Bitmap.createBitmap(IntArray(width * height), width, height, Bitmap.Config.ARGB_8888),
+                    pendingIntent = pendingIntent,
+                ),
+            ),
+        )
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+        val toolbar = spy(BrowserToolbar(testContext))
+        val useCases = CustomTabsUseCases(
+            store = store,
+            loadUrlUseCase = SessionUseCases(store).loadUrl,
+        )
+        val feature = spy(CustomTabsToolbarFeature(store, toolbar, sessionId = "mozilla", useCases = useCases) {})
+
+        feature.start()
+
+        verify(feature).addActionButton(anyInt(), any())
+        verify(toolbar).addBrowserAction(captor.capture())
+
+        val button = captor.value.createView(FrameLayout(testContext))
+        assertEquals(24, (button as ImageButton).drawable.intrinsicHeight)
+        assertEquals(12, button.drawable.intrinsicWidth)
     }
 
     @Test
@@ -1014,6 +1094,44 @@ class CustomTabsToolbarFeatureTest {
         verify(feature).addCloseButton(toolbar.display.colors.menu, tab.config.closeButtonIcon)
         verify(feature).addActionButton(toolbar.display.colors.menu, tab.config.actionButtonConfig)
         assertEquals(Color.WHITE, toolbar.display.colors.menu)
+    }
+
+    @Test
+    fun `WHEN tab is private THEN readableColor is the default private color`() {
+        val tab = createCustomTab(
+            "https://www.mozilla.org",
+            id = "mozilla",
+            config = CustomTabConfig(showShareMenuItem = true),
+        )
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+        val toolbar = spy(BrowserToolbar(testContext))
+        val useCases = CustomTabsUseCases(
+            store = store,
+            loadUrlUseCase = SessionUseCases(store).loadUrl,
+        )
+        val feature = spy(
+            CustomTabsToolbarFeature(
+                store = store,
+                toolbar = toolbar,
+                sessionId = "mozilla",
+                useCases = useCases,
+                menuBuilder = BrowserMenuBuilder(listOf(mock(), mock())),
+                menuItemIndex = 4,
+                updateToolbarBackground = false,
+            ) {},
+        )
+
+        feature.start()
+
+        val colorResId = testContext.theme.resolveAttribute(android.R.attr.textColorPrimary)
+        val privateColor = getColor(testContext, colorResId)
+        verify(feature).addCloseButton(privateColor, tab.config.closeButtonIcon)
+        verify(feature).addActionButton(privateColor, tab.config.actionButtonConfig)
+        verify(feature).addShareButton(privateColor)
     }
 
     @Test

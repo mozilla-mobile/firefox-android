@@ -8,7 +8,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.view.View
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
@@ -39,6 +38,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeVeryShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.clickPageObject
 
@@ -115,11 +115,12 @@ object TestHelper {
 
     // exit from Menus to home screen or browser
     fun exitMenu() {
-        val toolbar =
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
-        while (!toolbar.waitForExists(waitingTimeShort)) {
+        val menuToolbar =
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/navigationToolbar"))
+        while (menuToolbar.waitForExists(waitingTimeShort)) {
+            Log.i(TAG, "exitMenu: Trying to press the device back button to return to the app home/browser view")
             mDevice.pressBack()
-            Log.i(TAG, "exitMenu: Exiting app settings menus using device back button")
+            Log.i(TAG, "exitMenu: Pressed the device back button to return to the app home/browser view")
         }
     }
 
@@ -142,4 +143,10 @@ object TestHelper {
         assertFalse("Light theme not selected", expected)
 
     fun verifyDarkThemeApplied(expected: Boolean) = assertTrue("Dark theme not selected", expected)
+
+    fun waitForAppWindowToBeUpdated() {
+        Log.i(TAG, "waitForAppWindowToBeUpdated: Waiting for $waitingTimeVeryShort ms for $packageName window to be updated")
+        mDevice.waitForWindowUpdate(packageName, waitingTimeVeryShort)
+        Log.i(TAG, "waitForAppWindowToBeUpdated: Waited for $waitingTimeVeryShort ms for $packageName window to be updated")
+    }
 }

@@ -401,7 +401,7 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">Selecione um</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_2">Gerencie mecanismos de pesquisa alternativos</string>
+    <string name="preferences_manage_search_shortcuts_2">Gerenciar mecanismos de pesquisa alternativos</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts_summary">Editar mecanismos visíveis no menu de pesquisa</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
@@ -2182,6 +2182,9 @@
     <string name="other_default_search_engine_suggestion_header">Pesquisa do %s</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Mude seu navegador padrão</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Abra links, emails e mensagens automaticamente no Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
