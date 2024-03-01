@@ -40,6 +40,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 import org.robolectric.annotation.Config
 
+// TODO
 @RunWith(FenixRobolectricTestRunner::class)
 class FenixApplicationTest {
 
