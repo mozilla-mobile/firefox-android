@@ -78,6 +78,7 @@ import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.utils.ext.isLandscape
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.HomeScreen
@@ -434,7 +435,9 @@ class HomeFragment : Fragment() {
             interactor = sessionControlInteractor,
         )
 
-        if (IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
+        val navBarEnabled = IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled
+        val wideDisplay = resources.getBoolean(R.bool.tablet) || requireContext().isLandscape()
+        if (navBarEnabled && !wideDisplay) {
             val isToolbarAtBottom = requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM
 
             // The toolbar view has already been added directly to the container.

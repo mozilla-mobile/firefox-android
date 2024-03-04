@@ -112,6 +112,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.locale.ActivityContextWrapper
+import mozilla.components.support.utils.ext.isLandscape
 import mozilla.components.ui.widgets.behavior.EngineViewClippingBehavior
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
@@ -458,7 +459,9 @@ abstract class BaseBrowserFragment :
             browserToolbar = it.view
         }
 
-        if (IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+        val navBarEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+        val wideDisplay = resources.getBoolean(R.bool.tablet) || context.isLandscape()
+        if (navBarEnabled && !wideDisplay) {
             val isToolbarAtBottom = context.components.settings.toolbarPosition == ToolbarPosition.BOTTOM
 
             // The toolbar view has already been added directly to the container.
