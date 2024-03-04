@@ -44,7 +44,7 @@ object Versions {
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "57.0.0"
+    const val mozilla_glean = "58.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.17"
@@ -133,7 +133,7 @@ object ComponentsDependencies {
 
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
-    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.AndroidX.navigation}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
