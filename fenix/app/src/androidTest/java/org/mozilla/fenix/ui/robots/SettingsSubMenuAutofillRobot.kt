@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.util.Log
+import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
@@ -149,6 +150,10 @@ class SettingsSubMenuAutofillRobot {
     }
 
     fun verifyAddAddressView() {
+        Log.i(TAG, "verifyAddAddressView: Trying to perform \"Close soft keyboard\" action")
+        // Closing the keyboard to ensure full visibility of the "Add address" view
+        closeSoftKeyboard()
+        Log.i(TAG, "verifyAddAddressView: Performed \"Close soft keyboard\" action")
         assertUIObjectExists(
             addAddressToolbarTitle(),
             navigateBackButton(),
@@ -158,7 +163,6 @@ class SettingsSubMenuAutofillRobot {
             cityTextInput(),
             subRegionDropDown(),
         )
-        scrollToElementByText(getStringResource(R.string.addresses_country))
         assertUIObjectExists(
             zipCodeTextInput(),
             countryDropDown(),
