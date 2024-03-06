@@ -34,15 +34,20 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import junit.framework.AssertionFailedError
 import kotlinx.coroutines.runBlocking
+import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.helpers.Constants.PackageName.PIXEL_LAUNCHER
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
@@ -70,7 +75,7 @@ object AppAndSystemHelper {
     fun deleteDownloadedFileOnStorage(fileName: String) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             val storageManager: StorageManager? =
-                TestHelper.appContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager?
+                appContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager?
             val storageVolumes = storageManager!!.storageVolumes
             val storageVolume: StorageVolume = storageVolumes[0]
             val file = File(storageVolume.directory!!.path + "/Download/" + fileName)
@@ -110,7 +115,7 @@ object AppAndSystemHelper {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             Log.i(TAG, "clearDownloadsFolder: API > 29")
             val storageManager: StorageManager? =
-                TestHelper.appContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager?
+                appContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager?
             val storageVolumes = storageManager!!.storageVolumes
             val storageVolume: StorageVolume = storageVolumes[0]
             val downloadsFolder = File(storageVolume.directory!!.path + "/Download/")
@@ -121,16 +126,26 @@ object AppAndSystemHelper {
                 val files = downloadsFolder.listFiles()
 
                 // Check if the folder is not empty
+                // If you run this method before a test, files.isNotEmpty() will always return false.
                 if (files != null && files.isNotEmpty()) {
                     Log.i(
                         TAG,
-                        "clearDownloadsFolder: Verified that \"DOWNLOADS\" folder is not empty",
+                        "clearDownloadsFolder: Before cleanup: Downloads storage contains: ${files.size} file(s)",
                     )
                     // Delete all files in the folder
                     for (file in files) {
                         file.delete()
-                        Log.i(TAG, "clearDownloadsFolder: Deleted $file from \"DOWNLOADS\" folder")
+                        Log.i(
+                            TAG,
+                            "clearDownloadsFolder: Deleted $file from \"DOWNLOADS\" folder." +
+                                " Downloads storage contains ${files.size} file(s): $file",
+                        )
                     }
+                } else {
+                    Log.i(
+                        TAG,
+                        "clearDownloadsFolder: Downloads storage is empty.",
+                    )
                 }
             }
         } else {
@@ -139,11 +154,61 @@ object AppAndSystemHelper {
                 Log.i(TAG, "clearDownloadsFolder: Verifying if any download files exist.")
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                     .listFiles()?.forEach {
+                        Log.i(TAG, "clearDownloadsFolder: Downloads storage contains: $it.")
                         it.delete()
                         Log.i(TAG, "clearDownloadsFolder: Download file $it deleted.")
                     }
             }
         }
+    }
+
+    suspend fun deleteHistoryStorage() {
+        val historyStorage = PlacesHistoryStorage(appContext.applicationContext)
+        Log.i(
+            TAG,
+            "deleteHistoryStorage before cleanup: History storage contains: ${historyStorage.getVisited()}",
+        )
+        if (historyStorage.getVisited().isNotEmpty()) {
+            Log.i(TAG, "deleteHistoryStorage: Trying to delete all history storage.")
+            historyStorage.deleteEverything()
+            Log.i(
+                TAG,
+                "deleteHistoryStorage after cleanup: History storage contains: ${historyStorage.getVisited()}",
+            )
+        }
+    }
+
+    suspend fun deleteBookmarksStorage() {
+        val bookmarksStorage = PlacesBookmarksStorage(appContext.applicationContext)
+        val bookmarks = bookmarksStorage.getTree(BookmarkRoot.Mobile.id)?.children
+        Log.i(TAG, "deleteBookmarksStorage before cleanup: Bookmarks storage contains: $bookmarks")
+        if (bookmarks?.isNotEmpty() == true) {
+            bookmarks.forEach {
+                Log.i(
+                    TAG,
+                    "deleteBookmarksStorage: Trying to delete $it bookmark from storage.",
+                )
+                bookmarksStorage.deleteNode(it.guid)
+                // TODO: Follow-up with a method to handle the DB update; the logs will still show the bookmarks in the storage before the test starts.
+                Log.i(
+                    TAG,
+                    "deleteBookmarksStorage: Bookmark deleted. Bookmarks storage contains: $bookmarks",
+                )
+            }
+        }
+    }
+
+    suspend fun deletePermissionsStorage() {
+        val permissionStorage = PermissionStorage(appContext.applicationContext)
+        Log.i(
+            TAG,
+            "deletePermissionsStorage: Trying to delete permissions. Permissions storage contains: ${permissionStorage.getSitePermissionsPaged()}",
+        )
+        permissionStorage.deleteAllSitePermissions()
+        Log.i(
+            TAG,
+            "deletePermissionsStorage: Permissions deleted. Permissions storage contains: ${permissionStorage.getSitePermissionsPaged()}",
+        )
     }
 
     fun setNetworkEnabled(enabled: Boolean) {
@@ -228,7 +293,7 @@ object AppAndSystemHelper {
      */
     fun isExternalAppBrowserActivityInCurrentTask(): Boolean {
         Log.i(TAG, "Trying to verify that the latest activity of the application is used for custom tabs or PWAs")
-        val activityManager = TestHelper.appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
         mDevice.waitForIdle(TestAssetHelper.waitingTimeShort)
 
@@ -291,64 +356,60 @@ object AppAndSystemHelper {
 
     /**
      * Changes the default language of the entire device, not just the app.
-     * Runs on Debug variant as we don't want to adjust Release permission manifests
      * Runs the test in its testBlock.
      * Cleans up and sets the default locale after it's done.
-     * As a safety measure, always add the resetSystemLocaleToEnUS() method in the tearDown method of your Class.
      */
     fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<HomeActivity>, testBlock: () -> Unit) {
+        val defaultLocale = Locale.getDefault()
+
+        try {
+            setSystemLocale(locale)
+            testBlock()
+            ThreadUtils.runOnUiThread { testRule.activity.recreate() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            setSystemLocale(defaultLocale)
+        }
+    }
+
+    /**
+     * Changes the default language of the entire device, not just the app.
+     * We can only use this if we're running on a debug build, otherwise it will change the permission manifests in release builds.
+     */
+    fun setSystemLocale(locale: Locale) {
         if (Config.channel.isDebug) {
             /* Sets permission to change device language */
+            Log.i(
+                TAG,
+                "setSystemLocale: Requesting permission to change system locale to $locale.",
+            )
             PermissionRequester().apply {
                 addPermissions(
                     Manifest.permission.CHANGE_CONFIGURATION,
                 )
                 requestPermissions()
             }
-
-            val defaultLocale = Locale.getDefault()
-
-            try {
-                setSystemLocale(locale)
-                testBlock()
-                ThreadUtils.runOnUiThread { testRule.activity.recreate() }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                setSystemLocale(defaultLocale)
-            }
+            Log.i(
+                TAG,
+                "setSystemLocale: Received permission to change system locale to $locale.",
+            )
+            val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
+            val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
+                .invoke(activityManagerNative, *arrayOfNulls(0))
+            val config =
+                InstrumentationRegistry.getInstrumentation().context.resources.configuration
+            config.javaClass.getDeclaredField("locale")[config] = locale
+            config.javaClass.getDeclaredField("userSetLocale").setBoolean(config, true)
+            am.javaClass.getMethod(
+                "updateConfiguration",
+                Configuration::class.java,
+            ).invoke(am, config)
         }
-    }
-
-    /**
-     * Resets the default language of the entire device back to EN-US.
-     * In case of a test instrumentation crash, the finally statement in the
-     * runWithSystemLocaleChanged(locale: Locale) method, will not be reached.
-     * Add this method inside the tearDown method of your test class, where the above method is used.
-     * Note: If set inside the ActivityTestRule's afterActivityFinished() method, this also won't work,
-     * as the methods inside it are not always executed: https://github.com/android/android-test/issues/498
-     */
-    fun resetSystemLocaleToEnUS() {
-        if (Locale.getDefault() != Locale.US) {
-            Log.i(TAG, "Resetting system locale to EN US")
-            setSystemLocale(Locale.US)
-        }
-    }
-
-    /**
-     * Changes the default language of the entire device, not just the app.
-     */
-    fun setSystemLocale(locale: Locale) {
-        val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
-        val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
-            .invoke(activityManagerNative, *arrayOfNulls(0))
-        val config = InstrumentationRegistry.getInstrumentation().context.resources.configuration
-        config.javaClass.getDeclaredField("locale")[config] = locale
-        config.javaClass.getDeclaredField("userSetLocale").setBoolean(config, true)
-        am.javaClass.getMethod(
-            "updateConfiguration",
-            Configuration::class.java,
-        ).invoke(am, config)
+        Log.i(
+            TAG,
+            "setSystemLocale: Changed system locale to $locale.",
+        )
     }
 
     fun putAppToBackground() {

@@ -20,6 +20,11 @@ internal object TranslationsStateReducer {
      */
     @Suppress("LongMethod")
     fun reduce(state: BrowserState, action: TranslationsAction): BrowserState = when (action) {
+        TranslationsAction.InitTranslationsBrowserState -> {
+            // No state change on this operation
+            state
+        }
+
         is TranslationsAction.TranslateExpectedAction -> {
             state.copyWithTranslationsState(action.tabId) {
                 it.copy(
@@ -37,19 +42,45 @@ internal object TranslationsStateReducer {
         }
 
         is TranslationsAction.TranslateStateChangeAction -> {
+            var isExpectedTranslate = state.findTab(action.tabId)?.translationsState?.isExpectedTranslate ?: true
+            var isOfferTranslate = state.findTab(action.tabId)?.translationsState?.isOfferTranslate ?: true
+
+            // Checking if a translation can be anticipated or not based on
+            // the new translation engine state detected metadata.
+            if (action.translationEngineState.detectedLanguages == null ||
+                action.translationEngineState.detectedLanguages?.supportedDocumentLang == false ||
+                action.translationEngineState.detectedLanguages?.userPreferredLangTag == null
+            ) {
+                // Value can also update through [TranslateExpectedAction]
+                // via the translations engine.
+                isExpectedTranslate = false
+
+                // Value can also update through [TranslateOfferAction]
+                // via the translations engine.
+                isOfferTranslate = false
+            }
+
+            // Checking for if the translations engine is in the fully translated state or not based
+            // on the values of the translation pair.
             if (action.translationEngineState.requestedTranslationPair == null ||
                 action.translationEngineState.requestedTranslationPair?.fromLanguage == null ||
                 action.translationEngineState.requestedTranslationPair?.toLanguage == null
             ) {
+                // In an untranslated state
                 state.copyWithTranslationsState(action.tabId) {
                     it.copy(
+                        isOfferTranslate = isOfferTranslate,
+                        isExpectedTranslate = isExpectedTranslate,
                         isTranslated = false,
                         translationEngineState = action.translationEngineState,
                     )
                 }
             } else {
+                // In a translated state
                 state.copyWithTranslationsState(action.tabId) {
                     it.copy(
+                        isOfferTranslate = isOfferTranslate,
+                        isExpectedTranslate = isExpectedTranslate,
                         isTranslated = true,
                         translationError = null,
                         translationEngineState = action.translationEngineState,
@@ -101,6 +132,17 @@ internal object TranslationsStateReducer {
                     }
                 }
 
+                TranslationOperation.FETCH_LANGUAGE_MODELS -> {
+                    // Reset the error state, and then generally expect
+                    // [TranslationsAction.SetLanguageModelsAction] to update state in the
+                    // success case.
+                    state.copyWithTranslationsState(action.tabId) {
+                        it.copy(
+                            translationError = null,
+                        )
+                    }
+                }
+
                 TranslationOperation.FETCH_PAGE_SETTINGS -> {
                     // Reset the error state, and then generally expect
                     // [TranslationsAction.SetPageSettingsAction] to update state in the
@@ -110,6 +152,14 @@ internal object TranslationsStateReducer {
                             settingsError = null,
                         )
                     }
+                }
+
+                TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS -> {
+                    state.copy(
+                        translationEngine = state.translationEngine.copy(
+                            engineError = null,
+                        ),
+                    )
                 }
 
                 TranslationOperation.FETCH_NEVER_TRANSLATE_SITES -> {
@@ -148,7 +198,14 @@ internal object TranslationsStateReducer {
                 TranslationOperation.FETCH_SUPPORTED_LANGUAGES -> {
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
-                            supportedLanguages = null,
+                            translationError = action.translationError,
+                        )
+                    }
+                }
+
+                TranslationOperation.FETCH_LANGUAGE_MODELS -> {
+                    state.copyWithTranslationsState(action.tabId) {
+                        it.copy(
                             translationError = action.translationError,
                         )
                     }
@@ -159,6 +216,14 @@ internal object TranslationsStateReducer {
                         it.copy(
                             pageSettings = null,
                             settingsError = action.translationError,
+                        )
+                    }
+                }
+
+                TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS -> {
+                    state.copyWithTranslationsState(action.tabId) {
+                        it.copy(
+                            translationError = action.translationError,
                         )
                     }
                 }
@@ -179,12 +244,20 @@ internal object TranslationsStateReducer {
         }
 
         is TranslationsAction.SetSupportedLanguagesAction ->
-            state.copyWithTranslationsState(action.tabId) {
-                it.copy(
+            state.copy(
+                translationEngine = state.translationEngine.copy(
                     supportedLanguages = action.supportedLanguages,
-                    translationError = null,
-                )
-            }
+                    engineError = null,
+                ),
+            )
+
+        is TranslationsAction.SetLanguageModelsAction ->
+            state.copy(
+                translationEngine = state.translationEngine.copy(
+                    languageModels = action.languageModels,
+                    engineError = null,
+                ),
+            )
 
         is TranslationsAction.SetPageSettingsAction ->
             state.copyWithTranslationsState(action.tabId) {
@@ -214,12 +287,28 @@ internal object TranslationsStateReducer {
         is TranslationsAction.OperationRequestedAction ->
             when (action.operation) {
                 TranslationOperation.FETCH_SUPPORTED_LANGUAGES -> {
-                    state.copyWithTranslationsState(action.tabId) {
-                        it.copy(
+                    state.copy(
+                        translationEngine = state.translationEngine.copy(
                             supportedLanguages = null,
-                        )
-                    }
+                        ),
+                    )
                 }
+                TranslationOperation.FETCH_LANGUAGE_MODELS -> {
+                    state.copy(
+                        translationEngine = state.translationEngine.copy(
+                            languageModels = null,
+                        ),
+                    )
+                }
+
+                TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS -> {
+                    state.copy(
+                        translationEngine = state.translationEngine.copy(
+                            languageSettings = null,
+                        ),
+                    )
+                }
+
                 TranslationOperation.FETCH_PAGE_SETTINGS -> {
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
@@ -227,6 +316,7 @@ internal object TranslationsStateReducer {
                         )
                     }
                 }
+
                 TranslationOperation.FETCH_NEVER_TRANSLATE_SITES -> {
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
@@ -241,46 +331,60 @@ internal object TranslationsStateReducer {
             }
 
         is TranslationsAction.UpdatePageSettingAction -> {
-            var pageSettings = state.findTab(action.tabId)?.translationsState?.pageSettings
-            // Initialize page settings, if null.
-            if (pageSettings == null) {
-                pageSettings = TranslationPageSettings()
-            }
+            val currentPageSettings =
+                state.findTab(action.tabId)?.translationsState?.pageSettings ?: TranslationPageSettings()
+
             when (action.operation) {
                 TranslationPageSettingOperation.UPDATE_ALWAYS_OFFER_POPUP -> {
-                    pageSettings.alwaysOfferPopup = action.setting
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
-                            pageSettings = pageSettings,
+                            pageSettings = currentPageSettings.copy(alwaysOfferPopup = action.setting),
                         )
                     }
                 }
+
                 TranslationPageSettingOperation.UPDATE_ALWAYS_TRANSLATE_LANGUAGE -> {
-                    pageSettings.alwaysTranslateLanguage = action.setting
-                    // Always and never translate sites are always opposites.
-                    pageSettings.neverTranslateLanguage = !action.setting
+                    val alwaysTranslateLang = action.setting
+                    var neverTranslateLang = currentPageSettings.neverTranslateLanguage
+
+                    if (alwaysTranslateLang) {
+                        // Always and never translate sites are always opposites when the other is true.
+                        neverTranslateLang = false
+                    }
 
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
-                            pageSettings = pageSettings,
+                            pageSettings = currentPageSettings.copy(
+                                alwaysTranslateLanguage = alwaysTranslateLang,
+                                neverTranslateLanguage = neverTranslateLang,
+                            ),
                         )
                     }
                 }
+
                 TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_LANGUAGE -> {
-                    pageSettings.neverTranslateLanguage = action.setting
-                    // Always and never translate sites are always opposites.
-                    pageSettings.alwaysTranslateLanguage = !action.setting
+                    var alwaysTranslateLang = currentPageSettings.alwaysTranslateLanguage
+                    val neverTranslateLang = action.setting
+
+                    if (neverTranslateLang) {
+                        // Always and never translate sites are always opposites when the other is true.
+                        alwaysTranslateLang = false
+                    }
+
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
-                            pageSettings = pageSettings,
+                            pageSettings = currentPageSettings.copy(
+                                alwaysTranslateLanguage = alwaysTranslateLang,
+                                neverTranslateLanguage = neverTranslateLang,
+                            ),
                         )
                     }
                 }
+
                 TranslationPageSettingOperation.UPDATE_NEVER_TRANSLATE_SITE -> {
-                    pageSettings.neverTranslateSite = action.setting
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
-                            pageSettings = pageSettings,
+                            pageSettings = currentPageSettings.copy(neverTranslateSite = action.setting),
                         )
                     }
                 }
@@ -310,6 +414,15 @@ internal object TranslationsStateReducer {
                     translationDownloadSize = action.translationSize,
                 )
             }
+        }
+
+        is TranslationsAction.SetLanguageSettingsAction -> {
+            state.copy(
+                translationEngine = state.translationEngine.copy(
+                    languageSettings = action.languageSettings,
+                    engineError = null,
+                ),
+            )
         }
     }
 

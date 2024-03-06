@@ -5,6 +5,7 @@
 package mozilla.components.service.nimbus.messaging
 
 import android.content.Context
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import kotlinx.coroutines.runBlocking
@@ -41,6 +42,7 @@ class NimbusMessagingStorage(
     private val nimbus: NimbusMessagingInterface,
     private val messagingFeature: FeatureHolder<Messaging>,
     private val attributeProvider: JexlAttributeProvider? = null,
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) {
     /**
      * Contains all malformed messages where they key can be the value or a trigger of the message
@@ -90,8 +92,10 @@ class NimbusMessagingStorage(
             "CONTROL_ACTION"
         }
 
-        val trigger = sanitizeTriggers(message.trigger, featureValue.triggers) ?: return null
+        val triggerIfAll = sanitizeTriggers(message.triggerIfAll, featureValue.triggers) ?: return null
+        val excludeIfAny = sanitizeTriggers(message.excludeIfAny, featureValue.triggers) ?: return null
         val style = sanitizeStyle(message.style, featureValue.styles) ?: return null
+
         val storageMetadata = metadataStorage.getMetadata()
 
         return Message(
@@ -99,8 +103,9 @@ class NimbusMessagingStorage(
             data = message,
             action = action,
             style = style,
+            triggerIfAll = triggerIfAll,
+            excludeIfAny = excludeIfAny,
             metadata = storageMetadata[key] ?: addMetadata(key),
-            triggers = trigger,
         )
     }
 
@@ -177,30 +182,26 @@ class NimbusMessagingStorage(
     ): Message? {
         val message = availableMessages
             .filter { !excluded.contains(it.id) }
-            .firstOrNull { isMessageEligible(it, helper) } ?: return null
-
-        val slug = message.data.experiment
-        if (slug != null) {
-            // We know that it's experimental, and we know which experiment it came from.
-            messagingFeature.recordExperimentExposure(slug)
-        } else if (message.data.isControl) {
-            // It's not experimental, but it is a control. This is obviously malformed.
-            reportMalformedMessage(message.id)
-        }
+            .firstOrNull {
+                try {
+                    isMessageEligible(it, helper)
+                } catch (e: NimbusException) {
+                    reportMalformedMessage(it.id)
+                    false
+                }
+            } ?: return null
 
         // If this is an experimental message, but not a placebo, then just return the message.
         if (!message.data.isControl) {
             return message
         }
 
-        // If a message is a control then it's considered as displayed
-        val updatedMetadata = message.metadata.copy(
-            displayCount = message.metadata.displayCount + 1,
-            lastTimeShown = System.currentTimeMillis(),
-        )
-
+        // This is a control message which we're definitely not going to show to anyone,
+        // however, we need to do the bookkeeping and as if we were.
+        //
+        // Since no one is going to see it, then we need to do it ourselves, here.
         runBlocking {
-            updateMetadata(updatedMetadata)
+            onMessageDisplayed(message)
         }
 
         // This is a control, so we need to either return the next message (there may not be one)
@@ -219,26 +220,113 @@ class NimbusMessagingStorage(
     }
 
     /**
-     * Returns a pair of uuid and valid action for the provided [action].
+     * Record the time and optional [bootIdentifier] of the display of the given message.
+     *
+     * If the message is part of an experiment, then record an exposure event for that
+     * experiment.
+     *
+     * This is determined by the value in the [message.data.experiment] property.
+     */
+    suspend fun onMessageDisplayed(message: Message, bootIdentifier: String? = null): Message {
+        // Record an exposure event if this is an experimental message.
+        val slug = message.data.experiment
+        if (slug != null) {
+            // We know that it's experimental, and we know which experiment it came from.
+            messagingFeature.recordExperimentExposure(slug)
+        } else if (message.data.isControl) {
+            // It's not experimental, but it is a control. This is obviously malformed.
+            reportMalformedMessage(message.id)
+        }
+
+        // Now update the display counts.
+        val updatedMetadata = message.metadata.copy(
+            displayCount = message.metadata.displayCount + 1,
+            lastTimeShown = now(),
+            latestBootIdentifier = bootIdentifier,
+        )
+        val nextMessage = message.copy(
+            metadata = updatedMetadata,
+        )
+        updateMetadata(nextMessage.metadata)
+        return nextMessage
+    }
+
+    /**
+     * Returns a pair of uuid and valid action for the provided [message].
+     *
+     * The message's action-params are appended as query parameters to the action URI,
+     * URI encoding the values as it goes.
      *
      * Uses Nimbus' targeting attributes to do basic string interpolation.
      *
      * e.g.
-     * `https://example.com/{locale}/whatsnew.html?version={app_version}`
+     * `https://example.com/{locale}/whats-new.html?version={app_version}`
      *
-     * If the string `{uuid}` is detected in the [action] string, then it is
+     * If the string `{uuid}` is detected in the [message]'s action, then it is
      * replaced with a random UUID. This is returned as the first value of the returned
      * [Pair].
      *
      * The fully resolved (with all substitutions) action is returned as the second value
      * of the [Pair].
      */
-    fun generateUuidAndFormatAction(action: String): Pair<String?, String> =
+    internal fun generateUuidAndFormatMessage(message: Message): Pair<String?, String> =
         createMessagingHelper().use { helper ->
-            val uuid = helper.getUuid(action)
-            val url = helper.stringFormat(action, uuid)
-            Pair(uuid, url)
+            generateUuidAndFormatMessage(message, helper)
         }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun generateUuidAndFormatMessage(
+        message: Message,
+        helper: NimbusMessagingHelperInterface,
+    ): Pair<String?, String> {
+        // The message action is part or all of a valid URL, likely to be a deeplink.
+        // If it's an internal deeplink, we don't yet know the scheme, so
+        // we'll prepend it later: these should just have a :// prefix right now.
+        // e.g. market://details?id=org.mozilla.blah or ://open
+
+        // We need to construct it from the parts coming in from the message:
+        // the message.action, the message.actionParams and the attribute context.
+        //
+        // Any part of the action may have string params taken from the attribute
+        // context, and a special {uuid}.
+        // e.g. market://details?id={app_id} becomes market://details?id=org.mozilla.blah
+        // If there is a {uuid}, we want to create a uuid for later usage, i.e. recording in Glean
+        var uuid: String? = null
+        fun formatWithUuid(string: String): String {
+            if (uuid == null) {
+                uuid = helper.getUuid(string)
+            }
+            return helper.stringFormat(string, uuid)
+        }
+
+        // We also want to do any string substitutions e.g. locale
+        // or UUID for the action.
+        val action = formatWithUuid(message.action)
+
+        // Now we use a string builder to add the actionParams as query params to the URL.
+        val sb = StringBuilder(action)
+
+        // Before the first query parameter is a `?`, and subsequent ones are `&`.
+        // The action may already have a query parameter.
+        var separator = if (action.contains('?')) {
+            '&'
+        } else {
+            '?'
+        }
+
+        for ((queryParamName, queryParamValue) in message.data.actionParams) {
+            val v = formatWithUuid(queryParamValue)
+            sb
+                .append(separator)
+                .append(queryParamName)
+                .append('=')
+                .append(Uri.encode(v))
+
+            separator = '&'
+        }
+
+        return uuid to sb.toString()
+    }
 
     /**
      * Updated the provided [metadata] in the storage.
@@ -251,20 +339,7 @@ class NimbusMessagingStorage(
     internal fun sanitizeAction(
         unsafeAction: String,
         nimbusActions: Map<String, String>,
-    ): String? =
-        when {
-            unsafeAction.startsWith("http") -> {
-                unsafeAction
-            }
-            else -> {
-                val safeAction = nimbusActions[unsafeAction]
-                if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
-                    null
-                } else {
-                    safeAction
-                }
-            }
-        }
+    ): String? = nimbusActions[unsafeAction]
 
     @VisibleForTesting
     internal fun sanitizeTriggers(
@@ -297,20 +372,28 @@ class NimbusMessagingStorage(
         message: Message,
         helper: NimbusMessagingHelperInterface,
     ): Boolean {
-        return message.triggers.all { condition ->
-            try {
-                if (malFormedMap.containsKey(condition)) {
-                    return false
-                }
-                helper.evalJexl(condition)
-            } catch (e: NimbusException.EvaluationException) {
-                reportMalformedMessage(message.id)
-                malFormedMap[condition] = message.id
-                logger.info("Unable to evaluate $condition")
-                false
-            }
+        return message.triggerIfAll.all { condition ->
+            evalJexl(message, helper, condition)
+        } && !message.excludeIfAny.any { condition ->
+            evalJexl(message, helper, condition)
         }
     }
+
+    private fun evalJexl(
+        message: Message,
+        helper: NimbusMessagingHelperInterface,
+        condition: String,
+    ): Boolean =
+        try {
+            if (malFormedMap.containsKey(condition)) {
+                throw NimbusException.EvaluationException(condition)
+            }
+            helper.evalJexl(condition)
+        } catch (e: NimbusException) {
+            malFormedMap[condition] = message.id
+            logger.info("Unable to evaluate ${message.id} trigger: $condition")
+            throw NimbusException.EvaluationException(condition)
+        }
 
     @VisibleForTesting
     internal fun getOnControlBehavior(): ControlMessageBehavior = messagingFeature.value().onControl

@@ -36,7 +36,7 @@ object Versions {
     const val detekt = "1.23.5"
     const val ktlint = "0.49.1"
 
-    const val sentry = "7.3.0"
+    const val sentry = "7.4.0"
 
     const val zxing = "3.5.3"
 
@@ -44,7 +44,7 @@ object Versions {
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "57.0.0"
+    const val mozilla_glean = "58.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.17"
@@ -52,7 +52,7 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_compiler = "1.5.9"
+    const val compose_compiler = "1.5.10"
 
     object AndroidX {
         const val activityCompose = "1.7.2"
@@ -81,7 +81,7 @@ object Versions {
         const val lifecycle = "2.7.0"
         const val media = "1.7.0"
         const val navigation = "2.7.7"
-        const val work = "2.7.1"
+        const val work = "2.9.0"
         const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
         const val localbroadcastmanager = "1.0.0"
@@ -133,7 +133,7 @@ object ComponentsDependencies {
 
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
-    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.AndroidX.navigation}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
@@ -161,7 +161,7 @@ object ComponentsDependencies {
     const val androidx_test_runner = "androidx.test:runner:${Versions.AndroidX.test_runner}"
     const val androidx_test_rules = "androidx.test:rules:${Versions.AndroidX.test}"
     const val androidx_test_uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.AndroidX.uiautomator}"
-    const val androidx_work_runtime = "androidx.work:work-runtime-ktx:${Versions.AndroidX.work}"
+    const val androidx_work_runtime = "androidx.work:work-runtime:${Versions.AndroidX.work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.AndroidX.work}"
     const val androidx_espresso_core = "androidx.test.espresso:espresso-core:${Versions.AndroidX.espresso}"
     const val androidx_localbroadcastmanager = "androidx.localbroadcastmanager:localbroadcastmanager:${Versions.AndroidX.localbroadcastmanager}"

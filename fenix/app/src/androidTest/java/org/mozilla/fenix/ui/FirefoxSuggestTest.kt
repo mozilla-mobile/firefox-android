@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -13,6 +14,7 @@ import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithCondition
 import org.mozilla.fenix.helpers.DataGenerationHelper.getSponsoredFxSuggestPlaceHolder
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
@@ -20,7 +22,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 
-class FirefoxSuggestTest {
+class FirefoxSuggestTest : TestSetup() {
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
@@ -192,6 +194,7 @@ class FirefoxSuggestTest {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348374
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @SmokeTest
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsTest() {
@@ -219,6 +222,7 @@ class FirefoxSuggestTest {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348375
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun verifyFirefoxSuggestNonSponsoredSearchResultsWithPartialKeywordTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {
@@ -239,6 +243,7 @@ class FirefoxSuggestTest {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2348376
     // Known bug that might affect this UI test: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1882035")
     @Test
     fun openFirefoxSuggestNonSponsoredSearchResultsTest() {
         runWithCondition(TestHelper.appContext.settings().enableFxSuggest) {

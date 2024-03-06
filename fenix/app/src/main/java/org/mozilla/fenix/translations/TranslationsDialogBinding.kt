@@ -5,17 +5,20 @@
 package org.mozilla.fenix.translations
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.translate.initialFromLanguage
 import mozilla.components.concept.engine.translate.initialToLanguage
 import mozilla.components.lib.state.helpers.AbstractBinding
 
 /**
- * Helper for observing Translation state from [BrowserStore].
+ * Helper for observing Translation state from both [BrowserState.translationEngine]
+ * and [TabSessionState.translationsState].
  */
 class TranslationsDialogBinding(
     browserStore: BrowserStore,
@@ -24,20 +27,64 @@ class TranslationsDialogBinding(
     private val getTranslatedPageTitle: (localizedFrom: String?, localizedTo: String?) -> String,
 ) : AbstractBinding<BrowserState>(browserStore) {
 
+    @Suppress("LongMethod")
     override suspend fun onState(flow: Flow<BrowserState>) {
-        flow.mapNotNull { state -> state.findTab(sessionId) }
+        // Browser level flows
+        val browserFlow = flow.mapNotNull { state -> state }
+            .distinctUntilChangedBy {
+                it.translationEngine
+            }
+
+        // Session level flows
+        val sessionFlow = flow.mapNotNull { state -> state.findTab(sessionId) }
             .distinctUntilChangedBy {
                 it.translationsState
             }
-            .collect { sessionState ->
-                val translationsState = sessionState.translationsState
+
+        // Applying the flows together
+        sessionFlow
+            .combine(browserFlow) { sessionState, browserState -> TranslationsFlowState(sessionState, browserState) }
+            .collect {
+                    state ->
+                // Browser Translations State Behavior (Global)
+                val browserTranslationsState = state.browserState.translationEngine
+                val translateFromLanguages =
+                    browserTranslationsState.supportedLanguages?.fromLanguages
+                translateFromLanguages?.let {
+                    translationsDialogStore.dispatch(
+                        TranslationsDialogAction.UpdateTranslateFromLanguages(
+                            translateFromLanguages,
+                        ),
+                    )
+                }
+
+                val translateToLanguages =
+                    browserTranslationsState.supportedLanguages?.toLanguages
+                translateToLanguages?.let {
+                    translationsDialogStore.dispatch(
+                        TranslationsDialogAction.UpdateTranslateToLanguages(
+                            translateToLanguages,
+                        ),
+                    )
+                }
+
+                // Dispatch engine level errors
+                if (browserTranslationsState.engineError != null) {
+                    translationsDialogStore.dispatch(
+                        TranslationsDialogAction.UpdateTranslationError(browserTranslationsState.engineError),
+                    )
+                }
+
+                // Session Translations State Behavior (Tab)
+                val sessionTranslationsState = state.sessionState.translationsState
 
                 val fromSelected =
-                    translationsState.translationEngineState?.initialFromLanguage(
-                        translationsState.supportedLanguages?.fromLanguages,
+                    sessionTranslationsState.translationEngineState?.initialFromLanguage(
+                        translateFromLanguages,
                     )
 
-                fromSelected?.let {
+                // Dispatch initialFrom Language only the first time when it is null.
+                if (fromSelected != null && translationsDialogStore.state.initialFrom == null) {
                     translationsDialogStore.dispatch(
                         TranslationsDialogAction.UpdateFromSelectedLanguage(
                             fromSelected,
@@ -46,10 +93,12 @@ class TranslationsDialogBinding(
                 }
 
                 val toSelected =
-                    translationsState.translationEngineState?.initialToLanguage(
-                        translationsState.supportedLanguages?.toLanguages,
+                    sessionTranslationsState.translationEngineState?.initialToLanguage(
+                        translateToLanguages,
                     )
-                toSelected?.let {
+
+                // Dispatch initialTo Language only the first time when it is null.
+                if (toSelected != null && translationsDialogStore.state.initialTo == null) {
                     translationsDialogStore.dispatch(
                         TranslationsDialogAction.UpdateToSelectedLanguage(
                             toSelected,
@@ -71,35 +120,24 @@ class TranslationsDialogBinding(
                     )
                 }
 
-                val translateFromLanguages = translationsState.supportedLanguages?.fromLanguages
-                translateFromLanguages?.let {
-                    translationsDialogStore.dispatch(
-                        TranslationsDialogAction.UpdateTranslateFromLanguages(
-                            translateFromLanguages,
-                        ),
-                    )
-                }
-
-                val translateToLanguages = translationsState.supportedLanguages?.toLanguages
-                translateToLanguages?.let {
-                    translationsDialogStore.dispatch(
-                        TranslationsDialogAction.UpdateTranslateToLanguages(
-                            translateToLanguages,
-                        ),
-                    )
-                }
-
-                if (translationsState.isTranslateProcessing) {
+                if (sessionTranslationsState.isTranslateProcessing) {
                     updateStoreIfIsTranslateProcessing()
                 }
 
-                if (translationsState.isTranslated && !translationsState.isTranslateProcessing) {
+                if (sessionTranslationsState.isTranslated && !sessionTranslationsState.isTranslateProcessing) {
                     updateStoreIfTranslated()
                 }
 
-                if (translationsState.translationError != null) {
+                // A session error may override a browser error
+                if (sessionTranslationsState.translationError != null) {
                     translationsDialogStore.dispatch(
-                        TranslationsDialogAction.UpdateTranslationError(translationsState.translationError),
+                        TranslationsDialogAction.UpdateTranslationError(sessionTranslationsState.translationError),
+                    )
+                }
+
+                sessionTranslationsState.translationDownloadSize?.let {
+                    translationsDialogStore.dispatch(
+                        TranslationsDialogAction.UpdateDownloadTranslationDownloadSize(it),
                     )
                 }
             }
@@ -125,11 +163,13 @@ class TranslationsDialogBinding(
             ),
         )
 
-        translationsDialogStore.dispatch(
-            TranslationsDialogAction.UpdateTranslated(
-                true,
-            ),
-        )
+        if (!translationsDialogStore.state.isTranslated) {
+            translationsDialogStore.dispatch(
+                TranslationsDialogAction.UpdateTranslated(
+                    true,
+                ),
+            )
+        }
 
         if (translationsDialogStore.state.dismissDialogState == DismissDialogState.WaitingToBeDismissed) {
             translationsDialogStore.dispatch(

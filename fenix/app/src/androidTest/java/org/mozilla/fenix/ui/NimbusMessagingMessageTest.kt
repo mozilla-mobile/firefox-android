@@ -5,8 +5,6 @@
 package org.mozilla.fenix.ui
 
 import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import kotlinx.coroutines.test.runTest
 import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
 import mozilla.components.service.nimbus.messaging.Messaging
@@ -20,6 +18,7 @@ import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestSetup
 
 /**
  * This test is to test the integrity of messages hardcoded in the FML.
@@ -27,23 +26,21 @@ import org.mozilla.fenix.helpers.TestHelper
  * It tests if the trigger expressions are valid, all the fields are complete
  * and a simple check if they are localized (don't contain `_`).
  */
-class NimbusMessagingMessageTest {
+class NimbusMessagingMessageTest : TestSetup() {
     private lateinit var feature: Messaging
-    private lateinit var mDevice: UiDevice
-
     private lateinit var context: Context
 
-    private val storage
-        get() = context.components.nimbus.messagingStorage
+    private val messaging
+        get() = context.components.nimbus.messaging
 
     @get:Rule
     val activityTestRule =
         HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         context = TestHelper.appContext
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         feature = FxNimbusMessaging.features.messaging.value()
     }
 
@@ -54,7 +51,7 @@ class NimbusMessagingMessageTest {
      */
     @Test
     fun testAllMessageIntegrity() = runTest {
-        val messages = storage.getMessages()
+        val messages = messaging.getMessages()
         val rawMessages = feature.messages
         assertTrue(rawMessages.isNotEmpty())
 
@@ -65,22 +62,6 @@ class NimbusMessagingMessageTest {
             fail("Problem with message(s) in FML: $missing")
         }
         assertEquals(messages.size, rawMessages.size)
-    }
-
-    /**
-     * Check if the messages' triggers are well formed JEXL.
-     */
-    @Test
-    fun testAllMessageTriggers() = runTest {
-        val helper = context.components.nimbus.createJexlHelper()
-        val messages = storage.getMessages()
-        messages.forEach { message ->
-            storage.isMessageEligible(message, helper)
-            if (storage.malFormedMap.isNotEmpty()) {
-                fail("${message.id} has a problem with its JEXL trigger: ${storage.malFormedMap.keys}")
-            }
-        }
-        helper.destroy()
     }
 
     private fun checkIsLocalized(string: String) {
