@@ -11,6 +11,7 @@ import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.state.TranslationsBrowserState
 import mozilla.components.browser.state.state.TranslationsState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -65,7 +66,13 @@ class TranslationsMiddlewareTest {
     private val store = spy(BrowserStore(middleware = listOf(translationsMiddleware), initialState = state))
     private val context = mock<MiddlewareContext<BrowserState, BrowserAction>>()
 
+    // Mock Variables
     private val mockFrom = Language(code = "es", localizedDisplayName = "Spanish")
+    private val mockTo = Language(code = "en", localizedDisplayName = "English")
+    private val mockSupportedLanguages = TranslationSupport(
+        fromLanguages = listOf(mockFrom, mockTo),
+        toLanguages = listOf(mockFrom, mockTo),
+    )
     private val mockIsDownloaded = true
     private val mockSize: Long = 1234
     private val mockLanguage = Language(mockFrom.code, mockFrom.localizedDisplayName)
@@ -86,21 +93,21 @@ class TranslationsMiddlewareTest {
     }
 
     /**
-     * Use with tests that need a mock translations engine state.
+     * Use with tests that need a mock translations engine state and supported languages.
      */
     private fun setupMockState() {
-        val mockFrom = "es"
-        val mockTo = "en"
         val mockDetectedLanguages = DetectedLanguages(
-            documentLangTag = mockFrom,
+            documentLangTag = mockFrom.code,
             supportedDocumentLang = true,
-            userPreferredLangTag = mockTo,
+            userPreferredLangTag = mockTo.code,
         )
-        val mockState = TranslationsState(
+        val mockSessionState = TranslationsState(
             translationEngineState = TranslationEngineState(mockDetectedLanguages),
         )
+        whenever(store.state.findTab(tab.id)?.translationsState).thenReturn(mockSessionState)
 
-        whenever(store.state.findTab(tab.id)?.translationsState).thenReturn(mockState)
+        val mockBrowserState = TranslationsBrowserState(isEngineSupported = true, supportedLanguages = mockSupportedLanguages)
+        whenever(store.state.translationEngine).thenReturn(mockBrowserState)
     }
 
     @Test
@@ -220,6 +227,71 @@ class TranslationsMiddlewareTest {
     }
 
     @Test
+    fun `WHEN InitTranslationsBrowserState is dispatched AND the engine is supported THEN SetLanguageSettingsAction is also dispatched`() = runTest {
+        // Send Action
+        translationsMiddleware.invoke(context = context, next = {}, action = TranslationsAction.InitTranslationsBrowserState)
+        waitForIdle()
+
+        // Set the engine to support
+        val engineSupportedCallback = argumentCaptor<((Boolean) -> Unit)>()
+        // At least once, since InitAction also will trigger this
+        verify(engine, atLeastOnce()).isTranslationsEngineSupported(
+            onSuccess = engineSupportedCallback.capture(),
+            onError = any(),
+        )
+        engineSupportedCallback.value.invoke(true)
+
+        // Check expectations
+        val languageSettingsCallback = argumentCaptor<((Map<String, LanguageSetting>) -> Unit)>()
+        verify(engine, atLeastOnce()).getLanguageSettings(
+            onSuccess = languageSettingsCallback.capture(),
+            onError = any(),
+        )
+        val mockLanguageSetting = mapOf("en" to LanguageSetting.OFFER)
+        languageSettingsCallback.value.invoke(mockLanguageSetting)
+        waitForIdle()
+
+        verify(store, atLeastOnce()).dispatch(
+            TranslationsAction.SetLanguageSettingsAction(
+                languageSettings = mockLanguageSetting,
+            ),
+        )
+        waitForIdle()
+    }
+
+    @Test
+    fun `WHEN InitTranslationsBrowserState is dispatched AND an error occurs THEN TranslateExceptionAction is dispatched for language settings`() = runTest() {
+        // Send Action
+        translationsMiddleware.invoke(context = context, next = {}, action = TranslationsAction.InitTranslationsBrowserState)
+        waitForIdle()
+
+        // Set the engine to support
+        val engineSupportedCallback = argumentCaptor<((Boolean) -> Unit)>()
+        // At least once, since InitAction also will trigger this
+        verify(engine, atLeastOnce()).isTranslationsEngineSupported(
+            onSuccess = engineSupportedCallback.capture(),
+            onError = any(),
+        )
+        engineSupportedCallback.value.invoke(true)
+
+        // Check expectations
+        val errorCallback = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, atLeastOnce()).getLanguageSettings(
+            onSuccess = any(),
+            onError = errorCallback.capture(),
+        )
+        errorCallback.value.invoke(Throwable())
+        waitForIdle()
+
+        verify(store, atLeastOnce()).dispatch(
+            TranslationsAction.EngineExceptionAction(
+                error = TranslationError.CouldNotLoadLanguageSettingsError(any()),
+            ),
+        )
+        waitForIdle()
+    }
+
+    @Test
     fun `WHEN InitTranslationsBrowserState is dispatched AND the engine is supported THEN SetLanguageModelsAction is also dispatched`() = runTest {
         // Send Action
         translationsMiddleware.invoke(context = context, next = {}, action = TranslationsAction.InitTranslationsBrowserState)
@@ -287,6 +359,46 @@ class TranslationsMiddlewareTest {
         // Verify language query was never called
         verify(engine, never()).getSupportedTranslationLanguages(onSuccess = any(), onError = any())
         waitForIdle()
+    }
+
+    @Test
+    fun `WHEN TranslateExpectedAction is dispatched THEN FetchTranslationDownloadSizeAction is also dispatched`() = runTest {
+        // Set up the state of defaults on the engine.
+        setupMockState()
+
+        // Action
+        translationsMiddleware.invoke(context = context, next = {}, action = TranslationsAction.TranslateExpectedAction(tab.id))
+
+        waitForIdle()
+
+        // Verifying at least once
+        verify(store).dispatch(
+            TranslationsAction.FetchTranslationDownloadSizeAction(
+                tabId = tab.id,
+                fromLanguage = mockFrom,
+                toLanguage = mockTo,
+            ),
+        )
+
+        waitForIdle()
+    }
+
+    @Test
+    fun `WHEN TranslateExpectedAction is dispatched AND the defaults are NOT available THEN FetchTranslationDownloadSizeAction is NOT dispatched`() = runTest {
+        // Note, no state is set on the engine, so no default values are available.
+        // Action
+        translationsMiddleware.invoke(context = context, next = {}, action = TranslationsAction.TranslateExpectedAction(tab.id))
+
+        waitForIdle()
+
+        // Verifying no dispatch
+        verify(store, never()).dispatch(
+            TranslationsAction.FetchTranslationDownloadSizeAction(
+                tabId = tab.id,
+                fromLanguage = mockFrom,
+                toLanguage = mockTo,
+            ),
+        )
 
         // Verify language query was never called
         verify(engine, never()).getTranslationsModelDownloadStates(onSuccess = any(), onError = any())
@@ -425,6 +537,105 @@ class TranslationsMiddlewareTest {
     }
 
     @Test
+    fun `WHEN an Operation to FETCH_AUTOMATIC_LANGUAGE_SETTINGS is dispatched THEN SetLanguageSettingsAction is dispatched`() = runTest {
+        // Send Action
+        val action =
+            TranslationsAction.OperationRequestedAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS,
+            )
+        translationsMiddleware.invoke(context = context, next = {}, action = action)
+        waitForIdle()
+
+        // Check expectations
+        val languageSettingsCallback = argumentCaptor<((Map<String, LanguageSetting>) -> Unit)>()
+        // Checking atLeastOnce, because InitAction is also implicitly called earlier
+        verify(engine, atLeastOnce()).getLanguageSettings(
+            onSuccess = languageSettingsCallback.capture(),
+            onError = any(),
+        )
+        val mockLanguageSetting = mapOf("en" to LanguageSetting.OFFER)
+        languageSettingsCallback.value.invoke(mockLanguageSetting)
+        waitForIdle()
+
+        verify(store, atLeastOnce()).dispatch(
+            TranslationsAction.SetLanguageSettingsAction(
+                languageSettings = mockLanguageSetting,
+            ),
+        )
+        waitForIdle()
+    }
+
+    @Test
+    fun `WHEN an Operation to UpdatePageSettings for UPDATE_ALWAYS_TRANSLATE_LANGUAGE is dispatched THEN SetLanguageSettingsAction is dispatched`() = runTest {
+        // Page settings needs additional setup
+        setupMockState()
+        val pageSettingCallback = argumentCaptor<(() -> Unit)>()
+        whenever(
+            engine.setLanguageSetting(
+                languageCode = any(),
+                languageSetting = any(),
+                onSuccess = pageSettingCallback.capture(),
+                onError = any(),
+            ),
+        ).thenAnswer { pageSettingCallback.value.invoke() }
+
+        // Send Action
+        val action =
+            TranslationsAction.UpdatePageSettingAction(
+                tabId = tab.id,
+                operation = TranslationPageSettingOperation.UPDATE_ALWAYS_TRANSLATE_LANGUAGE,
+                setting = true,
+            )
+        translationsMiddleware.invoke(context = context, next = {}, action = action)
+        waitForIdle()
+
+        // Check expectations
+        val languageSettingsCallback = argumentCaptor<((Map<String, LanguageSetting>) -> Unit)>()
+        verify(engine).getLanguageSettings(
+            onSuccess = languageSettingsCallback.capture(),
+            onError = any(),
+        )
+        waitForIdle()
+    }
+
+    @Test
+    fun `WHEN an Operation to FETCH_AUTOMATIC_LANGUAGE_SETTINGS has an error THEN EngineExceptionAction and TranslateExceptionAction are dispatched for language setting`() = runTest() {
+        // Send Action
+        val action =
+            TranslationsAction.OperationRequestedAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS,
+            )
+        translationsMiddleware.invoke(context = context, next = {}, action = action)
+        waitForIdle()
+
+        // Check expectations
+        val errorCallback = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, atLeastOnce()).getLanguageSettings(
+            onSuccess = any(),
+            onError = errorCallback.capture(),
+        )
+        errorCallback.value.invoke(Throwable())
+        waitForIdle()
+
+        verify(store, atLeastOnce()).dispatch(
+            TranslationsAction.EngineExceptionAction(
+                error = TranslationError.CouldNotLoadLanguageSettingsError(any()),
+            ),
+        )
+
+        verify(store, atLeastOnce()).dispatch(
+            TranslationsAction.TranslateExceptionAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS,
+                translationError = TranslationError.CouldNotLoadLanguageSettingsError(any()),
+            ),
+        )
+        waitForIdle()
+    }
+
+    @Test
     fun `WHEN UpdatePageSettingAction is dispatched WITH UPDATE_NEVER_TRANSLATE_LANGUAGE AND updating the setting is unsuccessful THEN OperationRequestedAction with FETCH_PAGE_SETTINGS is dispatched`() = runTest {
         // Setup
         setupMockState()
@@ -456,6 +667,7 @@ class TranslationsMiddlewareTest {
                 operation = TranslationOperation.FETCH_PAGE_SETTINGS,
             ),
         )
+        waitForIdle()
     }
 
     @Test
@@ -489,6 +701,7 @@ class TranslationsMiddlewareTest {
                 operation = TranslationOperation.FETCH_PAGE_SETTINGS,
             ),
         )
+        waitForIdle()
     }
 
     @Test
@@ -631,6 +844,7 @@ class TranslationsMiddlewareTest {
                 operation = TranslationOperation.FETCH_NEVER_TRANSLATE_SITES,
             ),
         )
+        waitForIdle()
     }
 
     @Test
@@ -658,6 +872,7 @@ class TranslationsMiddlewareTest {
                 operation = TranslationOperation.FETCH_PAGE_SETTINGS,
             ),
         )
+        waitForIdle()
     }
 
     @Test

@@ -53,6 +53,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
@@ -268,12 +269,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                                 ),
                             )
                         },
-                        onLastTabClose = {
+                        onLastTabClose = { isPrivate ->
+                            requireComponents.appStore.dispatch(
+                                AppAction.TabStripAction.UpdateLastTabClosed(isPrivate),
+                            )
                             findNavController().navigate(
                                 BrowserFragmentDirections.actionGlobalHome(),
                             )
                         },
                         onSelectedTabClick = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
                     )
                 }
             }
@@ -300,7 +307,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private fun initTranslationsAction(context: Context, view: View) {
-        if (!context.settings().enableTranslations) {
+        val isEngineSupported =
+            context.components.core.store.state.translationEngine.isEngineSupported
+        if (
+            !context.settings().enableTranslations &&
+            (
+                isEngineSupported == null ||
+                    isEngineSupported == false
+                )
+        ) {
             return
         }
 
@@ -345,6 +360,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                         )
 
                         safeInvalidateBrowserToolbarView()
+                    },
+                    onShowTranslationsDialog = {
+                        browserToolbarInteractor.onTranslationsButtonClicked()
                     },
                 ),
                 owner = this,
