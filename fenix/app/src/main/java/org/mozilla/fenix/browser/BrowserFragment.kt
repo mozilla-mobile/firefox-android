@@ -53,6 +53,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
@@ -268,12 +269,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                                 ),
                             )
                         },
-                        onLastTabClose = {
+                        onLastTabClose = { isPrivate ->
+                            requireComponents.appStore.dispatch(
+                                AppAction.TabStripAction.UpdateLastTabClosed(isPrivate),
+                            )
                             findNavController().navigate(
                                 BrowserFragmentDirections.actionGlobalHome(),
                             )
                         },
                         onSelectedTabClick = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
                     )
                 }
             }
@@ -300,7 +307,13 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private fun initTranslationsAction(context: Context, view: View) {
-        if (!context.settings().enableTranslations) {
+        val isEngineSupported =
+            context.components.core.store.state.translationEngine.isEngineSupported
+
+        if (isEngineSupported != true ||
+            !context.settings().enableTranslations ||
+            !FxNimbus.features.translations.value().mainFlowToolbarEnabled
+        ) {
             return
         }
 
@@ -308,10 +321,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             AppCompatResources.getDrawable(
                 context,
                 R.drawable.mozac_ic_translate_24,
-            )!!.apply {
-                setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
-            },
+            ),
             contentDescription = context.getString(R.string.browser_toolbar_translate),
+            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
             visible = { translationsAvailable },
             listener = {
                 browserToolbarInteractor.onTranslationsButtonClicked()
@@ -331,7 +343,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                             tintColorResource = if (isTranslated) {
                                 R.color.fx_mobile_icon_color_accent_violet
                             } else {
-                                R.color.fx_mobile_text_color_primary
+                                ThemeManager.resolveAttribute(R.attr.textPrimary, context)
                             },
                             contentDescription = if (isTranslated) {
                                 context.getString(
@@ -345,6 +357,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                         )
 
                         safeInvalidateBrowserToolbarView()
+                    },
+                    onShowTranslationsDialog = {
+                        browserToolbarInteractor.onTranslationsButtonClicked()
                     },
                 ),
                 owner = this,
