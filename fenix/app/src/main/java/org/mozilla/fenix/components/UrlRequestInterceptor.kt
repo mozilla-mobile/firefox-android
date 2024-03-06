@@ -20,8 +20,8 @@ import mozilla.components.concept.engine.request.RequestInterceptor
  */
 class UrlRequestInterceptor(private val isDeviceRamAboveThreshold: Boolean) : RequestInterceptor {
 
-    private val isGoogleSearchRequest by lazy {
-        Regex("^https://www\\.google\\.(?:.+)/search")
+    private val isGoogleRequest by lazy {
+        Regex("^https://www\\.google\\..+")
     }
 
     @VisibleForTesting
@@ -42,7 +42,7 @@ class UrlRequestInterceptor(private val isDeviceRamAboveThreshold: Boolean) : Re
         uri: String,
         isSubframeRequest: Boolean,
     ): Boolean {
-        return !isSubframeRequest && isGoogleSearchRequest.containsMatchIn(uri)
+        return !isSubframeRequest && isGoogleRequest.containsMatchIn(uri)
     }
 
     override fun onLoadRequest(
