@@ -26,7 +26,7 @@ object Versions {
     const val jacoco = "0.8.11"
     const val okhttp = "4.12.0"
     const val okio = "3.8.0"
-    const val coil = "2.4.0"
+    const val androidsvg = "1.4"
 
     const val android_gradle_plugin = "8.2.2"
 
@@ -44,7 +44,7 @@ object Versions {
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "57.0.0"
+    const val mozilla_glean = "58.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.17"
@@ -83,7 +83,7 @@ object Versions {
         const val navigation = "2.7.7"
         const val work = "2.9.0"
         const val arch = "2.2.0"
-        const val uiautomator = "2.2.0"
+        const val uiautomator = "2.3.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
         const val data_store_preferences="1.0.0"
@@ -133,7 +133,7 @@ object ComponentsDependencies {
 
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
-    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.AndroidX.navigation}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
@@ -211,14 +211,7 @@ object ComponentsDependencies {
     const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
-    /**
-     *  ⚠️️ DO NOT use any NETWORK based operations provided by the Coil library.
-     *  ⚠️️ The Coil library should be used for DECODING data only.
-     *
-     *  Fenix is using SvgDecoder.kt for SVG decoding. However this dependency will also expose other
-     *  API features that Fenix should not use.
-     */
-    const val thirdparty_coil_svg = "io.coil-kt:coil-svg:${Versions.coil}"
+    const val thirdparty_androidsvg = "com.caverock:androidsvg-aar:${Versions.androidsvg}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"
 }

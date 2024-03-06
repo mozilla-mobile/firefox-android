@@ -58,6 +58,8 @@ import java.util.Locale
 
 object AppAndSystemHelper {
 
+    private val bookmarksStorage = PlacesBookmarksStorage(appContext.applicationContext)
+    suspend fun bookmarks() = bookmarksStorage.getTree(BookmarkRoot.Mobile.id)?.children
     fun getPermissionAllowID(): String {
         return when
             (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
@@ -122,23 +124,26 @@ object AppAndSystemHelper {
 
             // Check if the downloads folder exists
             if (downloadsFolder.exists() && downloadsFolder.isDirectory) {
-                Log.i(TAG, "clearDownloadsFolder: Verified that \"DOWNLOADS\" folder exists")
-                val files = downloadsFolder.listFiles()
+                Log.i(TAG, "clearDownloadsFolder: Verified that \"DOWNLOADS\" folder exists.")
+                var files = downloadsFolder.listFiles()
 
                 // Check if the folder is not empty
-                // If you run this method before a test, files.isNotEmpty() will always return false.
                 if (files != null && files.isNotEmpty()) {
                     Log.i(
                         TAG,
-                        "clearDownloadsFolder: Before cleanup: Downloads storage contains: ${files.size} file(s)",
+                        "clearDownloadsFolder: Before cleanup: Downloads storage contains: ${files.size} file(s).",
                     )
                     // Delete all files in the folder
-                    for (file in files) {
+                    for (file in files!!) {
                         file.delete()
                         Log.i(
                             TAG,
-                            "clearDownloadsFolder: Deleted $file from \"DOWNLOADS\" folder." +
-                                " Downloads storage contains ${files.size} file(s): $file",
+                            "clearDownloadsFolder: Deleted $file from \"DOWNLOADS\" folder.",
+                        )
+                        files = downloadsFolder.listFiles()
+                        Log.i(
+                            TAG,
+                            "clearDownloadsFolder: After cleanup: Downloads storage contains: ${files?.size} file(s).",
                         )
                     }
                 } else {
@@ -179,8 +184,7 @@ object AppAndSystemHelper {
     }
 
     suspend fun deleteBookmarksStorage() {
-        val bookmarksStorage = PlacesBookmarksStorage(appContext.applicationContext)
-        val bookmarks = bookmarksStorage.getTree(BookmarkRoot.Mobile.id)?.children
+        val bookmarks = bookmarks()
         Log.i(TAG, "deleteBookmarksStorage before cleanup: Bookmarks storage contains: $bookmarks")
         if (bookmarks?.isNotEmpty() == true) {
             bookmarks.forEach {
@@ -189,10 +193,9 @@ object AppAndSystemHelper {
                     "deleteBookmarksStorage: Trying to delete $it bookmark from storage.",
                 )
                 bookmarksStorage.deleteNode(it.guid)
-                // TODO: Follow-up with a method to handle the DB update; the logs will still show the bookmarks in the storage before the test starts.
                 Log.i(
                     TAG,
-                    "deleteBookmarksStorage: Bookmark deleted. Bookmarks storage contains: $bookmarks",
+                    "deleteBookmarksStorage: Bookmark deleted. Bookmarks storage contains: ${bookmarks()}",
                 )
             }
         }
@@ -356,64 +359,60 @@ object AppAndSystemHelper {
 
     /**
      * Changes the default language of the entire device, not just the app.
-     * Runs on Debug variant as we don't want to adjust Release permission manifests
      * Runs the test in its testBlock.
      * Cleans up and sets the default locale after it's done.
-     * As a safety measure, always add the resetSystemLocaleToEnUS() method in the tearDown method of your Class.
      */
     fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<HomeActivity>, testBlock: () -> Unit) {
+        val defaultLocale = Locale.getDefault()
+
+        try {
+            setSystemLocale(locale)
+            testBlock()
+            ThreadUtils.runOnUiThread { testRule.activity.recreate() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            setSystemLocale(defaultLocale)
+        }
+    }
+
+    /**
+     * Changes the default language of the entire device, not just the app.
+     * We can only use this if we're running on a debug build, otherwise it will change the permission manifests in release builds.
+     */
+    fun setSystemLocale(locale: Locale) {
         if (Config.channel.isDebug) {
             /* Sets permission to change device language */
+            Log.i(
+                TAG,
+                "setSystemLocale: Requesting permission to change system locale to $locale.",
+            )
             PermissionRequester().apply {
                 addPermissions(
                     Manifest.permission.CHANGE_CONFIGURATION,
                 )
                 requestPermissions()
             }
-
-            val defaultLocale = Locale.getDefault()
-
-            try {
-                setSystemLocale(locale)
-                testBlock()
-                ThreadUtils.runOnUiThread { testRule.activity.recreate() }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                setSystemLocale(defaultLocale)
-            }
+            Log.i(
+                TAG,
+                "setSystemLocale: Received permission to change system locale to $locale.",
+            )
+            val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
+            val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
+                .invoke(activityManagerNative, *arrayOfNulls(0))
+            val config =
+                InstrumentationRegistry.getInstrumentation().context.resources.configuration
+            config.javaClass.getDeclaredField("locale")[config] = locale
+            config.javaClass.getDeclaredField("userSetLocale").setBoolean(config, true)
+            am.javaClass.getMethod(
+                "updateConfiguration",
+                Configuration::class.java,
+            ).invoke(am, config)
         }
-    }
-
-    /**
-     * Resets the default language of the entire device back to EN-US.
-     * In case of a test instrumentation crash, the finally statement in the
-     * runWithSystemLocaleChanged(locale: Locale) method, will not be reached.
-     * Add this method inside the tearDown method of your test class, where the above method is used.
-     * Note: If set inside the ActivityTestRule's afterActivityFinished() method, this also won't work,
-     * as the methods inside it are not always executed: https://github.com/android/android-test/issues/498
-     */
-    fun resetSystemLocaleToEnUS() {
-        if (Locale.getDefault() != Locale.US) {
-            Log.i(TAG, "Resetting system locale to EN US")
-            setSystemLocale(Locale.US)
-        }
-    }
-
-    /**
-     * Changes the default language of the entire device, not just the app.
-     */
-    fun setSystemLocale(locale: Locale) {
-        val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
-        val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
-            .invoke(activityManagerNative, *arrayOfNulls(0))
-        val config = InstrumentationRegistry.getInstrumentation().context.resources.configuration
-        config.javaClass.getDeclaredField("locale")[config] = locale
-        config.javaClass.getDeclaredField("userSetLocale").setBoolean(config, true)
-        am.javaClass.getMethod(
-            "updateConfiguration",
-            Configuration::class.java,
-        ).invoke(am, config)
+        Log.i(
+            TAG,
+            "setSystemLocale: Changed system locale to $locale.",
+        )
     }
 
     fun putAppToBackground() {

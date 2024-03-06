@@ -22,6 +22,7 @@ import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.SwitchWithLabel
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.list.TextListItem
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -32,6 +33,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onNeverTranslationClicked Invoked when the user clicks on the "Never Translation" button.
  * @param onDownloadLanguageClicked Invoked when the user clicks on the "Download Language" button.
  */
+@Suppress("LongMethod")
 @Composable
 fun TranslationSettings(
     translationSwitchList: List<TranslationSwitchItem>,
@@ -49,13 +51,18 @@ fun TranslationSettings(
             items(translationSwitchList) { item: TranslationSwitchItem ->
                 SwitchWithLabel(
                     checked = item.isChecked,
-                    onCheckedChange = item.onStateChange,
+                    onCheckedChange = { checked ->
+                        item.onStateChange.invoke(
+                            item.type,
+                            checked,
+                        )
+                    },
                     label = item.textLabel,
                     modifier = Modifier
                         .padding(start = 72.dp, end = 16.dp),
                 )
 
-                if (item.hasDivider) {
+                if (item.type.hasDivider) {
                     Divider(Modifier.padding(top = 8.dp, bottom = 8.dp))
                 }
             }
@@ -74,38 +81,44 @@ fun TranslationSettings(
                 )
             }
 
-            item {
-                TextListItem(
-                    label = stringResource(id = R.string.translation_settings_automatic_translation),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 56.dp),
-                    onClick = { onAutomaticTranslationClicked() },
-                )
+            if (FxNimbus.features.translations.value().globalLangSettingsEnabled) {
+                item {
+                    TextListItem(
+                        label = stringResource(id = R.string.translation_settings_automatic_translation),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp),
+                        onClick = { onAutomaticTranslationClicked() },
+                    )
+                }
             }
 
-            item {
-                TextListItem(
-                    label = stringResource(
-                        id = R.string.translation_settings_automatic_never_translate_sites,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 56.dp),
-                    onClick = { onNeverTranslationClicked() },
-                )
+            if (FxNimbus.features.translations.value().globalSiteSettingsEnabled) {
+                item {
+                    TextListItem(
+                        label = stringResource(
+                            id = R.string.translation_settings_automatic_never_translate_sites,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp),
+                        onClick = { onNeverTranslationClicked() },
+                    )
+                }
             }
 
-            item {
-                TextListItem(
-                    label = stringResource(
-                        id = R.string.translation_settings_download_language,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 56.dp),
-                    onClick = { onDownloadLanguageClicked() },
-                )
+            if (FxNimbus.features.translations.value().downloadsEnabled) {
+                item {
+                    TextListItem(
+                        label = stringResource(
+                            id = R.string.translation_settings_download_language,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp),
+                        onClick = { onDownloadLanguageClicked() },
+                    )
+                }
             }
         }
     }
@@ -119,20 +132,24 @@ internal fun getTranslationSettingsSwitchList(): List<TranslationSwitchItem> {
     return mutableListOf<TranslationSwitchItem>().apply {
         add(
             TranslationSwitchItem(
+                type = TranslationSettingsScreenOption.OfferToTranslate(
+                    hasDivider = false,
+                ),
                 textLabel = stringResource(R.string.translation_settings_offer_to_translate),
                 isChecked = true,
-                hasDivider = false,
                 isEnabled = true,
-                onStateChange = {},
+                onStateChange = { _, _ -> },
             ),
         )
         add(
             TranslationSwitchItem(
+                type = TranslationSettingsScreenOption.AlwaysDownloadInSavingMode(
+                    hasDivider = true,
+                ),
                 textLabel = stringResource(R.string.translation_settings_always_download),
                 isChecked = false,
-                hasDivider = true,
                 isEnabled = true,
-                onStateChange = {},
+                onStateChange = { _, _ -> },
             ),
         )
     }

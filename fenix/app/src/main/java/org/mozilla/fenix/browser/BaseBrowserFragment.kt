@@ -162,6 +162,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
@@ -276,8 +277,8 @@ abstract class BaseBrowserFragment :
         _binding = FragmentBrowserBinding.inflate(inflater, container, false)
 
         val activity = activity as HomeActivity
-        // ExternalAppBrowserActivity handles it's own theming as it can be customized.
-        if (activity !is ExternalAppBrowserActivity) {
+        // ExternalAppBrowserActivity exclusively handles it's own theming unless in private mode.
+        if (activity !is ExternalAppBrowserActivity || activity.browsingModeManager.mode.isPrivate) {
             activity.themeManager.applyStatusBarTheme(activity)
         }
 
@@ -401,23 +402,7 @@ abstract class BaseBrowserFragment :
             },
             onCloseTab = { closedSession ->
                 val closedTab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
-
-                val snackbarMessage = if (closedTab.content.private) {
-                    requireContext().getString(R.string.snackbar_private_tab_closed)
-                } else {
-                    requireContext().getString(R.string.snackbar_tab_closed)
-                }
-
-                viewLifecycleOwner.lifecycleScope.allowUndo(
-                    binding.dynamicSnackbarContainer,
-                    snackbarMessage,
-                    requireContext().getString(R.string.snackbar_deleted_undo),
-                    {
-                        requireComponents.useCases.tabsUseCases.undo.invoke()
-                    },
-                    paddedForBottomToolbar = true,
-                    operation = { },
-                )
+                showUndoSnackbar(requireContext().tabClosedUndoMessage(closedTab.content.private))
             },
         )
         val browserToolbarMenuController = DefaultBrowserToolbarMenuController(
@@ -1025,6 +1010,19 @@ abstract class BaseBrowserFragment :
         initializeEngineView(toolbarHeight)
     }
 
+    protected fun showUndoSnackbar(message: String) {
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            binding.dynamicSnackbarContainer,
+            message,
+            requireContext().getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+            },
+            paddedForBottomToolbar = true,
+            operation = { },
+        )
+    }
+
     /**
      * Show a [Snackbar] when data is set to the device clipboard. To avoid duplicate displays of
      * information only show a [Snackbar] for Android 12 and lower.
@@ -1623,8 +1621,8 @@ abstract class BaseBrowserFragment :
             activity?.exitImmersiveMode()
             (view as? SwipeGestureLayout)?.isSwipeEnabled = true
             (activity as? HomeActivity)?.let { activity ->
-                // ExternalAppBrowserActivity handles it's own theming as it can be customized.
-                if (activity !is ExternalAppBrowserActivity) {
+                // ExternalAppBrowserActivity exclusively handles it's own theming unless in private mode.
+                if (activity !is ExternalAppBrowserActivity || activity.browsingModeManager.mode.isPrivate) {
                     activity.themeManager.applyStatusBarTheme(activity)
                 }
             }
@@ -1634,7 +1632,7 @@ abstract class BaseBrowserFragment :
                 initializeEngineView(toolbarHeight)
                 browserToolbarView.expand()
             }
-            if (requireContext().settings().isTabletAndTabStripEnabled) {
+            if (customTabSessionId == null && requireContext().settings().isTabletAndTabStripEnabled) {
                 binding.tabStripView.isVisible = true
             }
         }
