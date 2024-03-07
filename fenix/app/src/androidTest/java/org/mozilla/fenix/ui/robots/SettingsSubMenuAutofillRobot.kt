@@ -177,10 +177,10 @@ class SettingsSubMenuAutofillRobot {
     }
 
     fun verifyCountryOption(country: String) {
-        scrollToElementByText(getStringResource(R.string.addresses_country))
-        Log.i(TAG, "verifyCountryOption: Trying to click device back button")
-        mDevice.pressBack()
-        Log.i(TAG, "verifyCountryOption: Clicked device back button")
+        Log.i(TAG, "verifyCountryOption: Trying to perform \"Close soft keyboard\" action")
+        // Closing the keyboard to ensure full visibility of the "Add address" view
+        closeSoftKeyboard()
+        Log.i(TAG, "verifyCountryOption: Performed \"Close soft keyboard\" action")
         assertUIObjectExists(itemContainingText(country))
     }
 
