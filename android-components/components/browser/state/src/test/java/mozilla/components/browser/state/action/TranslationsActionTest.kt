@@ -11,6 +11,8 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.translate.DetectedLanguages
 import mozilla.components.concept.engine.translate.Language
+import mozilla.components.concept.engine.translate.LanguageModel
+import mozilla.components.concept.engine.translate.LanguageSetting
 import mozilla.components.concept.engine.translate.TranslationDownloadSize
 import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationError
@@ -150,6 +152,45 @@ class TranslationsActionTest {
         store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
             .joinBlocking()
         assertFalse(tabState().translationsState.isExpectedTranslate)
+    }
+
+    @Test
+    fun `WHEN a TranslateStateChangeAction is dispatched THEN the isOfferTranslate status updates accordingly`() {
+        // Initial State
+        assertNull(tabState().translationsState.translationEngineState)
+
+        // Sending an initial request to set state; however, the engine hasn't decided if it is an
+        // offered state
+        var translatedEngineState = TranslationEngineState(
+            detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = true, userPreferredLangTag = "en"),
+            error = null,
+            isEngineReady = true,
+            requestedTranslationPair = TranslationPair(fromLanguage = "es", toLanguage = "en"),
+        )
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertFalse(tabState().translationsState.isOfferTranslate)
+
+        // Engine is sending a translation offer action
+        store.dispatch(TranslationsAction.TranslateOfferAction(tabId = tab.id))
+            .joinBlocking()
+
+        // Initial expected translation state
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertTrue(tabState().translationsState.isOfferTranslate)
+
+        // Not in an offer translation state, because it is no longer supported
+        translatedEngineState = TranslationEngineState(
+            detectedLanguages = DetectedLanguages(documentLangTag = "es", supportedDocumentLang = false, userPreferredLangTag = "en"),
+            error = null,
+            isEngineReady = true,
+            requestedTranslationPair = TranslationPair(fromLanguage = "es", toLanguage = "en"),
+        )
+
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId = tab.id, translationEngineState = translatedEngineState))
+            .joinBlocking()
+        assertFalse(tabState().translationsState.isOfferTranslate)
     }
 
     @Test
@@ -691,6 +732,62 @@ class TranslationsActionTest {
     }
 
     @Test
+    fun `WHEN a SetLanguageSettingsAction is dispatched THEN the browser store is updated to match`() {
+        // Initial state
+        assertNull(store.state.translationEngine.languageSettings)
+
+        // Dispatch
+        val languageSetting = mapOf("es" to LanguageSetting.OFFER)
+        store.dispatch(
+            TranslationsAction.SetLanguageSettingsAction(
+                languageSettings = languageSetting,
+            ),
+        ).joinBlocking()
+
+        // Final state
+        assertEquals(store.state.translationEngine.languageSettings!!, languageSetting)
+    }
+
+    @Test
+    fun `WHEN a OperationRequestedAction is dispatched for FETCH_AUTOMATIC_LANGUAGE_SETTINGS THEN clear languageSettings`() {
+        // Setting first to have a more robust initial state
+        val languageSetting = mapOf("es" to LanguageSetting.OFFER)
+        store.dispatch(
+            TranslationsAction.SetLanguageSettingsAction(
+                languageSettings = languageSetting,
+            ),
+        ).joinBlocking()
+        assertEquals(store.state.translationEngine.languageSettings, languageSetting)
+
+        // Action started
+        store.dispatch(
+            TranslationsAction.OperationRequestedAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS,
+            ),
+        ).joinBlocking()
+
+        // Action success
+        assertNull(store.state.translationEngine.languageSettings)
+    }
+
+    @Test
+    fun `WHEN a TranslateExceptionAction is dispatched for FETCH_AUTOMATIC_LANGUAGE_SETTINGS THEN set the error`() {
+        // Action started
+        val error = TranslationError.UnknownError(IllegalStateException())
+        store.dispatch(
+            TranslationsAction.TranslateExceptionAction(
+                tabId = tab.id,
+                operation = TranslationOperation.FETCH_AUTOMATIC_LANGUAGE_SETTINGS,
+                translationError = error,
+            ),
+        ).joinBlocking()
+
+        // Action success
+        assertEquals(error, tabState().translationsState.translationError)
+    }
+
+    @Test
     fun `WHEN a SetEngineSupportAction is dispatched THEN the browser store is updated to match`() {
         // Initial state
         assertNull(store.state.translationEngine.isEngineSupported)
@@ -721,5 +818,29 @@ class TranslationsActionTest {
 
         // Final state
         assertEquals(store.state.translationEngine.engineError!!, error)
+    }
+
+    @Test
+    fun `WHEN a SetLanguageModelsAction is dispatched and successful THEN the browser store is updated to match`() {
+        // Initial state
+        assertNull(store.state.translationEngine.languageModels)
+
+        val code = "es"
+        val localizedDisplayName = "Spanish"
+        val isDownloaded = true
+        val size: Long = 1234
+        val language = Language(code, localizedDisplayName)
+        val languageModel = LanguageModel(language, isDownloaded, size)
+        val languageModels = mutableListOf(languageModel)
+
+        // Dispatch
+        store.dispatch(
+            TranslationsAction.SetLanguageModelsAction(
+                languageModels = languageModels,
+            ),
+        ).joinBlocking()
+
+        // Final state
+        assertEquals(languageModels, store.state.translationEngine.languageModels)
     }
 }
