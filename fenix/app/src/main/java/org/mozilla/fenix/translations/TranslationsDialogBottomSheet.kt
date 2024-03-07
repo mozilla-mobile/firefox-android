@@ -57,6 +57,7 @@ import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.TertiaryButton
 import org.mozilla.fenix.compose.button.TextButton
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.shopping.ui.ReviewQualityCheckInfoCard
 import org.mozilla.fenix.shopping.ui.ReviewQualityCheckInfoType
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -455,15 +456,17 @@ private fun TranslationsDialogHeader(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        IconButton(
-            onClick = { onSettingClicked() },
-            modifier = Modifier.size(24.dp),
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.mozac_ic_settings_24),
-                contentDescription = stringResource(id = R.string.translation_option_bottom_sheet_title),
-                tint = FirefoxTheme.colors.iconPrimary,
-            )
+        if (FxNimbus.features.translations.value().pageSettingsEnabled) {
+            IconButton(
+                onClick = { onSettingClicked() },
+                modifier = Modifier.size(24.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.mozac_ic_settings_24),
+                    contentDescription = stringResource(id = R.string.translation_option_bottom_sheet_title),
+                    tint = FirefoxTheme.colors.iconPrimary,
+                )
+            }
         }
     }
 }
@@ -629,12 +632,12 @@ private fun TranslationsDropdown(
                     offset = if (isInLandscapeMode) {
                         DpOffset(
                             -contextMenuWidthDp + ICON_SIZE,
-                            -ICON_SIZE,
+                            ICON_SIZE,
                         )
                     } else {
                         DpOffset(
                             0.dp,
-                            -ICON_SIZE,
+                            ICON_SIZE,
                         )
                     },
                 )
