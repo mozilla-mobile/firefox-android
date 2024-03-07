@@ -27,6 +27,7 @@ class CustomTabsIntegration(
     shouldReverseItems: Boolean,
     isSandboxCustomTab: Boolean,
     isPrivate: Boolean,
+    isNavBarEnabled: Boolean,
 ) : LifecycleAwareFeature, UserInteractionHandler {
 
     init {
@@ -66,8 +67,9 @@ class CustomTabsIntegration(
         window = activity.window,
         shareListener = { onItemTapped.invoke(ToolbarMenu.Item.Share) },
         closeListener = { activity.finishAndRemoveTask() },
-        updateToolbarBackground = !isPrivate,
+        updateTheme = !isPrivate,
         forceActionButtonTinting = isPrivate,
+        isNavBarEnabled = isNavBarEnabled,
     )
 
     override fun start() = feature.start()
