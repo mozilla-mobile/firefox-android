@@ -92,9 +92,9 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -103,6 +103,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.scaleToBottomOfView
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
@@ -457,7 +458,7 @@ class HomeFragment : Fragment() {
 
             BottomToolbarContainerView(
                 context = requireContext(),
-                container = binding.homeLayout,
+                parent = binding.homeLayout,
                 androidToolbarView = if (isToolbarAtBottom) binding.toolbarLayout else null,
                 menuButton = menuButton,
                 browsingModeManager = browsingModeManager,
@@ -636,6 +637,11 @@ class HomeFragment : Fragment() {
 
         homeViewModel.sessionToDelete = null
 
+        requireComponents.appStore.state.wasLastTabClosedPrivate?.also {
+            showUndoSnackbar(requireContext().tabClosedUndoMessage(it))
+            requireComponents.appStore.dispatch(AppAction.TabStripAction.UpdateLastTabClosed(null))
+        }
+
         tabCounterView?.update(requireComponents.core.store.state)
 
         if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
@@ -707,6 +713,9 @@ class HomeFragment : Fragment() {
                             (requireActivity() as HomeActivity).openToBrowser(BrowserDirection.FromHome)
                         },
                         onLastTabClose = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
                     )
                 }
             }
@@ -765,18 +774,14 @@ class HomeFragment : Fragment() {
 
     private fun removeTabAndShowSnackbar(sessionId: String) {
         val tab = store.state.findTab(sessionId) ?: return
-
         requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+        showUndoSnackbar(requireContext().tabClosedUndoMessage(tab.content.private))
+    }
 
-        val snackbarMessage = if (tab.content.private) {
-            requireContext().getString(R.string.snackbar_private_tab_closed)
-        } else {
-            requireContext().getString(R.string.snackbar_tab_closed)
-        }
-
+    private fun showUndoSnackbar(message: String) {
         viewLifecycleOwner.lifecycleScope.allowUndo(
             requireView(),
-            snackbarMessage,
+            message,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
                 requireComponents.useCases.tabsUseCases.undo.invoke()
@@ -1136,12 +1141,15 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
+        // Used to set homeViewModel.sessionToDelete when all tabs of a browsing mode are closed
         const val ALL_NORMAL_TABS = "all_normal"
         const val ALL_PRIVATE_TABS = "all_private"
 
+        // Navigation arguments passed to HomeFragment
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
-
         private const val SCROLL_TO_COLLECTION = "scrollToCollection"
+
+        // Delay for scrolling to the collection header
         private const val ANIM_SCROLL_DELAY = 100L
 
         // Sponsored top sites titles and search engine names used for filtering
