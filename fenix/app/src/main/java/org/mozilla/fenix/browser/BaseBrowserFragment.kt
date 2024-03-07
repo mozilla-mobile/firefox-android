@@ -131,7 +131,6 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
@@ -142,6 +141,8 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.navbar.NavbarIntegration
 import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
@@ -161,6 +162,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
@@ -222,6 +224,7 @@ abstract class BaseBrowserFragment :
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
     private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
+    private val navbarIntegration = ViewBoundFeatureWrapper<NavbarIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
@@ -399,23 +402,7 @@ abstract class BaseBrowserFragment :
             },
             onCloseTab = { closedSession ->
                 val closedTab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
-
-                val snackbarMessage = if (closedTab.content.private) {
-                    requireContext().getString(R.string.snackbar_private_tab_closed)
-                } else {
-                    requireContext().getString(R.string.snackbar_tab_closed)
-                }
-
-                viewLifecycleOwner.lifecycleScope.allowUndo(
-                    binding.dynamicSnackbarContainer,
-                    snackbarMessage,
-                    requireContext().getString(R.string.snackbar_deleted_undo),
-                    {
-                        requireComponents.useCases.tabsUseCases.undo.invoke()
-                    },
-                    paddedForBottomToolbar = true,
-                    operation = { },
-                )
+                showUndoSnackbar(requireContext().tabClosedUndoMessage(closedTab.content.private))
             },
         )
         val browserToolbarMenuController = DefaultBrowserToolbarMenuController(
@@ -482,11 +469,17 @@ abstract class BaseBrowserFragment :
 
             BottomToolbarContainerView(
                 context = context,
-                container = binding.browserLayout,
+                parent = binding.browserLayout,
                 androidToolbarView = if (isToolbarAtBottom) browserToolbar else null,
                 menuButton = menuButton,
                 browsingModeManager = activity.browsingModeManager,
-            )
+            ).also {
+                navbarIntegration.set(
+                    feature = it.navbarIntegration,
+                    owner = this,
+                    view = view,
+                )
+            }
         }
 
         toolbarIntegration.set(
@@ -1015,6 +1008,19 @@ abstract class BaseBrowserFragment :
             view = view,
         )
         initializeEngineView(toolbarHeight)
+    }
+
+    protected fun showUndoSnackbar(message: String) {
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            binding.dynamicSnackbarContainer,
+            message,
+            requireContext().getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+            },
+            paddedForBottomToolbar = true,
+            operation = { },
+        )
     }
 
     /**
