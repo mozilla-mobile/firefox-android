@@ -311,7 +311,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             context.components.core.store.state.translationEngine.isEngineSupported
 
         if (isEngineSupported != true ||
-            !context.settings().enableTranslations ||
             !FxNimbus.features.translations.value().mainFlowToolbarEnabled
         ) {
             return
