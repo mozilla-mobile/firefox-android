@@ -21,22 +21,22 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.10.0"
+    const val mockito = "5.11.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.12.0"
     const val okio = "3.8.0"
     const val androidsvg = "1.4"
 
-    const val android_gradle_plugin = "8.2.2"
+    const val android_gradle_plugin = "8.3.0"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "31.2.2"
+    const val lint = "31.3.0"
     const val detekt = "1.23.5"
     const val ktlint = "0.49.1"
 
-    const val sentry = "7.4.0"
+    const val sentry = "7.5.0"
 
     const val zxing = "3.5.3"
 
@@ -59,10 +59,10 @@ object Versions {
         const val annotation = "1.7.1"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.7.0"
+        const val browser = "1.8.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
-        const val compose_bom = "2023.10.01"
+        const val compose_bom = "2024.02.02"
         const val constraintlayout = "2.1.4"
         const val coordinatorlayout = "1.2.0"
         const val core = "1.12.0"
