@@ -35,11 +35,13 @@ import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.translations.preferences.downloadlanguages.DownloadLanguageFileDialog
@@ -141,10 +143,13 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                     }
                                 },
                             ) {
+                                FxNimbus.features.translations.recordExposure()
                                 TranslationsDialogContent(
                                     learnMoreUrl = learnMoreUrl,
+                                    showPageSettings = FxNimbus.features.translations.value().pageSettingsEnabled,
                                     translationsDialogState = translationsDialogState,
                                 ) {
+                                    Events.translationsAction.record(Events.TranslationsActionExtra("page_settings"))
                                     translationsVisibility = false
                                 }
                             }
@@ -167,6 +172,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                             ) {
                                 TranslationsOptionsDialogContent(
                                     learnMoreUrl = learnMoreUrl,
+                                    showGlobalSettings = FxNimbus.features.translations.value().globalSettingsEnabled,
                                     initialFrom = translationsDialogState?.initialFrom,
                                 ) {
                                     translationsVisibility = true
@@ -216,6 +222,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
     @Composable
     private fun TranslationsDialogContent(
         learnMoreUrl: String,
+        showPageSettings: Boolean,
         translationsDialogState: TranslationsDialogState? = null,
         onSettingClicked: () -> Unit,
     ) {
@@ -233,6 +240,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
             TranslationsDialog(
                 translationsDialogState = translationsDialogState,
                 learnMoreUrl = learnMoreUrl,
+                showPageSettings = showPageSettings,
                 showFirstTime = requireContext().settings().showFirstTimeTranslation,
                 onSettingClicked = onSettingClicked,
                 onLearnMoreClicked = { openBrowserAndLoad(learnMoreUrl) },
@@ -315,6 +323,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
     @Composable
     private fun TranslationsOptionsDialogContent(
         learnMoreUrl: String,
+        showGlobalSettings: Boolean,
         initialFrom: Language? = null,
         onBackClicked: () -> Unit,
     ) {
@@ -326,6 +335,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
         TranslationsOptionsDialog(
             context = requireContext(),
             translationPageSettings = pageSettingsState,
+            showGlobalSettings = showGlobalSettings,
             initialFrom = initialFrom,
             onStateChange = { type, checked ->
                 translationsDialogStore.dispatch(
@@ -337,6 +347,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
             },
             onBackClicked = onBackClicked,
             onTranslationSettingsClicked = {
+                Events.translationsAction.record(Events.TranslationsActionExtra("global_settings"))
                 findNavController().navigate(
                     TranslationsDialogFragmentDirections
                         .actionTranslationsDialogFragmentToTranslationSettingsFragment(
