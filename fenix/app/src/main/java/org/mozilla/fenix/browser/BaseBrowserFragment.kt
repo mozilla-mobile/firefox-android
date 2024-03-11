@@ -482,7 +482,6 @@ abstract class BaseBrowserFragment :
                     toolbar = bottomToolbarContainerView.toolbarContainerView,
                     store = requireComponents.core.store,
                     appStore = requireComponents.appStore,
-                    viewLifecycleOwner = viewLifecycleOwner,
                     bottomToolbarContainerView = bottomToolbarContainerView,
                     sessionId = customTabSessionId,
                 ),
