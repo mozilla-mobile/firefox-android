@@ -69,6 +69,7 @@ import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.net.isHttpOrHttps
 import mozilla.components.support.ktx.android.view.findViewInHierarchy
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import mozilla.components.ui.widgets.withCenterAlignedButtons
@@ -81,6 +82,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.TABS_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
@@ -166,8 +168,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 val updatedUrl = toolbarView.view.edit.updateUrl(url = it, shouldHighlight = false, shouldAppend = true)
                 interactor.onTextChanged(updatedUrl)
                 toolbarView.view.edit.focus()
+                // When using voice input, show keyboard after for user convenience.
+                toolbarView.view.showKeyboard()
             }
         }
+
+        requireComponents.appStore.dispatch(
+            AppAction.UpdateSearchDialogVisibility(isVisible = true),
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -594,6 +602,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         if (!dialogHandledAction) {
             requireComponents.core.store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
         }
+
+        requireComponents.appStore.dispatch(
+            AppAction.UpdateSearchDialogVisibility(isVisible = false),
+        )
     }
 
     override fun onBackPressed(): Boolean {
@@ -959,7 +971,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     internal fun getPreviousDestination(): NavBackStackEntry? {
         // This duplicates the platform functionality for "previousBackStackEntry" but additionally skips this entry.
 
-        val descendingEntries = findNavController().backQueue.reversed().iterator()
+        val descendingEntries = findNavController().currentBackStack.value.reversed().iterator()
         // Throw the topmost destination away.
         if (descendingEntries.hasNext()) {
             descendingEntries.next()

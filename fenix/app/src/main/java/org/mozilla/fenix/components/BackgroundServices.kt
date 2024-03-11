@@ -43,6 +43,7 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.maxActiveTime
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
@@ -143,7 +144,7 @@ class BackgroundServices(
     }
 
     val syncedTabsStorage by lazyMonitored {
-        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value)
+        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value, maxActiveTime)
     }
     val syncedTabsAutocompleteProvider by lazyMonitored {
         SyncedTabsAutocompleteProvider(syncedTabsStorage)
@@ -230,7 +231,7 @@ internal class TelemetryAccountObserver(
             // User signed-in into an existing FxA account.
             AuthType.Signin -> {
                 SyncAuth.signIn.record(NoExtras())
-                context.components.analytics.experiments.recordEvent("sync_auth.sign_in")
+                context.components.nimbus.events.recordEvent("sync_auth.sign_in")
             }
 
             // User created a new FxA account.

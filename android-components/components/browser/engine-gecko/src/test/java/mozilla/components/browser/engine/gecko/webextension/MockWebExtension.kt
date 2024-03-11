@@ -32,6 +32,8 @@ fun mockNativeWebExtension(
 fun mockNativeWebExtensionMetaData(
     icon: Image = mock(),
     permissions: Array<String> = emptyArray(),
+    optionalPermissions: Array<String> = emptyArray(),
+    optionalOrigins: Array<String> = emptyArray(),
     origins: Array<String> = emptyArray(),
     name: String? = null,
     description: String? = null,
@@ -55,10 +57,13 @@ fun mockNativeWebExtensionMetaData(
     updateDate: String? = null,
     reviewCount: Int = 0,
     averageRating: Double = 0.0,
+    incognito: String? = "spanning",
 ): WebExtension.MetaData {
     val metadata: WebExtension.MetaData = mock()
     ReflectionUtils.setField(metadata, "icon", icon)
     ReflectionUtils.setField(metadata, "permissions", permissions)
+    ReflectionUtils.setField(metadata, "optionalPermissions", optionalPermissions)
+    ReflectionUtils.setField(metadata, "optionalOrigins", optionalOrigins)
     ReflectionUtils.setField(metadata, "origins", origins)
     ReflectionUtils.setField(metadata, "name", name)
     ReflectionUtils.setField(metadata, "description", description)
@@ -82,6 +87,8 @@ fun mockNativeWebExtensionMetaData(
     ReflectionUtils.setField(metadata, "updateDate", updateDate)
     ReflectionUtils.setField(metadata, "reviewCount", reviewCount)
     ReflectionUtils.setField(metadata, "averageRating", averageRating)
+    ReflectionUtils.setField(metadata, "averageRating", averageRating)
+    ReflectionUtils.setField(metadata, "incognito", incognito)
     return metadata
 }
 

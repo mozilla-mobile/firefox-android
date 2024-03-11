@@ -223,32 +223,36 @@
     },
     {
       "schemaVersion": "1.12.0",
-      "slug": "beta-fx-122-android-set-to-default-notifications-timing-experiment",
-      "id": "beta-fx-122-android-set-to-default-notifications-timing-experiment",
+      "slug": "android-optimize-set-as-default-browser-screen",
+      "id": "android-optimize-set-as-default-browser-screen",
       "arguments": {},
-      "application": "org.mozilla.firefox",
+      "application": "org.mozilla.fenix",
       "appName": "fenix",
-      "appId": "org.mozilla.firefox",
-      "channel": "release",
-      "userFacingName": "Fx 122 Android set to default notifications timing experiment",
-      "userFacingDescription": "Timing test for the set to default message on Firefox for Android (Fenix).",
+      "appId": "org.mozilla.fenix",
+      "channel": "nightly",
+      "userFacingName": "Android - Optimize “Set as Default Browser” Screen",
+      "userFacingDescription": "This experiment is designed to optimize the set-to-default browser experience on Android.",
       "isEnrollmentPaused": false,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
-        "namespace": "fenix-messaging-release-19",
+        "namespace": "fenix-juno-onboarding-nightly-2",
         "start": 0,
         "count": 10000,
         "total": 10000
       },
       "featureIds": [
-        "messaging"
+        "juno-onboarding"
       ],
       "probeSets": [],
       "outcomes": [
         {
-          "slug": "default-browser",
+          "slug": "onboarding",
           "priority": "primary"
+        },
+        {
+          "slug": "default-browser",
+          "priority": "secondary"
         }
       ],
       "branches": [
@@ -262,22 +266,9 @@
           },
           "features": [
             {
-              "featureId": "messaging",
+              "featureId": "juno-onboarding",
               "enabled": true,
-              "value": {
-                "messages": {
-                  "{experiment}-en": {
-                    "is-control": true,
-                    "surface": "notification",
-                    "style": "NOTIFICATION",
-                    "action": "MAKE_DEFAULT_BROWSER",
-                    "trigger": [
-                      "I_AM_NOT_DEFAULT_BROWSER"
-                    ],
-                    "experiment": "{experiment}"
-                  }
-                }
-              }
+              "value": {}
             }
           ]
         },
@@ -291,21 +282,12 @@
           },
           "features": [
             {
-              "featureId": "messaging",
+              "featureId": "juno-onboarding",
               "enabled": true,
               "value": {
-                "messages": {
-                  "{experiment}-en": {
-                    "title": "Firefox is Fast and Private",
-                    "text": "Make Firefox your default browser",
-                    "surface": "notification",
-                    "style": "NOTIFICATION",
-                    "action": "MAKE_DEFAULT_BROWSER",
-                    "trigger": [
-                      "DAY_1_AFTER_INSTALL",
-                      "I_AM_NOT_DEFAULT_BROWSER"
-                    ],
-                    "experiment": "{experiment}"
+                "cards": {
+                  "default-browser": {
+                    "enabled": false
                   }
                 }
               }
@@ -322,21 +304,13 @@
           },
           "features": [
             {
-              "featureId": "messaging",
+              "featureId": "juno-onboarding",
               "enabled": true,
               "value": {
-                "messages": {
-                  "{experiment}-en": {
-                    "title": "Firefox is Fast and Private",
-                    "text": "Make Firefox your default browser",
-                    "surface": "notification",
-                    "style": "NOTIFICATION",
-                    "action": "MAKE_DEFAULT_BROWSER",
-                    "trigger": [
-                      "DAY_3_AFTER_INSTALL",
-                      "I_AM_NOT_DEFAULT_BROWSER"
-                    ],
-                    "experiment": "{experiment}"
+                "cards": {
+                  "default-browser": {
+                    "title": "juno_onboarding_default_browser_title_nimbus_3",
+                    "body": "juno_onboarding_default_browser_description_nimbus_4"
                   }
                 }
               }
@@ -353,42 +327,56 @@
           },
           "features": [
             {
-              "featureId": "messaging",
+              "featureId": "juno-onboarding",
               "enabled": true,
               "value": {
-                "messages": {
-                  "{experiment}-en": {
-                    "title": "Firefox is Fast and Private",
-                    "text": "Make Firefox your default browser",
-                    "surface": "notification",
-                    "style": "NOTIFICATION",
-                    "action": "MAKE_DEFAULT_BROWSER",
-                    "trigger": [
-                      "DAY_6_AFTER_INSTALL",
-                      "I_AM_NOT_DEFAULT_BROWSER"
-                    ],
-                    "experiment": "{experiment}"
+                "cards": {
+                  "default-browser": {
+                    "title": "juno_onboarding_default_browser_title_nimbus_4",
+                    "body": "",
+                    "image-res": "ic_onboarding_key_features"
                   }
-                },
-                "triggers": {
-                  "DAY_6_AFTER_INSTALL": "days_since_install == 6"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "slug": "treatment-d",
+          "ratio": 1,
+          "feature": {
+            "featureId": "this-is-included-for-mobile-pre-96-support",
+            "enabled": false,
+            "value": {}
+          },
+          "features": [
+            {
+              "featureId": "juno-onboarding",
+              "enabled": true,
+              "value": {
+                "cards": {
+                  "default-browser": {
+                    "title": "juno_onboarding_default_browser_title_nimbus_4",
+                    "body": "juno_onboarding_default_browser_description_nimbus_5",
+                    "image-res": "ic_onboarding_key_features_icons_only"
+                  }
                 }
               }
             }
           ]
         }
       ],
-      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('122.!') >= 0) && (language in ['en'])))",
-      "startDate": "2024-01-23",
+      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('124.!') >= 0) && (language in ['en'])))",
+      "startDate": "2024-03-08",
       "enrollmentEndDate": null,
       "endDate": null,
-      "proposedDuration": 43,
-      "proposedEnrollment": 14,
+      "proposedDuration": 35,
+      "proposedEnrollment": 21,
       "referenceBranch": "control",
       "featureValidationOptOut": false,
       "localizations": null,
       "locales": null,
-      "publishedDate": null
+      "publishedDate": "2024-03-08T16:48:36.645956Z"
     }
   ]
 }

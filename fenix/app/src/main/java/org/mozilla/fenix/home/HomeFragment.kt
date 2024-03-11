@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -53,6 +54,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -74,9 +76,11 @@ import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.lib.state.ext.flow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.ui.colors.PhotonColors
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
@@ -84,11 +88,15 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.tabstrip.TabStrip
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.navbar.NavbarIntegration
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -97,6 +105,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.scaleToBottomOfView
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
@@ -117,7 +126,6 @@ import org.mozilla.fenix.home.toolbar.SearchSelectorBinding
 import org.mozilla.fenix.home.toolbar.SearchSelectorMenuBinding
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.messaging.DefaultMessageController
-import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingFeature
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
@@ -149,6 +157,10 @@ class HomeFragment : Fragment() {
             ToolbarPosition.BOTTOM -> binding.toolbarLayout
             ToolbarPosition.TOP -> null
         }
+
+    private var _bottomToolbarContainerView: BottomToolbarContainerView? = null
+    private val bottomToolbarContainerView: BottomToolbarContainerView
+        get() = _bottomToolbarContainerView!!
 
     private val searchSelectorMenu by lazy {
         SearchSelectorMenu(
@@ -217,6 +229,7 @@ class HomeFragment : Fragment() {
     private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
     private val searchSelectorBinding = ViewBoundFeatureWrapper<SearchSelectorBinding>()
     private val searchSelectorMenuBinding = ViewBoundFeatureWrapper<SearchSelectorMenuBinding>()
+    private val navbarIntegration = ViewBoundFeatureWrapper<NavbarIntegration>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
@@ -360,7 +373,7 @@ class HomeFragment : Fragment() {
                 engine = components.core.engine,
                 messageController = DefaultMessageController(
                     appStore = components.appStore,
-                    messagingController = FenixNimbusMessagingController(components.analytics.messagingStorage),
+                    messagingController = components.nimbus.messaging,
                     homeActivity = activity,
                 ),
                 store = store,
@@ -428,6 +441,49 @@ class HomeFragment : Fragment() {
             context = requireContext(),
             interactor = sessionControlInteractor,
         )
+
+        if (IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
+            val isToolbarAtBottom = requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM
+
+            // The toolbar view has already been added directly to the container.
+            // We should remove it and add the view to the navigation bar container.
+            // Should refactor this so there is no added view to remove to begin with:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=1870976
+            if (isToolbarAtBottom) {
+                binding.root.removeView(binding.toolbarLayout)
+            }
+
+            val menuButton = MenuButton(requireContext())
+            HomeMenuView(
+                view = binding.root,
+                context = requireContext(),
+                lifecycleOwner = viewLifecycleOwner,
+                homeActivity = activity,
+                navController = findNavController(),
+                menuButton = WeakReference(menuButton),
+            ).also { it.build() }
+
+            _bottomToolbarContainerView = BottomToolbarContainerView(
+                context = requireContext(),
+                parent = binding.homeLayout,
+                androidToolbarView = if (isToolbarAtBottom) binding.toolbarLayout else null,
+                menuButton = menuButton,
+                isPrivateMode = activity.browsingModeManager.mode.isPrivate,
+            )
+
+            navbarIntegration.set(
+                feature = NavbarIntegration(
+                    toolbar = bottomToolbarContainerView.toolbarContainerView,
+                    store = requireComponents.core.store,
+                    appStore = requireComponents.appStore,
+                    viewLifecycleOwner = viewLifecycleOwner,
+                    bottomToolbarContainerView = bottomToolbarContainerView,
+                    sessionId = null,
+                ),
+                owner = this,
+                view = binding.root,
+            )
+        }
 
         sessionControlView = SessionControlView(
             containerView = binding.sessionControlRecyclerView,
@@ -577,6 +633,9 @@ class HomeFragment : Fragment() {
         )
 
         toolbarView?.build()
+        if (requireContext().settings().isTabletAndTabStripEnabled) {
+            initTabStrip()
+        }
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(newMode)
@@ -597,6 +656,11 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.sessionToDelete = null
+
+        requireComponents.appStore.state.wasLastTabClosedPrivate?.also {
+            showUndoSnackbar(requireContext().tabClosedUndoMessage(it))
+            requireComponents.appStore.dispatch(AppAction.TabStripAction.UpdateLastTabClosed(null))
+        }
 
         tabCounterView?.update(requireComponents.core.store.state)
 
@@ -654,6 +718,30 @@ class HomeFragment : Fragment() {
         )
     }
 
+    private fun initTabStrip() {
+        binding.tabStripView.isVisible = true
+        binding.tabStripView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                FirefoxTheme {
+                    TabStrip(
+                        onHome = true,
+                        onAddTabClick = {
+                            sessionControlInteractor.onNavigateSearch()
+                        },
+                        onSelectedTabClick = {
+                            (requireActivity() as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+                        },
+                        onLastTabClose = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
+                    )
+                }
+            }
+        }
+    }
+
     /**
      * Method used to listen to search engine name changes and trigger a top sites update accordingly
      */
@@ -706,18 +794,14 @@ class HomeFragment : Fragment() {
 
     private fun removeTabAndShowSnackbar(sessionId: String) {
         val tab = store.state.findTab(sessionId) ?: return
-
         requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+        showUndoSnackbar(requireContext().tabClosedUndoMessage(tab.content.private))
+    }
 
-        val snackbarMessage = if (tab.content.private) {
-            requireContext().getString(R.string.snackbar_private_tab_closed)
-        } else {
-            requireContext().getString(R.string.snackbar_tab_closed)
-        }
-
+    private fun showUndoSnackbar(message: String) {
         viewLifecycleOwner.lifecycleScope.allowUndo(
             requireView(),
-            snackbarMessage,
+            message,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
                 requireComponents.useCases.tabsUseCases.undo.invoke()
@@ -738,6 +822,7 @@ class HomeFragment : Fragment() {
         sessionControlView = null
         tabCounterView = null
         toolbarView = null
+        _bottomToolbarContainerView = null
         _binding = null
 
         bundleArgs.clear()
@@ -1077,12 +1162,15 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
+        // Used to set homeViewModel.sessionToDelete when all tabs of a browsing mode are closed
         const val ALL_NORMAL_TABS = "all_normal"
         const val ALL_PRIVATE_TABS = "all_private"
 
+        // Navigation arguments passed to HomeFragment
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
-
         private const val SCROLL_TO_COLLECTION = "scrollToCollection"
+
+        // Delay for scrolling to the collection header
         private const val ANIM_SCROLL_DELAY = 100L
 
         // Sponsored top sites titles and search engine names used for filtering

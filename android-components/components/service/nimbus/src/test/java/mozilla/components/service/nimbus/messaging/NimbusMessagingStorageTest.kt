@@ -4,6 +4,7 @@
 
 package mozilla.components.service.nimbus.messaging
 
+import android.net.Uri
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import mozilla.components.service.nimbus.messaging.ControlMessageBehavior.SHOW_NEXT_MESSAGE
@@ -16,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -30,20 +32,23 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mozilla.experiments.nimbus.FeaturesInterface
-import org.mozilla.experiments.nimbus.GleanPlumbInterface
-import org.mozilla.experiments.nimbus.GleanPlumbMessageHelper
+import org.mozilla.experiments.nimbus.NimbusMessagingHelperInterface
+import org.mozilla.experiments.nimbus.NimbusMessagingInterface
 import org.mozilla.experiments.nimbus.NullVariables
 import org.mozilla.experiments.nimbus.Res
 import org.mozilla.experiments.nimbus.internal.FeatureHolder
 import org.mozilla.experiments.nimbus.internal.NimbusException
 import org.robolectric.RobolectricTestRunner
+import java.util.UUID
+
+private const val MOCK_TIME_MILLIS = 1000L
 
 @RunWith(RobolectricTestRunner::class)
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 class NimbusMessagingStorageTest {
     @Mock private lateinit var metadataStorage: MessageMetadataStorage
 
-    @Mock private lateinit var gleanPlumb: GleanPlumbInterface
+    @Mock private lateinit var nimbus: NimbusMessagingInterface
 
     private lateinit var storage: NimbusMessagingStorage
     private lateinit var messagingFeature: FeatureHolder<Messaging>
@@ -54,6 +59,8 @@ class NimbusMessagingStorageTest {
         malformedWasReported = true
     }
     private lateinit var featuresInterface: FeaturesInterface
+
+    private val displayOnceStyle = StyleData(maxDisplayCount = 1)
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
@@ -80,9 +87,13 @@ class NimbusMessagingStorageTest {
             testContext,
             metadataStorage,
             reportMalformedMessage,
-            gleanPlumb,
+            nimbus,
             messagingFeature,
-        )
+        ) { MOCK_TIME_MILLIS }
+
+        val helper: NimbusMessagingHelperInterface = mock()
+        `when`(helper.evalJexl(any())).thenReturn(true)
+        `when`(nimbus.createMessageHelper(any())).thenReturn(helper)
     }
 
     @After
@@ -130,7 +141,7 @@ class NimbusMessagingStorageTest {
                 testContext,
                 metadataStorage,
                 reportMalformedMessage,
-                gleanPlumb,
+                nimbus,
                 messagingFeature,
             )
 
@@ -167,14 +178,16 @@ class NimbusMessagingStorageTest {
                 testContext,
                 metadataStorage,
                 reportMalformedMessage,
-                gleanPlumb,
+                nimbus,
                 messagingFeature,
             )
 
             val results = storage.getMessages()
 
-            assertEquals(1, results.size)
-            assertEquals("normal-message", results[0].id)
+            assertEquals(2, results.size)
+
+            val message = storage.getNextMessage(HOMESCREEN, results)!!
+            assertEquals("normal-message", message.id)
         }
 
     @Test
@@ -203,14 +216,15 @@ class NimbusMessagingStorageTest {
                 testContext,
                 metadataStorage,
                 reportMalformedMessage,
-                gleanPlumb,
+                nimbus,
                 messagingFeature,
             )
 
             val results = storage.getMessages()
+            assertEquals(2, results.size)
 
-            assertEquals(1, results.size)
-            assertEquals("normal-message", results[0].id)
+            val message = storage.getNextMessage(HOMESCREEN, results)!!
+            assertEquals("normal-message", message.id)
         }
 
     @Test
@@ -251,14 +265,15 @@ class NimbusMessagingStorageTest {
                 testContext,
                 metadataStorage,
                 reportMalformedMessage,
-                gleanPlumb,
+                nimbus,
                 messagingFeature,
             )
 
             val results = storage.getMessages()
+            assertEquals(3, results.size)
 
-            assertEquals(1, results.size)
-            assertEquals("normal-message", results[0].id)
+            val message = storage.getNextMessage(HOMESCREEN, results)!!
+            assertEquals("normal-message", message.id)
         }
 
     @Test
@@ -278,14 +293,13 @@ class NimbusMessagingStorageTest {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
         val notFoundAction =
-            storage.sanitizeAction("messageId", "no-found-action", actionsMap, false)
-        val emptyAction = storage.sanitizeAction("messageId", "", actionsMap, false)
-        val blankAction = storage.sanitizeAction("messageId", " ", actionsMap, false)
+            storage.sanitizeAction("no-found-action", actionsMap)
+        val emptyAction = storage.sanitizeAction("", actionsMap)
+        val blankAction = storage.sanitizeAction(" ", actionsMap)
 
         assertNull(notFoundAction)
         assertNull(emptyAction)
         assertNull(blankAction)
-        assertTrue(malformedWasReported)
     }
 
     @Test
@@ -294,21 +308,19 @@ class NimbusMessagingStorageTest {
 
         storage.malFormedMap["malformed-action"] = "messageId"
 
-        val action = storage.sanitizeAction("messageId", "malformed-action", actionsMap, false)
+        val action = storage.sanitizeAction("malformed-action", actionsMap)
 
         assertNull(action)
         assertFalse(malformedWasReported)
     }
 
     @Test
-    fun `GIVEN a non-previously stored malformed action WHEN calling sanitizeAction THEN return null and report malFormed`() {
+    fun `GIVEN a non-previously stored malformed action WHEN calling sanitizeAction THEN return null`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val action = storage.sanitizeAction("messageId", "malformed-action", actionsMap, false)
+        val action = storage.sanitizeAction("malformed-action", actionsMap)
 
         assertNull(action)
-        assertTrue(storage.malFormedMap.containsKey("malformed-action"))
-        assertTrue(malformedWasReported)
     }
 
     @Test
@@ -319,22 +331,50 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
+    fun `WHEN calling onMessageDisplayed with message & boot id THEN metadata for count, lastTimeShown & latestBootIdentifier is updated`() =
+        runTest {
+            val message = storage.getMessage("message-1")!!
+            assertEquals(0, message.displayCount)
+
+            val bootId = "test boot id"
+            val expectedMessage = message.copy(
+                metadata = Message.Metadata(
+                    id = "message-1",
+                    displayCount = 1,
+                    lastTimeShown = MOCK_TIME_MILLIS,
+                    latestBootIdentifier = bootId,
+                ),
+            )
+
+            assertEquals(expectedMessage, storage.onMessageDisplayed(message, bootId))
+        }
+
+    @Test
+    fun `WHEN calling onMessageDisplayed with message THEN metadata for count, lastTimeShown is updated`() =
+        runTest {
+            val message = storage.getMessage("message-1")!!
+            assertEquals(0, message.displayCount)
+
+            val bootId = null
+            val expectedMessage = message.copy(
+                metadata = Message.Metadata(
+                    id = "message-1",
+                    displayCount = 1,
+                    lastTimeShown = MOCK_TIME_MILLIS,
+                    latestBootIdentifier = bootId,
+                ),
+            )
+
+            assertEquals(expectedMessage, storage.onMessageDisplayed(message, bootId))
+        }
+
+    @Test
     fun `GIVEN a valid action WHEN calling sanitizeAction THEN return the action`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val validAction = storage.sanitizeAction("messageId", "action-1", actionsMap, false)
+        val validAction = storage.sanitizeAction("action-1", actionsMap)
 
         assertEquals("action-1-url", validAction)
-    }
-
-    @Test
-    fun `GIVEN a valid action for control message WHEN calling sanitizeAction THEN return a empty action`() {
-        val actionsMap = mapOf("action-1" to "action-1-url")
-
-        val validAction = storage.sanitizeAction("messageId", "", actionsMap, true)
-
-        assertEquals("CONTROL_ACTION", validAction)
-        assertFalse(malformedWasReported)
     }
 
     @Test
@@ -342,14 +382,13 @@ class NimbusMessagingStorageTest {
         val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
 
         val notFoundTrigger =
-            storage.sanitizeTriggers("messageId", listOf("no-found-trigger"), triggersMap)
-        val emptyTrigger = storage.sanitizeTriggers("messageId", listOf(""), triggersMap)
-        val blankTrigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+            storage.sanitizeTriggers(listOf("no-found-trigger"), triggersMap)
+        val emptyTrigger = storage.sanitizeTriggers(listOf(""), triggersMap)
+        val blankTrigger = storage.sanitizeTriggers(listOf(" "), triggersMap)
 
         assertNull(notFoundTrigger)
         assertNull(emptyTrigger)
         assertNull(blankTrigger)
-        assertTrue(malformedWasReported)
     }
 
     @Test
@@ -358,42 +397,40 @@ class NimbusMessagingStorageTest {
 
         storage.malFormedMap[" "] = "messageId"
 
-        val trigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+        val trigger = storage.sanitizeTriggers(listOf(" "), triggersMap)
 
         assertNull(trigger)
         assertFalse(malformedWasReported)
     }
 
     @Test
-    fun `GIVEN a non previously stored malformed trigger WHEN calling sanitizeTriggers THEN report malformed and return null`() {
+    fun `GIVEN a non previously stored malformed trigger WHEN calling sanitizeTriggers THEN return null`() {
         val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
 
-        val trigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+        val trigger = storage.sanitizeTriggers(listOf(" "), triggersMap)
 
         assertNull(trigger)
-        assertTrue(storage.malFormedMap.containsKey(" "))
-        assertTrue(malformedWasReported)
     }
 
     @Test
     fun `GIVEN a valid trigger WHEN calling sanitizeAction THEN return the trigger`() {
         val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
 
-        val validTrigger = storage.sanitizeTriggers("messageId", listOf("trigger-1"), triggersMap)
+        val validTrigger = storage.sanitizeTriggers(listOf("trigger-1"), triggersMap)
 
         assertEquals(listOf("trigger-1-expression"), validTrigger)
     }
 
     @Test
     fun `GIVEN an eligible message WHEN calling isMessageEligible THEN return true`() {
-        val helper: GleanPlumbMessageHelper = mock()
+        val helper: NimbusMessagingHelperInterface = mock()
         val message = Message(
             "same-id",
             mock(),
             action = "action",
             mock(),
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         `when`(helper.evalJexl(any())).thenReturn(true)
@@ -414,67 +451,67 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN a malformed trigger WHEN calling isMessageEligible THEN return false`() {
-        val helper: GleanPlumbMessageHelper = mock()
+        val helper: NimbusMessagingHelperInterface = mock()
         val message = Message(
             "same-id",
             mock(),
             action = "action",
             mock(),
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         `when`(helper.evalJexl(any())).then { throw NimbusException.EvaluationException("") }
 
-        val result = storage.isMessageEligible(message, helper)
-
-        assertFalse(result)
+        assertThrows(NimbusException.EvaluationException::class.java) {
+            storage.isMessageEligible(message, helper)
+        }
     }
 
     @Test
-    fun `GIVEN a previously malformed trigger WHEN calling isMessageEligible THEN return false and not evaluate`() {
-        val helper: GleanPlumbMessageHelper = mock()
+    fun `GIVEN a previously malformed trigger WHEN calling isMessageEligible THEN throw and not evaluate`() {
+        val helper: NimbusMessagingHelperInterface = mock()
         val message = Message(
             "same-id",
             mock(),
             action = "action",
             mock(),
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         storage.malFormedMap["trigger"] = "same-id"
 
         `when`(helper.evalJexl(any())).then { throw NimbusException.EvaluationException("") }
 
-        val result = storage.isMessageEligible(message, helper)
+        assertThrows(NimbusException.EvaluationException::class.java) {
+            storage.isMessageEligible(message, helper)
+        }
 
-        assertFalse(result)
         verify(helper, never()).evalJexl("trigger")
-        assertFalse(malformedWasReported)
     }
 
     @Test
-    fun `GIVEN a non previously malformed trigger WHEN calling isMessageEligible THEN return false and not evaluate`() {
-        val helper: GleanPlumbMessageHelper = mock()
+    fun `GIVEN a non previously malformed trigger WHEN calling isMessageEligible THEN throw and not evaluate`() {
+        val helper: NimbusMessagingHelperInterface = mock()
         val message = Message(
             "same-id",
             mock(),
             action = "action",
             mock(),
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         `when`(helper.evalJexl(any())).then { throw NimbusException.EvaluationException("") }
 
         assertFalse(storage.malFormedMap.containsKey("trigger"))
 
-        val result = storage.isMessageEligible(message, helper)
+        assertThrows(NimbusException.EvaluationException::class.java) {
+            storage.isMessageEligible(message, helper)
+        }
 
-        assertFalse(result)
         assertTrue(storage.malFormedMap.containsKey("trigger"))
-        assertTrue(malformedWasReported)
     }
 
     @Test
@@ -486,10 +523,10 @@ class NimbusMessagingStorageTest {
             action = "action",
             mock(),
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(false).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(false).`when`(spiedStorage).isMessageEligible(any(), any())
 
         val result = spiedStorage.getNextMessage(HOMESCREEN, listOf(message))
 
@@ -503,12 +540,12 @@ class NimbusMessagingStorageTest {
             "same-id",
             createMessageData(surface = HOMESCREEN),
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any())
 
         val result = spiedStorage.getNextMessage(HOMESCREEN, listOf(message))
 
@@ -516,7 +553,7 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `GIVEN a message under experiment WHEN calling getNextMessage THEN call recordExposureEvent`() {
+    fun `GIVEN a message under experiment WHEN calling onMessageDisplayed THEN call recordExposureEvent`() = runTest {
         val spiedStorage = spy(storage)
         val experiment = "my-experiment"
         val messageData: MessageData = createMessageData(isControl = false, experiment = experiment)
@@ -525,15 +562,17 @@ class NimbusMessagingStorageTest {
             "same-id",
             messageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any())
 
         val result = spiedStorage.getNextMessage(HOMESCREEN, listOf(message))
+        verify(featuresInterface, never()).recordExposureEvent("messaging", experiment)
 
+        spiedStorage.onMessageDisplayed(message)
         verify(featuresInterface).recordExposureEvent("messaging", experiment)
         assertEquals(message.id, result!!.id)
     }
@@ -551,21 +590,21 @@ class NimbusMessagingStorageTest {
             "id",
             messageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         val controlMessage = Message(
             "control-id",
             controlMessageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any())
 
         val result = spiedStorage.getNextMessage(
             HOMESCREEN,
@@ -589,21 +628,21 @@ class NimbusMessagingStorageTest {
             "id",
             messageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         val controlMessage = Message(
             "control-id",
             controlMessageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any())
 
         val result = spiedStorage.getNextMessage(
             HOMESCREEN,
@@ -629,30 +668,30 @@ class NimbusMessagingStorageTest {
             "id",
             messageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         val incorrectMessage = Message(
             "incorrect-id",
             incorrectMessageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
         val controlMessage = Message(
             "control-id",
             controlMessageData,
             action = "action",
-            mock(),
+            style = displayOnceStyle,
             listOf("trigger"),
-            Message.Metadata("same-id"),
+            metadata = Message.Metadata("same-id"),
         )
 
-        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any())
 
         var result = spiedStorage.getNextMessage(
             HOMESCREEN,
@@ -677,7 +716,7 @@ class NimbusMessagingStorageTest {
             testContext,
             metadataStorage,
             reportMalformedMessage,
-            gleanPlumb,
+            nimbus,
             messagingFeature,
         )
 
@@ -714,7 +753,7 @@ class NimbusMessagingStorageTest {
                 testContext,
                 metadataStorage,
                 reportMalformedMessage,
-                gleanPlumb,
+                nimbus,
                 messagingFeature,
             )
 
@@ -733,6 +772,7 @@ class NimbusMessagingStorageTest {
             triggers = mapOf("trigger-1" to "://trigger-1"),
             messages = mapOf(
                 "missing-text" to createMessageData(text = ""),
+                "control" to createMessageData(text = "", isControl = true),
                 "ok" to createMessageData(),
             ),
         )
@@ -740,28 +780,106 @@ class NimbusMessagingStorageTest {
             testContext,
             metadataStorage,
             reportMalformedMessage,
-            gleanPlumb,
+            nimbus,
             feature,
         )
 
         assertNotNull(storage.getMessage("ok"))
+        assertNotNull(storage.getMessage("control"))
         assertNull(storage.getMessage("missing-text"))
         assertTrue(malformedMessageIds.contains("missing-text"))
         assertFalse(malformedMessageIds.contains("ok"))
+        assertFalse(malformedMessageIds.contains("control"))
+    }
+
+    @Test
+    fun `GIVEN a message with an action and params THEN do string interpolation`() = runTest {
+        val (feature, _) = createMessagingFeature(
+            actions = mapOf("OPEN_URL" to "://open", "INSTALL_FOCUS" to "market://details?app=org.mozilla.focus"),
+            messages = mapOf(
+                "open-url" to createMessageData(
+                    action = "OPEN_URL",
+                    actionParams = mapOf("url" to "https://mozilla.org"),
+                ),
+
+                // with uuid in the param value
+                "open-url-with-uuid" to createMessageData(
+                    action = "OPEN_URL",
+                    actionParams = mapOf("url" to "https://mozilla.org?uuid={uuid}"),
+                ),
+
+                // with ? in the action
+                "install-focus" to createMessageData(
+                    action = "INSTALL_FOCUS",
+                    actionParams = mapOf("utm" to "my-utm"),
+                ),
+            ),
+        )
+        val storage = NimbusMessagingStorage(
+            testContext,
+            metadataStorage,
+            reportMalformedMessage,
+            nimbus,
+            messagingFeature = feature,
+        )
+
+        val myUuid = UUID.randomUUID().toString()
+        val helper = object : NimbusMessagingHelperInterface {
+            override fun evalJexl(expression: String) = false
+            override fun getUuid(template: String): String? =
+                if (template.contains("{uuid}")) {
+                    myUuid
+                } else {
+                    null
+                }
+
+            override fun stringFormat(template: String, uuid: String?): String =
+                uuid?.let {
+                    template.replace("{uuid}", it)
+                } ?: template
+        }
+
+        run {
+            val message = storage.getMessage("open-url")!!
+            assertEquals(message.action, "://open")
+            val (uuid, url) = storage.generateUuidAndFormatMessage(message, helper)
+            assertEquals(uuid, null)
+            val urlParam = "https://mozilla.org"
+            assertEquals(url, "://open?url=${Uri.encode(urlParam)}")
+        }
+
+        run {
+            val message = storage.getMessage("open-url-with-uuid")!!
+            assertEquals(message.action, "://open")
+            val (uuid, url) = storage.generateUuidAndFormatMessage(message, helper)
+            assertEquals(uuid, myUuid)
+            val urlParam = "https://mozilla.org?uuid=$myUuid"
+            assertEquals(url, "://open?url=${Uri.encode(urlParam)}")
+        }
+
+        run {
+            val message = storage.getMessage("install-focus")!!
+            assertEquals(message.action, "market://details?app=org.mozilla.focus")
+            val (uuid, url) = storage.generateUuidAndFormatMessage(message, helper)
+            assertEquals(uuid, null)
+            assertEquals(url, "market://details?app=org.mozilla.focus&utm=my-utm")
+        }
     }
 
     private fun createMessageData(
         text: String = "text-1",
         action: String = "action-1",
+        actionParams: Map<String, String> = mapOf(),
         style: String = "style-1",
         triggers: List<String> = listOf("trigger-1"),
         surface: MessageSurfaceId = HOMESCREEN,
         isControl: Boolean = false,
         experiment: String? = null,
     ) = MessageData(
-        action = Res.string(action),
+        action = action,
+        actionParams = actionParams,
         style = style,
-        trigger = triggers,
+        triggerIfAll = triggers,
         surface = surface,
         isControl = isControl,
         text = Res.string(text),

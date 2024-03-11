@@ -57,11 +57,27 @@ object AppServicesStateMachineChecker {
                 val pairingUrl = event.pairingUrl ?: "<null>"
                 FxaEvent.BeginPairingFlow(pairingUrl, ArrayList(scopes), event.entrypoint.entryName)
             }
-            is Event.Account.AuthenticationError -> FxaEvent.CheckAuthorizationStatus
+            is Event.Account.AuthenticationError -> {
+                // There are basically 2 ways for this to happen:
+                //
+                // - Another component called `FxaAccountManager.encounteredAuthError()`.  In this
+                //   case, we should initiate the state transition by sending the state machine the
+                //   `FxaEvent.CheckAuthorizationStatus`
+                // - `FxaAccountManager` sent it to itself, because there was an error when
+                //   `internalStateSideEffects` called `finalizeDevice()`.  In this case, we're
+                //   already in the middle of a state transition and already sent the state machine
+                //   the `EnsureCapabilitiesAuthError` event, so we should ignore it.
+                if (event.operation == "finalizeDevice") {
+                    return
+                } else {
+                    FxaEvent.CheckAuthorizationStatus
+                }
+            }
             Event.Account.AccessTokenKeyError -> FxaEvent.CheckAuthorizationStatus
             Event.Account.Logout -> FxaEvent.Disconnect
             // This is the one ProgressEvent that's considered a "public event" in app-services
             is Event.Progress.AuthData -> FxaEvent.CompleteOAuthFlow(event.authData.code, event.authData.state)
+            is Event.Progress.CancelAuth -> FxaEvent.CancelOAuthFlow
             else -> return
         }
         rustChecker.handlePublicEvent(convertedEvent)
@@ -169,19 +185,18 @@ object AppServicesStateMachineChecker {
                 )
             }
             Event.Progress.FailedToRecoverFromAuthenticationProblem -> {
-                // `via` should always be `AuthenticationError` if not, we'll probably see a state
-                // check error down the line.
-                if (via is Event.Account.AuthenticationError) {
-                    if (via.errorCountWithinTheTimeWindow >= AUTH_CHECK_CIRCUIT_BREAKER_COUNT) {
-                        // In this case, the state machine fails early and doesn't actualy make any
-                        // calls
-                        return
-                    }
-                    AppServicesStateMachineChecker.checkInternalState(FxaStateCheckerState.CheckAuthorizationStatus)
-                    AppServicesStateMachineChecker.handleInternalEvent(
-                        FxaStateCheckerEvent.CheckAuthorizationStatusSuccess(false),
-                    )
+                if (via is Event.Account.AuthenticationError &&
+                    via.errorCountWithinTheTimeWindow >= AUTH_CHECK_CIRCUIT_BREAKER_COUNT
+                ) {
+                    // In this case, the state machine fails early and doesn't actualy make any
+                    // calls
+                    return
                 }
+
+                AppServicesStateMachineChecker.checkInternalState(FxaStateCheckerState.CheckAuthorizationStatus)
+                AppServicesStateMachineChecker.handleInternalEvent(
+                    FxaStateCheckerEvent.CheckAuthorizationStatusSuccess(false),
+                )
             }
             else -> Unit
         }
