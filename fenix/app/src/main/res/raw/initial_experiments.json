@@ -223,20 +223,20 @@
     },
     {
       "schemaVersion": "1.12.0",
-      "slug": "android-optimize-set-as-default-browser-screen",
-      "id": "android-optimize-set-as-default-browser-screen",
+      "slug": "android-optimize-set-as-default-browser-screen-release",
+      "id": "android-optimize-set-as-default-browser-screen-release",
       "arguments": {},
-      "application": "org.mozilla.fenix",
+      "application": "org.mozilla.firefox",
       "appName": "fenix",
-      "appId": "org.mozilla.fenix",
-      "channel": "nightly",
-      "userFacingName": "Android - Optimize “Set as Default Browser” Screen",
+      "appId": "org.mozilla.firefox",
+      "channel": "release",
+      "userFacingName": "Android - Optimize “Set as Default Browser” Screen Release",
       "userFacingDescription": "This experiment is designed to optimize the set-to-default browser experience on Android.",
       "isEnrollmentPaused": false,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
-        "namespace": "fenix-juno-onboarding-nightly-2",
+        "namespace": "fenix-juno-onboarding-release-6",
         "start": 0,
         "count": 10000,
         "total": 10000
@@ -367,7 +367,7 @@
         }
       ],
       "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('124.!') >= 0) && (language in ['en'])))",
-      "startDate": "2024-03-08",
+      "startDate": "2024-03-12",
       "enrollmentEndDate": null,
       "endDate": null,
       "proposedDuration": 35,
@@ -376,7 +376,7 @@
       "featureValidationOptOut": false,
       "localizations": null,
       "locales": null,
-      "publishedDate": "2024-03-08T16:48:36.645956Z"
+      "publishedDate": "2024-03-12T15:23:02.314682Z"
     }
   ]
 }
