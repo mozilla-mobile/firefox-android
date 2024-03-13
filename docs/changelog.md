@@ -4,18 +4,49 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 124.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v123..main)
+# 125.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v124..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **concept-toolabar**:
+  * Added a new method for `ActionButton` to update the contentDescription and the iconTint, see [Bug 1875817](https://bugzilla.mozilla.org/show_bug.cgi?id=1875817).
+
+* **concept-engine**
+  * Added `onLocationChange#hasUserGesture` parameter. This indicates if a location change was requested while a user gesture was active. [bug #1804636](https://bugzilla.mozilla.org/show_bug.cgi?id=1804636)
+
+* **lib-dataprotect**
+  * Remove unused `KeyUtils.generateEncryptionKey` function.
+
+# 124.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v123..releases_v124)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v124/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v124/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v124/android-components/.config.yml)
 
 * **feature-prompts**:
   * Added `FileUploadsDirCleaner` deletes temporary stale uploaded files, see [Bug 1860472](https://bugzilla.mozilla.org/show_bug.cgi?id=1860472).
   * ⚠️ **This is a breaking change**: `PromptFeature` now requires a `FileUploadsDirCleaner` to be constructed
 
+* **browser-state**
+  * `BrowserStore` and the `TabListReducer` will no longer automatically select a normal tab when all private tabs are removed. [Bug 1861459](https://bugzilla.mozilla.org/show_bug.cgi?id=1861459)
+
 * **all components**
   * All new usages of the `concept-fetch` component to make fetch requests now have conservative-mode off by default. Current features will continue to use conservative mode until individually updated.
+
+* **browser-toolbar**
+  * Add `showMenuButton` and `hideMenuButton` API to `BrowserToolbar` and `DisplayToolbar` to allow hiding and showing of the menu button in
+  the `BrowserToolbar` [Bug 1864760](https://bugzilla.mozilla.org/show_bug.cgi?id=1864760)
+
+* **feature-customtabs**
+  * Fallback behaviour when failing to open a new window in custom tab will now be loading the URL directly in the same custom tab. [Bug 1832357](https://bugzilla.mozilla.org/show_bug.cgi?id=1832357)
+
+* **feature-session**
+  * Update URL in the store immediately when using the optimized load URL code path.
+
+* **tooling-lint**
+  * Added a lint rule to detect when `Response#close` may not have been called. Note: Currently, this rule only runs on Android Components.
 
 # 123.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..releases_v123)
@@ -24,7 +55,7 @@ permalink: /changelog/
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/.config.yml)
 
 * **feature-customtabs**
- * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
+  * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
 
 # 122.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)

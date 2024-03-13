@@ -10,7 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,6 +27,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -35,23 +39,31 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.tabstrip.TabStrip
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
 import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.ReviewQualityCheckFeature
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
+import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.translations.TranslationsDialogFragment.Companion.SESSION_ID
+import org.mozilla.fenix.translations.TranslationsDialogFragment.Companion.TRANSLATION_IN_PROGRESS
 
 /**
  * Fragment used for browsing the web within the main app.
@@ -64,6 +76,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     private val standardSnackbarErrorBinding =
         ViewBoundFeatureWrapper<StandardSnackbarErrorBinding>()
     private val reviewQualityCheckFeature = ViewBoundFeatureWrapper<ReviewQualityCheckFeature>()
+    private val translationsBinding = ViewBoundFeatureWrapper<TranslationsBinding>()
 
     private var readerModeAvailable = false
     private var reviewQualityCheckAvailable = false
@@ -82,8 +95,12 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         val context = requireContext()
         val components = context.components
+        val isTabletAndTabStripEnabled = context.settings().isTabletAndTabStripEnabled
+        if (isTabletAndTabStripEnabled) {
+            initTabStrip()
+        }
 
-        if (context.settings().isSwipeToolbarToSwitchTabsEnabled) {
+        if (!isTabletAndTabStripEnabled && context.settings().isSwipeToolbarToSwitchTabsEnabled) {
             binding.gestureLayout.addGestureListener(
                 ToolbarGestureHandler(
                     activity = requireActivity(),
@@ -92,34 +109,40 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     toolbarLayout = browserToolbarView.view,
                     store = components.core.store,
                     selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                    onSwipeStarted = {
+                        thumbnailsFeature.get()?.requestScreenshot()
+                    },
                 ),
             )
         }
 
         val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-        val leadingAction = if (isPrivate && context.settings().feltPrivateBrowsingEnabled) {
-            BrowserToolbar.Button(
-                imageDrawable = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.mozac_ic_data_clearance_24,
-                )!!,
-                contentDescription = context.getString(R.string.browser_toolbar_erase),
-                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
-                listener = browserToolbarInteractor::onEraseButtonClicked,
-            )
-        } else {
-            BrowserToolbar.Button(
-                imageDrawable = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.mozac_ic_home_24,
-                )!!,
-                contentDescription = context.getString(R.string.browser_toolbar_home),
-                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
-                listener = browserToolbarInteractor::onHomeButtonClicked,
-            )
-        }
 
-        browserToolbarView.view.addNavigationAction(leadingAction)
+        if (!IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+            val leadingAction = if (isPrivate && context.settings().feltPrivateBrowsingEnabled) {
+                BrowserToolbar.Button(
+                    imageDrawable = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.mozac_ic_data_clearance_24,
+                    )!!,
+                    contentDescription = context.getString(R.string.browser_toolbar_erase),
+                    iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                    listener = browserToolbarInteractor::onEraseButtonClicked,
+                )
+            } else {
+                BrowserToolbar.Button(
+                    imageDrawable = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.mozac_ic_home_24,
+                    )!!,
+                    contentDescription = context.getString(R.string.browser_toolbar_home),
+                    iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                    listener = browserToolbarInteractor::onHomeButtonClicked,
+                )
+            }
+
+            browserToolbarView.view.addNavigationAction(leadingAction)
+        }
 
         updateToolbarActions(isTablet = resources.getBoolean(R.bool.tablet))
 
@@ -147,8 +170,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         browserToolbarView.view.addPageAction(readerModeAction)
 
-        initTranslationsAction(context)
+        initTranslationsAction(context, view)
+        initSharePageAction(context)
         initReviewQualityCheck(context, view)
+        initReloadAction(context)
 
         thumbnailsFeature.set(
             feature = BrowserThumbnails(context, binding.engineView, components.core.store),
@@ -211,34 +236,181 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             owner = viewLifecycleOwner,
             view = binding.root,
         )
+
+        setTranslationFragmentResultListener()
     }
 
-    private fun initTranslationsAction(context: Context) {
-        if (!context.settings().enableTranslations) {
+    private fun setTranslationFragmentResultListener() {
+        setFragmentResultListener(
+            TRANSLATION_IN_PROGRESS,
+        ) { _, result ->
+            result.getString(SESSION_ID)?.let {
+                if (it == getCurrentTab()?.id) {
+                    FenixSnackbar.make(
+                        view = binding.dynamicSnackbarContainer,
+                        duration = Snackbar.LENGTH_LONG,
+                        isDisplayedWithBrowserToolbar = true,
+                    )
+                        .setText(requireContext().getString(R.string.translation_in_progress_snackbar))
+                        .show()
+                }
+            }
+        }
+    }
+
+    private fun initTabStrip() {
+        binding.tabStripView.isVisible = true
+        binding.tabStripView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                FirefoxTheme {
+                    TabStrip(
+                        onAddTabClick = {
+                            findNavController().navigate(
+                                NavGraphDirections.actionGlobalHome(
+                                    focusOnAddressBar = true,
+                                ),
+                            )
+                        },
+                        onLastTabClose = { isPrivate ->
+                            requireComponents.appStore.dispatch(
+                                AppAction.TabStripAction.UpdateLastTabClosed(isPrivate),
+                            )
+                            findNavController().navigate(
+                                BrowserFragmentDirections.actionGlobalHome(),
+                            )
+                        },
+                        onSelectedTabClick = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
+                    )
+                }
+            }
+        }
+    }
+
+    private fun initSharePageAction(context: Context) {
+        if (!IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
             return
         }
 
-        val translationsAction =
-            BrowserToolbar.ToggleButton(
-                image = AppCompatResources.getDrawable(
+        val sharePageAction =
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_translate_24,
-                )!!.apply {
-                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
-                },
-                imageSelected = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.mozac_ic_translate_24,
+                    R.drawable.mozac_ic_share_android_24,
                 )!!,
-                contentDescription = context.getString(R.string.browser_toolbar_translate),
-                contentDescriptionSelected = "",
-                visible = {
-                    translationsAvailable || context.settings().enableTranslations
-                },
-                listener = { browserToolbarInteractor.onTranslationsButtonClicked() },
+                contentDescription = getString(R.string.browser_menu_share),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = { browserToolbarInteractor.onShareActionClicked() },
             )
 
+        browserToolbarView.view.addPageAction(sharePageAction)
+    }
+
+    private fun initTranslationsAction(context: Context, view: View) {
+        val isEngineSupported =
+            context.components.core.store.state.translationEngine.isEngineSupported
+
+        if (isEngineSupported != true ||
+            !FxNimbus.features.translations.value().mainFlowToolbarEnabled
+        ) {
+            return
+        }
+
+        val translationsAction = Toolbar.ActionButton(
+            AppCompatResources.getDrawable(
+                context,
+                R.drawable.mozac_ic_translate_24,
+            ),
+            contentDescription = context.getString(R.string.browser_toolbar_translate),
+            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            visible = { translationsAvailable },
+            listener = {
+                browserToolbarInteractor.onTranslationsButtonClicked()
+            },
+        )
         browserToolbarView.view.addPageAction(translationsAction)
+
+        getCurrentTab()?.let {
+            translationsBinding.set(
+                feature = TranslationsBinding(
+                    browserStore = context.components.core.store,
+                    sessionId = it.id,
+                    onStateUpdated = { isVisible, isTranslated, fromSelectedLanguage, toSelectedLanguage ->
+                        translationsAvailable = isVisible
+
+                        translationsAction.updateView(
+                            tintColorResource = if (isTranslated) {
+                                R.color.fx_mobile_icon_color_accent_violet
+                            } else {
+                                ThemeManager.resolveAttribute(R.attr.textPrimary, context)
+                            },
+                            contentDescription = if (isTranslated) {
+                                context.getString(
+                                    R.string.browser_toolbar_translated_successfully,
+                                    fromSelectedLanguage?.localizedDisplayName,
+                                    toSelectedLanguage?.localizedDisplayName,
+                                )
+                            } else {
+                                context.getString(R.string.browser_toolbar_translate)
+                            },
+                        )
+
+                        safeInvalidateBrowserToolbarView()
+                    },
+                    onShowTranslationsDialog = {
+                        browserToolbarInteractor.onTranslationsButtonClicked()
+                    },
+                ),
+                owner = this,
+                view = view,
+            )
+        }
+    }
+
+    private fun initReloadAction(context: Context) {
+        if (!IncompleteRedesignToolbarFeature(context.settings()).isEnabled || refreshAction != null) {
+            return
+        }
+
+        refreshAction =
+            BrowserToolbar.TwoStateButton(
+                primaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_arrow_clockwise_24,
+                )!!,
+                primaryContentDescription = context.getString(R.string.browser_menu_refresh),
+                primaryImageTintResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                isInPrimaryState = {
+                    getCurrentTab()?.content?.loading == false
+                },
+                secondaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_stop,
+                )!!,
+                secondaryContentDescription = context.getString(R.string.browser_menu_stop),
+                disableInSecondaryState = false,
+                longClickListener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Reload(bypassCache = true),
+                    )
+                },
+                listener = {
+                    if (getCurrentTab()?.content?.loading == true) {
+                        browserToolbarInteractor.onBrowserToolbarMenuItemTapped(ToolbarMenu.Item.Stop)
+                    } else {
+                        browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                            ToolbarMenu.Item.Reload(bypassCache = false),
+                        )
+                    }
+                },
+            )
+
+        refreshAction?.let {
+            browserToolbarView.view.addPageAction(it)
+        }
     }
 
     private fun initReviewQualityCheck(context: Context, view: View) {

@@ -767,6 +767,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true,
     )
 
+    val useProductionRemoteSettingsServer by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_remote_server_prod),
+        default = true,
+    )
+
     val enabledTotalCookieProtection: Boolean
         get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
@@ -849,6 +854,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
 
+    private val isTablet: Boolean
+        get() = appContext.resources.getBoolean(R.bool.tablet)
+
+    /**
+     * Indicates if the user has enabled the tab strip feature.
+     */
+    val isTabStripEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_tab_strip),
+        default = false,
+    )
+
+    val isTabletAndTabStripEnabled: Boolean
+        get() = isTablet && isTabStripEnabled
+
     var lastKnownMode: BrowsingMode = BrowsingMode.Normal
         get() {
             val lastKnownModeWasPrivate = preferences.getBoolean(
@@ -917,7 +936,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val toolbarPosition: ToolbarPosition
-        get() = if (shouldUseBottomToolbar) ToolbarPosition.BOTTOM else ToolbarPosition.TOP
+        get() = if (isTabletAndTabStripEnabled) {
+            ToolbarPosition.TOP
+        } else if (shouldUseBottomToolbar) {
+            ToolbarPosition.BOTTOM
+        } else {
+            ToolbarPosition.TOP
+        }
 
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
@@ -1472,7 +1497,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
-        default = Config.channel.isNightlyOrDebug,
+        default = true,
     )
 
     var isDynamicToolbarEnabled by booleanPreference(
@@ -1577,7 +1602,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing the user choice from the "Credit cards" settings for whether save and autofill cards
+     * Storing the user choice from the "Payment methods" settings for whether save and autofill cards
      * should be enabled or not.
      * If set to `true` when the user focuses on credit card fields in the webpage an Android prompt letting her
      * select the card details to be automatically filled will appear.
@@ -1847,14 +1872,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var enableComposeTopSites by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_compose_top_sites),
         default = FeatureFlags.composeTopSites,
-    )
-
-    /**
-     * Indicates if Firefox translations are enabled.
-     */
-    var enableTranslations by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_enable_translations),
-        default = false,
     )
 
     /**

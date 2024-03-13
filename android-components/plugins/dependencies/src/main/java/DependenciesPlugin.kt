@@ -14,56 +14,55 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.22"
-    const val coroutines = "1.7.2"
-    const val serialization = "1.5.1"
+    const val kotlin = "1.9.22"
+    const val coroutines = "1.8.0"
+    const val serialization = "1.6.3"
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.10.0"
+    const val mockito = "5.11.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
-    const val okhttp = "4.11.0"
-    const val okio = "3.6.0"
-    const val coil = "2.4.0"
+    const val okhttp = "4.12.0"
+    const val okio = "3.8.0"
+    const val androidsvg = "1.4"
 
-    const val android_gradle_plugin = "8.0.2"
+    const val android_gradle_plugin = "8.2.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "31.0.2"
-    const val detekt = "1.23.4"
+    const val lint = "31.2.2"
+    const val detekt = "1.23.5"
     const val ktlint = "0.49.1"
 
-    const val sentry = "7.2.0"
+    const val sentry = "7.5.0"
 
-    const val zxing = "3.5.2"
+    const val zxing = "3.5.3"
 
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "56.1.0"
+    const val mozilla_glean = "58.1.0"
 
     const val material = "1.9.0"
-    const val ksp = "1.0.11"
+    const val ksp = "1.0.17"
     val ksp_plugin = "$kotlin-$ksp"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.5.4"
-    const val compose_compiler = "1.4.8"
+    const val compose_compiler = "1.5.10"
 
     object AndroidX {
         const val activityCompose = "1.7.2"
         const val annotation = "1.7.1"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.7.0"
+        const val browser = "1.8.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
-        const val compose = compose_version
+        const val compose_bom = "2023.10.01"
         const val constraintlayout = "2.1.4"
         const val coordinatorlayout = "1.2.0"
         const val core = "1.12.0"
@@ -74,24 +73,24 @@ object Versions {
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
         const val espresso = "3.5.1"
-        const val room = "2.5.2"
+        const val room = "2.6.1"
         const val savedstate = "1.2.1"
         const val paging = "3.2.1"
         const val palette = "1.0.0"
         const val preferences = "1.2.1"
         const val lifecycle = "2.7.0"
         const val media = "1.7.0"
-        const val navigation = "2.5.3"
-        const val work = "2.7.1"
+        const val navigation = "2.7.7"
+        const val work = "2.9.0"
         const val arch = "2.2.0"
-        const val uiautomator = "2.2.0"
+        const val uiautomator = "2.3.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
         const val data_store_preferences="1.0.0"
     }
 
     object Firebase {
-        const val messaging = "23.4.0"
+        const val messaging = "23.4.1"
     }
 }
 
@@ -119,16 +118,22 @@ object ComponentsDependencies {
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.AndroidX.biometric}"
     const val androidx_browser = "androidx.browser:browser:${Versions.AndroidX.browser}"
     const val androidx_cardview = "androidx.cardview:cardview:${Versions.AndroidX.cardview}"
-    const val androidx_compose_animation = "androidx.compose.animation:animation:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui_graphics = "androidx.compose.ui:ui-graphics:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${Versions.AndroidX.compose}"
-    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${Versions.AndroidX.compose}"
-    const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
-    const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
-    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${Versions.AndroidX.compose}"
+
+    const val androidx_compose_bom = "androidx.compose:compose-bom:${Versions.AndroidX.compose_bom}"
+    const val androidx_compose_animation = "androidx.compose.animation:animation"
+    const val androidx_compose_ui = "androidx.compose.ui:ui"
+    const val androidx_compose_ui_graphics = "androidx.compose.ui:ui-graphics"
+    const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4"
+    const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest"
+    const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview"
+    const val androidx_compose_foundation = "androidx.compose.foundation:foundation"
+    const val androidx_compose_material = "androidx.compose.material:material"
+    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata"
+
+    const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.AndroidX.navigation}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
@@ -156,7 +161,7 @@ object ComponentsDependencies {
     const val androidx_test_runner = "androidx.test:runner:${Versions.AndroidX.test_runner}"
     const val androidx_test_rules = "androidx.test:rules:${Versions.AndroidX.test}"
     const val androidx_test_uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.AndroidX.uiautomator}"
-    const val androidx_work_runtime = "androidx.work:work-runtime-ktx:${Versions.AndroidX.work}"
+    const val androidx_work_runtime = "androidx.work:work-runtime:${Versions.AndroidX.work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.AndroidX.work}"
     const val androidx_espresso_core = "androidx.test.espresso:espresso-core:${Versions.AndroidX.espresso}"
     const val androidx_localbroadcastmanager = "androidx.localbroadcastmanager:localbroadcastmanager:${Versions.AndroidX.localbroadcastmanager}"
@@ -206,14 +211,7 @@ object ComponentsDependencies {
     const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
-    /**
-     *  ⚠️️ DO NOT use any NETWORK based operations provided by the Coil library.
-     *  ⚠️️ The Coil library should be used for DECODING data only.
-     *
-     *  Fenix is using SvgDecoder.kt for SVG decoding. However this dependency will also expose other
-     *  API features that Fenix should not use.
-     */
-    const val thirdparty_coil_svg = "io.coil-kt:coil-svg:${Versions.coil}"
+    const val thirdparty_androidsvg = "com.caverock:androidsvg-aar:${Versions.androidsvg}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"
 }

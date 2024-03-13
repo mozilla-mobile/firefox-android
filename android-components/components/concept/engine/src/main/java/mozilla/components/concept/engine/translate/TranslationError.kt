@@ -49,6 +49,14 @@ sealed class TranslationError(
         TranslationError(errorName = "engine-not-supported", displayError = false, cause = cause)
 
     /**
+     * Could not determine if the translations engine works on the device architecture.
+     *
+     * @param cause The original [Throwable] before it was converted into this error state.
+     */
+    class UnknownEngineSupportError(override val cause: Throwable?) :
+        TranslationError(errorName = "unknown-engine-support", displayError = false, cause = cause)
+
+    /**
      * Generic could not compete a translation error.
      *
      * @param cause The original throwable before it was converted into this error state.
@@ -65,12 +73,49 @@ sealed class TranslationError(
         TranslationError(errorName = "could-not-restore", displayError = false, cause = cause)
 
     /**
+     * Could not determine the translation download size between a given "to" and "from" language
+     * translation pair.
+     *
+     * @param cause The original [Throwable] before it was converted into this error state.
+     */
+    class CouldNotDetermineDownloadSizeError(override val cause: Throwable?) :
+        TranslationError(
+            errorName = "could-not-determine-translation-download-size",
+            displayError = false,
+            cause = cause,
+        )
+
+    /**
      * Could not load language options error.
      *
      * @param cause The original throwable before it was converted into this error state.
      */
     class CouldNotLoadLanguagesError(override val cause: Throwable?) :
         TranslationError(errorName = "could-not-load-languages", displayError = true, cause = cause)
+
+    /**
+     * Could not load page settings error.
+     *
+     * @param cause The original throwable before it was converted into this error state.
+     */
+    class CouldNotLoadPageSettingsError(override val cause: Throwable?) :
+        TranslationError(errorName = "could-not-load-settings", displayError = false, cause = cause)
+
+    /**
+     * Could not load language settings error.
+     *
+     * @param cause The original [Throwable] before it was converted into this error state.
+     */
+    class CouldNotLoadLanguageSettingsError(override val cause: Throwable?) :
+        TranslationError(errorName = "could-not-load-language-settings", displayError = false, cause = cause)
+
+    /**
+     * Could not load never translate sites error.
+     *
+     * @param cause The original throwable before it was converted into this error state.
+     */
+    class CouldNotLoadNeverTranslateSites(override val cause: Throwable?) :
+        TranslationError(errorName = "could-not-load-never-translate-sites", displayError = false, cause = cause)
 
     /**
      * The language is not supported for translation.

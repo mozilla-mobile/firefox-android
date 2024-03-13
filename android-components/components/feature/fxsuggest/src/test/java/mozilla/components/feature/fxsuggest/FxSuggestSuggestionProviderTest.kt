@@ -36,6 +36,7 @@ class FxSuggestSuggestionProviderTest {
         val suggestionProviderConfig = AwesomebarSuggestionProvider(
             availableSuggestionTypes = mapOf(
                 SuggestionType.AMP to true,
+                SuggestionType.AMP_MOBILE to false,
                 SuggestionType.WIKIPEDIA to true,
             ),
         )
@@ -57,6 +58,7 @@ class FxSuggestSuggestionProviderTest {
                     title = "Las Vegas",
                     url = "https://wikipedia.org/wiki/Las_Vegas",
                     icon = null,
+                    iconMimetype = null,
                     fullKeyword = "las",
                 ),
             ),
@@ -91,6 +93,7 @@ class FxSuggestSuggestionProviderTest {
                         65u, 84u, 8u, 215u, 99u, 96u, 0u, 0u, 0u, 2u, 0u, 1u, 226u, 33u, 188u, 51u, 0u,
                         0u, 0u, 0u, 73u, 69u, 78u, 68u, 174u, 66u, 96u, 130u,
                     ),
+                    iconMimetype = null,
                     fullKeyword = "lasagna",
                     blockId = 0,
                     advertiser = "Good Place Eats",
@@ -99,12 +102,6 @@ class FxSuggestSuggestionProviderTest {
                     clickUrl = "https://example.com/click_url",
                     rawClickUrl = "https://example.com/click_url",
                     score = 0.3,
-                ),
-                Suggestion.Wikipedia(
-                    title = "Las Vegas",
-                    url = "https://wikipedia.org/wiki/Las_Vegas",
-                    icon = null,
-                    fullKeyword = "las",
                 ),
             ),
         )
@@ -123,20 +120,16 @@ class FxSuggestSuggestionProviderTest {
                 SuggestionQuery(
                     keyword = "la",
                     providers = listOf(SuggestionProvider.AMP, SuggestionProvider.WIKIPEDIA),
+                    limit = 1,
                 ),
             ),
         )
-        assertEquals(2, suggestions.size)
+        assertEquals(1, suggestions.size)
         assertEquals("Lasagna Come Out Tomorrow", suggestions[0].title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions[0].description)
         assertNotNull(suggestions[0].icon)
         assertEquals(Int.MIN_VALUE, suggestions[0].score)
         assertTrue(suggestions[0].metadata.isNullOrEmpty())
-        assertEquals("Las Vegas", suggestions[1].title)
-        assertNull(suggestions[1].description)
-        assertNull(suggestions[1].icon)
-        assertEquals(Int.MIN_VALUE, suggestions[1].score)
-        assertTrue(suggestions[1].metadata.isNullOrEmpty())
     }
 
     @Test
@@ -163,6 +156,7 @@ class FxSuggestSuggestionProviderTest {
                     title = "Las Vegas",
                     url = "https://wikipedia.org/wiki/Las_Vegas",
                     icon = null,
+                    iconMimetype = null,
                     fullKeyword = "las",
                 ),
             ),
@@ -183,6 +177,7 @@ class FxSuggestSuggestionProviderTest {
                 SuggestionQuery(
                     keyword = "la",
                     providers = listOf(SuggestionProvider.WIKIPEDIA),
+                    limit = 1,
                 ),
             ),
         )
@@ -211,6 +206,7 @@ class FxSuggestSuggestionProviderTest {
                     url = "https://www.lasagna.restaurant",
                     rawUrl = "https://www.lasagna.restaurant",
                     icon = null,
+                    iconMimetype = null,
                     fullKeyword = "lasagna",
                     blockId = 0,
                     advertiser = "Good Place Eats",
@@ -238,11 +234,85 @@ class FxSuggestSuggestionProviderTest {
                 SuggestionQuery(
                     keyword = "la",
                     providers = listOf(SuggestionProvider.AMP),
+                    limit = 1,
                 ),
             ),
         )
         assertEquals(1, suggestions.size)
         assertEquals("Lasagna Come Out Tomorrow", suggestions.first().title)
+        assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions.first().description)
+        assertEquals(Int.MIN_VALUE, suggestions.first().score)
+        suggestions.first().metadata?.let {
+            assertEquals(setOf(FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO, FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO), it.keys)
+
+            val clickInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO] as? FxSuggestInteractionInfo.Amp)
+            assertEquals(0, clickInfo.blockId)
+            assertEquals("good place eats", clickInfo.advertiser)
+            assertEquals("https://example.com/click_url", clickInfo.reportingUrl)
+            assertEquals("8 - Food & Drink", clickInfo.iabCategory)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", clickInfo.contextId)
+
+            val impressionInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO] as? FxSuggestInteractionInfo.Amp)
+            assertEquals(0, impressionInfo.blockId)
+            assertEquals("good place eats", impressionInfo.advertiser)
+            assertEquals("https://example.com/impression_url", impressionInfo.reportingUrl)
+            assertEquals("8 - Food & Drink", impressionInfo.iabCategory)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", impressionInfo.contextId)
+        }
+    }
+
+    @Test
+    fun includeMobileSponsoredSuggestionsOnly() = runTest {
+        FxSuggestNimbus.features.awesomebarSuggestionProvider.withCachedValue(
+            AwesomebarSuggestionProvider(
+                availableSuggestionTypes = mapOf(
+                    SuggestionType.AMP to false,
+                    SuggestionType.AMP_MOBILE to true,
+                    SuggestionType.WIKIPEDIA to true,
+                ),
+            ),
+        )
+        whenever(storage.query(any())).thenReturn(
+            listOf(
+                Suggestion.Amp(
+                    title = "Mobile - Lasagna Come Out Tomorrow",
+                    url = "https://www.lasagna.restaurant",
+                    rawUrl = "https://www.lasagna.restaurant",
+                    icon = null,
+                    iconMimetype = null,
+                    fullKeyword = "lasagna",
+                    blockId = 0,
+                    advertiser = "Good Place Eats",
+                    iabCategory = "8 - Food & Drink",
+                    impressionUrl = "https://example.com/impression_url",
+                    clickUrl = "https://example.com/click_url",
+                    rawClickUrl = "https://example.com/click_url",
+                    score = 0.3,
+                ),
+            ),
+        )
+
+        val provider = FxSuggestSuggestionProvider(
+            resources = testContext.resources,
+            loadUrlUseCase = mock(),
+            includeNonSponsoredSuggestions = false,
+            includeSponsoredSuggestions = true,
+            contextId = "c303282d-f2e6-46ca-a04a-35d3d873712d",
+        )
+
+        val suggestions = provider.onInputChanged("la")
+
+        verify(storage).query(
+            eq(
+                SuggestionQuery(
+                    keyword = "la",
+                    providers = listOf(SuggestionProvider.AMP_MOBILE),
+                    limit = 1,
+                ),
+            ),
+        )
+        assertEquals(1, suggestions.size)
+        assertEquals("Mobile - Lasagna Come Out Tomorrow", suggestions.first().title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions.first().description)
         assertEquals(Int.MIN_VALUE, suggestions.first().score)
         suggestions.first().metadata?.let {
@@ -286,6 +356,7 @@ class FxSuggestSuggestionProviderTest {
                 SuggestionQuery(
                     keyword = "la",
                     providers = emptyList(),
+                    limit = 1,
                 ),
             ),
         )
@@ -314,6 +385,7 @@ class FxSuggestSuggestionProviderTest {
                 SuggestionQuery(
                     keyword = "la",
                     providers = emptyList(),
+                    limit = 1,
                 ),
             ),
         )

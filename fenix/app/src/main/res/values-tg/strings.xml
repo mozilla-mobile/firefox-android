@@ -246,6 +246,7 @@
 
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Танзимоти саҳифаи асосӣ</string>
+
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Экрани асосӣ</string>
@@ -253,6 +254,14 @@
     <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
          history and go back to the home screen. -->
     <string name="browser_toolbar_erase">Пок кардани таърихи тамошо</string>
+    <!-- Content description for the translate page toolbar button that opens the translations dialog when no translation has occurred. -->
+    <string name="browser_toolbar_translate">Тарҷума кардани саҳифа</string>
+
+    <!-- Content description (not visible, for screen readers etc.) for the translate page toolbar button that opens the translations dialog when the page is translated successfully.
+         The first parameter is the name of the language that is displayed in the original page. (For example: English)
+         The second parameter is the name of the language which the page was translated to. (For example: French) -->
+    <string name="browser_toolbar_translated_successfully">Саҳифа аз забони %1$s ба забони %2$s тарҷума шуд.</string>
+
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Забони интихобшуда</string>
@@ -264,8 +273,6 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Ҷустуҷӯ</string>
-    <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Низоми ҷустуҷӯӣ</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Танзимоти низоми ҷустуҷӯӣ</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -320,21 +327,25 @@
     <!-- Notification pre-permission dialog -->
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_title">Огоҳиҳо барои кори бештар бо «%s» ба шумо кумак мекунанд</string>
+    <string name="onboarding_home_enable_notifications_title" moz:removedIn="124" tools:ignore="UnusedResources">Огоҳиҳо барои кори бештар бо «%s» ба шумо кумак мекунанд</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_description">Варақаҳои худро байни дастгоҳҳо ҳамоҳанг созед, боргириҳоро идора кунед, барои беҳтар танзим кардани муҳофизати махфияти «%s» маслиҳатҳо гиред ва аз чизҳои бештар истифода баред.</string>
+    <string name="onboarding_home_enable_notifications_description" moz:removedIn="124" tools:ignore="UnusedResources">Варақаҳои худро байни дастгоҳҳо ҳамоҳанг созед, боргириҳоро идора кунед, барои беҳтар танзим кардани муҳофизати махфияти «%s» маслиҳатҳо гиред ва аз чизҳои бештар истифода баред.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="onboarding_home_enable_notifications_positive_button">Идома додан</string>
+    <string name="onboarding_home_enable_notifications_positive_button" moz:removedIn="124" tools:ignore="UnusedResources">Идома додан</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
-    <string name="onboarding_home_enable_notifications_negative_button">Ҳоло не</string>
+    <string name="onboarding_home_enable_notifications_negative_button" moz:removedIn="124" tools:ignore="UnusedResources">Ҳоло не</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Description for learning more about our privacy notice. -->
     <string name="juno_onboarding_privacy_notice_text">Огоҳномаи махфияти «Firefox»</string>
-    <!-- Text for the button to set firefox as default browser on the device -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text_2" moz:removedIn="125" tools:ignore="UnusedResources">Маълумоти бештар дар «Огоҳномаи махфияти мо»</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Мо нигоҳдории бехатарии шуморо дӯст медорем</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus_3" tools:ignore="UnusedResources">Бифаҳмед, ки чаро миллионҳо одамон браузери «Firefox»-ро дӯст медоранд</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_description_nimbus_3">Браузери мо, ки аз ҷониби ташкилоти ғайритиҷоратӣ дастгирӣ мешавад, маъракаҳоеро, ки шуморо дар атрофи Интернет пинҳонӣ пайгирӣ мекунанд, қатъ мекунад.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
@@ -444,21 +455,11 @@
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Реҷаи «Танҳо HTTPS»</string>
 
-    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Маҳдудкунии баннери куки</string>
     <!-- Label for cookie banner section in quick settings panel. -->
     <string name="cookie_banner_blocker">Манъкунандаи баннери куки</string>
     <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
     <string name="preferences_cookie_banner_reduction_private_mode">Манъкунандаи баннери куки дар тамошокунии хусусӣ</string>
-    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Маҳдуд кардани баннерҳои куки</string>
-    <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Ғайрифаъол</string>
-    <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">Фаъол</string>
 
-    <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">«%1$s» ба таври худкор кушиш мекунад, ки дархостҳои кукиҳоро дар баннерҳои кукиҳо рад кунад.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Барои ин сомона хомӯш аст</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -476,36 +477,17 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Ин сомона дар айни замон дастгирӣ намешавад</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">«Маҳдудкунии баннери куки»-ро барои %1$s фаъол месозед?</string>
-    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Манъкунандаи баннери кукиро барои %1$s фаъол мекунед?</string>
-    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">«Маҳдудкунии баннери куки»-ро барои %1$s хомӯш месозед?</string>
 
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Манъкунандаи баннери кукиро барои %1$s хомӯш мекунед?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">«%1$s» наметавонад, ки дархостҳои кукиро барои ин сомона ба таври худкор рад кунад. Шумо метавонед барои дастгирӣ кардани ин сомона дар оянда дархостеро фиристонед.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s кукиҳои ин сомонаро тоза мекунад ва саҳифаро аз нав бор мекунад. Амали тозакунии ҳамаи кукиҳо метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Хомӯш кунед ва «%1$s» кукиҳоро тоза намуда, ин сомонаро аз нав бор мекунад. Ин амал метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">«%1$s» кӯшиш мекунад, ки ҳамаи дархостҳои кукиҳоро дар сомонаҳои дастгиришаванда ба таври худкор рад кунад.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Фаъол созед, ва «%1$s» кӯшиш мекунад, ки ҳамаи баннерҳои кукиро дар ин сомона ба таври худкор рад кунад.</string>
-    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">Ба «%1$s» иҷозат медиҳед, ки баннерҳои кукиро рад кунад?</string>
-    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">«%1$s» метавонад бисёр дархостҳои баннерҳои кукиро ба таври худкор рад кунад.</string>
-    <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Ҳоло не</string>
-    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Шумо бояд камтар дархостҳои кукиҳоро бинед</string>
-
-    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Иҷозат додан</string>
 
     <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
     <string name="cookie_banner_cfr_title">«%1$s» дар ҳоли ҳозир барои шумо кукиҳоро рад кард</string>
@@ -721,9 +703,9 @@
     <!-- Preference for syncing bookmarks -->
     <string name="preferences_sync_bookmarks">Хатбаракҳо</string>
     <!-- Preference for syncing logins -->
-    <string name="preferences_sync_logins">Воридшавиҳо</string>
+    <string name="preferences_sync_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳо</string>
     <!-- Preference for syncing passwords -->
-    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Ниҳонвожаҳо</string>
+    <string name="preferences_sync_logins_2">Ниҳонвожаҳо</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Варақаҳои кушодашуда</string>
     <!-- Preference for signing out -->
@@ -750,9 +732,9 @@
     <string name="default_device_name_2">%1$s дар %2$s %3$s</string>
 
     <!-- Preference for syncing credit cards -->
-    <string name="preferences_sync_credit_cards">Кортҳои кредитӣ</string>
+    <string name="preferences_sync_credit_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Кортҳои кредитӣ</string>
     <!-- Preference for syncing payment methods -->
-    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Тарзҳои пардохт</string>
+    <string name="preferences_sync_credit_cards_2">Тарзҳои пардохт</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Нишониҳо</string>
 
@@ -1294,8 +1276,6 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Нодида гузарондан</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Чоп ғайриимкон аст</string>
-    <!-- Text for error message when printing a page and it fails. -->
     <string name="unable_to_print_page_error">Ин саҳифа чоп карда намешавад</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Чоп кардан</string>
@@ -1704,13 +1684,13 @@
     <string name="add_to_homescreen_description_2">Шумо метавонед ин сомонаро ба экрани асосии дастгоҳи худ ба осонӣ илова кунед, то ки ба он дастрасии фаврӣ дошта бошед ва бо таҷрибаи ба барнома монанд зудтар паймоиш кунед.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords">Воридшавиҳо ва ниҳонвожаҳо</string>
+    <string name="preferences_passwords_logins_and_passwords" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳо ва ниҳонвожаҳо</string>
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Ниҳонвожаҳо</string>
+    <string name="preferences_passwords_logins_and_passwords_2">Ниҳонвожаҳо</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
-    <string name="preferences_passwords_save_logins">Нигоҳ доштани воридшавиҳо ва ниҳонвожаҳо</string>
+    <string name="preferences_passwords_save_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Нигоҳ доштани воридшавиҳо ва ниҳонвожаҳо</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
-    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Нигоҳ доштани ниҳонвожаҳо</string>
+    <string name="preferences_passwords_save_logins_2">Нигоҳ доштани ниҳонвожаҳо</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Бо пешниҳоди нигоҳдорӣ</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1725,39 +1705,47 @@
     <string name="preferences_android_autofill_description">Номи корбарон ва ниҳонвожаҳоро дар барномаҳои дигари дастгоҳи худ пур кунед.</string>
 
     <!-- Preference option for adding a login -->
-    <string name="preferences_logins_add_login">Илова кардани воридшавӣ</string>
+    <string name="preferences_logins_add_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Илова кардани воридшавӣ</string>
 
     <!-- Preference option for adding a password -->
-    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Илова кардани ниҳонвожа</string>
+    <string name="preferences_logins_add_login_2">Илова кардани ниҳонвожа</string>
 
-    <!-- Preference for syncing saved logins in Fenix -->
-    <string name="preferences_passwords_sync_logins">Воридшавиҳои ҳамоҳангшуда</string>
     <!-- Preference for syncing saved passwords in Fenix -->
-    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Ҳамоҳанг кардани ниҳонвожаҳо</string>
+    <string name="preferences_passwords_sync_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳои ҳамоҳангшуда</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2">Ҳамоҳанг кардани ниҳонвожаҳо</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
-    <string name="preferences_passwords_sync_logins_across_devices">Ҳамоҳанг кардани воридшавиҳо байни дастгоҳҳо</string>
+    <string name="preferences_passwords_sync_logins_across_devices" moz:RemovedIn="125" tools:ignore="UnusedResources">Ҳамоҳанг кардани воридшавиҳо байни дастгоҳҳо</string>
     <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
-    <string name="preferences_passwords_sync_logins_across_devices_2" tools:ignore="UnusedResources">Ҳамоҳанг кардани ниҳонвожаҳо байни дастгоҳҳо</string>
+    <string name="preferences_passwords_sync_logins_across_devices_2">Ҳамоҳанг кардани ниҳонвожаҳо байни дастгоҳҳо</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">Воридшавиҳои нигоҳдошташуда</string>
+    <string name="preferences_passwords_saved_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳои нигоҳдошташуда</string>
     <!-- Preference to access list of saved passwords -->
-    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Ниҳонвожаҳои нигоҳдошташуда</string>
+    <string name="preferences_passwords_saved_logins_2">Ниҳонвожаҳои нигоҳдошташуда</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
-    <string name="preferences_passwords_saved_logins_description_empty_text">Воридшавиҳое, ки шумо дар %s нигоҳ медоред ё ҳамоҳанг мекунед, дар ин ҷо нишон дода мешаванд.</string>
+    <string name="preferences_passwords_saved_logins_description_empty_text" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳое, ки шумо дар %s нигоҳ медоред ё ҳамоҳанг мекунед, дар ин ҷо нишон дода мешаванд.</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2">Ниҳонвожаҳоеро, ки шумо нигоҳ медоред ё бо «%s» ҳамоҳанг месозед, дар ин рӯйхат нишон дода мешаванд. Ҳамаи ниҳонвожаҳое, ки шумо нигоҳ медоред, рамзгузорӣ карда мешаванд.</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Маълумоти бештар дар бораи ҳамоҳангсозӣ</string>
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link" moz:RemovedIn="125" tools:ignore="UnusedResources">Маълумоти бештар дар бораи ҳамоҳангсозӣ</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2">Маълумоти бештар дар бораи ҳамоҳангсозӣ</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Истисноҳо</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description_empty">Воридшавиҳо ва ниҳонвожаҳое, ки нигоҳ дошта нашудаанд, дар ин ҷо нишон дошта мешаванд.</string>
+    <string name="preferences_passwords_exceptions_description_empty" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳо ва ниҳонвожаҳое, ки нигоҳ дошта нашудаанд, дар ин ҷо нишон дошта мешаванд.</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2">«%s» барои сомонаҳое, ки дар ин рӯйхат нишон дода шудаанд, ниҳонвожаҳоро нигоҳ намедорад.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description">Воридшавиҳо ва ниҳонвожаҳо барои сомонаҳои зерин нигоҳ дошта намешаванд.</string>
+    <string name="preferences_passwords_exceptions_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳо ва ниҳонвожаҳо барои сомонаҳои зерин нигоҳ дошта намешаванд.</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2">«%s» барои сомонаҳои зерин ниҳонвожаҳоро нигоҳ намедорад.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Нест кардани ҳамаи истисноҳо</string>
     <!-- Hint for search box in logins list -->
-    <string name="preferences_passwords_saved_logins_search">Ҷустуҷӯи воридшавиҳо</string>
+    <string name="preferences_passwords_saved_logins_search" moz:RemovedIn="125" tools:ignore="UnusedResources">Ҷустуҷӯи воридшавиҳо</string>
     <!-- Hint for search box in passwords list -->
-    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Ҷустуҷӯи ниҳонвожаҳо</string>
+    <string name="preferences_passwords_saved_logins_search_2">Ҷустуҷӯи ниҳонвожаҳо</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Сомона</string>
     <!-- The header for the username for a login -->
@@ -1785,11 +1773,17 @@
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">Пинҳон кардани ниҳонвожа</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
-    <string name="logins_biometric_prompt_message">Барои дидани воридшавиҳои нигоҳдошташуда, қулфро кушоед</string>
+    <string name="logins_biometric_prompt_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Барои дидани воридшавиҳои нигоҳдошташуда, қулфро кушоед</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2">Барои дидани ниҳонвожаҳои нигоҳдошташуда, қулфро кушоед</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_title">Воридшавиҳо ва ниҳонвожаҳои худро муҳофизат намоед</string>
+    <string name="logins_warning_dialog_title" moz:RemovedIn="125" tools:ignore="UnusedResources">Воридшавиҳо ва ниҳонвожаҳои худро муҳофизат намоед</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2">Ниҳонвожаҳои нигоҳдоштаро муҳофизат намоед</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Барои муҳофизат кардани воридшавиҳо ва ниҳонвожаҳои худ аз дастрасии озод, агар касе дигар аз дастгоҳи шумо истифода барад, шаклвораи қулфи экран, рамзи PIN ё ниҳонвожаеро барои дастгоҳи худ танзим намоед.</string>
+    <string name="logins_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Барои муҳофизат кардани воридшавиҳо ва ниҳонвожаҳои худ аз дастрасии озод, агар касе дигар аз дастгоҳи шумо истифода барад, шаклвораи қулфи экран, рамзи PIN ё ниҳонвожаеро барои дастгоҳи худ танзим намоед.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2">Барои муҳофизат кардани ниҳонвожаҳои нигоҳдошташудаи худ аз дастрасии озод, агар касе дигар аз дастгоҳи шумо истифода барад, шаклвораи қулфи экран, рамзи PIN ё ниҳонвожаеро барои дастгоҳи худ танзим намоед.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Дертар</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1807,7 +1801,7 @@
     <string name="saved_logins_sort_strategy_last_used">Истифодашудаи охирин</string>
 
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
-    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Мураттаб кардани менюи воридшавиҳо</string>
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Мураттаб кардани менюи воридшавиҳо</string>
 
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
@@ -1815,32 +1809,38 @@
     <!-- Preference and title for managing the settings for addresses -->
     <string name="preferences_addresses">Нишониҳо</string>
     <!-- Preference and title for managing the settings for credit cards -->
-    <string name="preferences_credit_cards">Кортҳои кредитӣ</string>
+    <string name="preferences_credit_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Кортҳои кредитӣ</string>
     <!-- Preference and title for managing the settings for payment methods -->
-    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Тарзҳои пардохт</string>
+    <string name="preferences_credit_cards_2">Тарзҳои пардохт</string>
     <!-- Preference for saving and autofilling credit cards -->
-    <string name="preferences_credit_cards_save_and_autofill_cards">Нигоҳ доштан ва ба таври худкор пур кардани кортҳо</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Нигоҳ доштан ва ба таври худкор пур кардани кортҳо</string>
     <!-- Preference for saving and autofilling credit cards -->
-    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Нигоҳ доштан ва пур кардани тарзҳои пардохт</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards_2">Нигоҳ доштан ва пур кардани тарзҳои пардохт</string>
     <!-- Preference summary for saving and autofilling credit card data -->
-    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Маълумот рамзгузорӣ карда шуд</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Маълумот рамзгузорӣ карда шуд</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Ҳамоҳанг кардани кортҳо байни дастгоҳҳо</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
     <string name="preferences_credit_cards_sync_cards">Ҳамоҳанг кардани кортҳо</string>
     <!-- Preference option for adding a credit card -->
-    <string name="preferences_credit_cards_add_credit_card">Илова кардани корти кредитӣ</string>
+    <string name="preferences_credit_cards_add_credit_card" moz:RemovedIn="125" tools:ignore="UnusedResources">Илова кардани корти кредитӣ</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2">Илова кардани корт</string>
     <!-- Preference option for managing saved credit cards -->
-    <string name="preferences_credit_cards_manage_saved_cards">Идора кардани кортҳои нигоҳдошташуда</string>
+    <string name="preferences_credit_cards_manage_saved_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Идора кардани кортҳои нигоҳдошташуда</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2">Идоракунии кортҳо</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Илова кардани нишонӣ</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Идоракунии нишониҳо</string>
     <!-- Preference for saving and autofilling addresses -->
-    <string name="preferences_addresses_save_and_autofill_addresses">Нигоҳ доштан ва ба таври худкор пур кардани нишониҳо</string>
+    <string name="preferences_addresses_save_and_autofill_addresses" moz:RemovedIn="125" tools:ignore="UnusedResources">Нигоҳ доштан ва ба таври худкор пур кардани нишониҳо</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2">Нигоҳ доштан ва пур кардани нишониҳо</string>
     <!-- Preference summary for saving and autofilling address data -->
-    <string name="preferences_addresses_save_and_autofill_addresses_summary">Илова кардани маълумот монанди рақамҳо, нишониҳои почтаи электронӣ ва бурдарасонӣ</string>
+    <string name="preferences_addresses_save_and_autofill_addresses_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Илова кардани маълумот монанди рақамҳо, нишониҳои почтаи электронӣ ва бурдарасонӣ</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Илова кардани корт</string>
@@ -1862,7 +1862,9 @@
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Нест кардани корт</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
-    <string name="credit_cards_delete_dialog_confirmation">Шумо мутмаин ҳастед, ки мехоҳед ин корти кредитиро нест намоед?</string>
+    <string name="credit_cards_delete_dialog_confirmation" moz:RemovedIn="125" tools:ignore="UnusedResources">Шумо мутмаин ҳастед, ки мехоҳед ин корти кредитиро нест намоед?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2">Кортро нест мекунед?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Нест кардан</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1876,16 +1878,20 @@
     <string name="credit_cards_saved_cards">Кортҳои нигоҳдошташуда</string>
 
     <!-- Error message for credit card number validation -->
-    <string name="credit_cards_number_validation_error_message">Лутфан, рақами корти кредитии дурустро ворид намоед</string>
+    <string name="credit_cards_number_validation_error_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Лутфан, рақами корти кредитии дурустро ворид намоед</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2">Рақами корти дурустро ворид намоед</string>
     <!-- Error message for credit card name on card validation -->
-    <string name="credit_cards_name_on_card_validation_error_message">Лутфан, ин майдонро пур кунед</string>
+    <string name="credit_cards_name_on_card_validation_error_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Лутфан, ин майдонро пур кунед</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2">Номеро ворид намоед</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Барои дидани кортҳои нигоҳдошташуда, қулфро кушоед</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="credit_cards_warning_dialog_title">Кортҳои кредитии худро муҳофизат кунед</string>
+    <string name="credit_cards_warning_dialog_title" moz:RemovedIn="125" tools:ignore="UnusedResources">Кортҳои кредитии худро муҳофизат кунед</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="credit_cards_warning_dialog_message">Барои муҳофизат кардани кортҳои кредитии нигоҳдошташудаи худ аз дастрасии озод, агар касе дигар аз дастгоҳи шумо истифода барад, шаклвораи қулфи экран, рамзи PIN ё ниҳонвожаеро барои дастгоҳи худ танзим намоед.</string>
+    <string name="credit_cards_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Барои муҳофизат кардани кортҳои кредитии нигоҳдошташудаи худ аз дастрасии озод, агар касе дигар аз дастгоҳи шумо истифода барад, шаклвораи қулфи экран, рамзи PIN ё ниҳонвожаеро барои дастгоҳи худ танзим намоед.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Ҳозир насб кунед</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1893,7 +1899,7 @@
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
     <string name="credit_cards_biometric_prompt_message_pin">Қулфи дастгоҳи худро кушоед</string>
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
-    <string name="credit_cards_biometric_prompt_unlock_message">Барои истифодаи маълумоти кортҳои кредитии нигоҳдошташуда, қулфро кушоед</string>
+    <string name="credit_cards_biometric_prompt_unlock_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Барои истифодаи маълумоти кортҳои кредитии нигоҳдошташуда, қулфро кушоед</string>
 
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Илова кардани нишонӣ</string>
@@ -1902,11 +1908,11 @@
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Идоракунии нишониҳо</string>
     <!-- The header for the first name of an address -->
-    <string name="addresses_first_name">Ном</string>
+    <string name="addresses_first_name" moz:removedIn="125" tools:ignore="UnusedResources">Ном</string>
     <!-- The header for the middle name of an address -->
-    <string name="addresses_middle_name">Номи падар</string>
+    <string name="addresses_middle_name" moz:removedIn="125" tools:ignore="UnusedResources">Номи падар</string>
     <!-- The header for the last name of an address -->
-    <string name="addresses_last_name">Насаб</string>
+    <string name="addresses_last_name" moz:removedIn="125" tools:ignore="UnusedResources">Насаб</string>
     <!-- The header for the street address of an address -->
     <string name="addresses_street_address">Нишонии кӯча</string>
     <!-- The header for the city of an address -->
@@ -1931,7 +1937,9 @@
     <string name="addressess_delete_address_button">Нест кардани нишонӣ</string>
 
     <!-- The title for the "Delete address" confirmation dialog -->
-    <string name="addressess_confirm_dialog_message">Шумо мутмаин ҳастед, ки мехоҳед ин нишониро нест намоед?</string>
+    <string name="addressess_confirm_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Шумо мутмаин ҳастед, ки мехоҳед ин нишониро нест намоед?</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2">Ин нишониро нест мекунед?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Нест кардан</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -2028,32 +2036,48 @@
     <!-- Login overflow menu edit button -->
     <string name="login_menu_edit_button">Таҳрир кардан</string>
     <!-- Message in delete confirmation dialog for logins -->
-    <string name="login_deletion_confirmation">Шумо мутмаин ҳастед, ки мехоҳед ин воридшавиро нест намоед?</string>
+    <string name="login_deletion_confirmation" moz:RemovedIn="125" tools:ignore="UnusedResources">Шумо мутмаин ҳастед, ки мехоҳед ин воридшавиро нест намоед?</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2">Шумо мутмаин ҳастед, ки мехоҳед ин ниҳонвожаро нест намоед?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Нест кардан</string>
     <!-- Negative action of a dialog asking to delete login -->
     <string name="dialog_delete_negative">Бекор кардан</string>
     <!--  The saved login options menu description. -->
-    <string name="login_options_menu">Имконоти воридшавӣ</string>
+    <string name="login_options_menu" moz:RemovedIn="125" tools:ignore="UnusedResources">Имконоти воридшавӣ</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2">Инконоти ниҳонвожа</string>
     <!--  The editable text field for a login's web address. -->
-    <string name="saved_login_hostname_description">Майдони матни таҳриршаванда барои нишонии сомонаи воридшавӣ.</string>
+    <string name="saved_login_hostname_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Майдони матни таҳриршаванда барои нишонии сомонаи воридшавӣ.</string>
     <!--  The editable text field for a login's username. -->
-    <string name="saved_login_username_description">Майдони матни таҳриршаванда барои номи корбарии воридшавӣ.</string>
+    <string name="saved_login_username_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Майдони матни таҳриршаванда барои номи корбарии воридшавӣ.</string>
     <!--  The editable text field for a login's password. -->
-    <string name="saved_login_password_description">Майдони матни таҳриршаванда барои ниҳонвожаи воридшавӣ.</string>
+    <string name="saved_login_password_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Майдони матни таҳриршаванда барои ниҳонвожаи воридшавӣ.</string>
     <!--  The button description to save changes to an edited login. -->
-    <string name="save_changes_to_login">Нигоҳ доштани тағйирот барои воридшавӣ</string>
+    <string name="save_changes_to_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Нигоҳ доштани тағйирот барои воридшавӣ</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2">Тағийротро нигоҳ медорад.</string>
     <!--  The page title for editing a saved login. -->
-    <string name="edit">Таҳрир кардан</string>
+    <string name="edit" moz:RemovedIn="125" tools:ignore="UnusedResources">Таҳрир кардан</string>
 
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2">Таҳрир кардани ниҳонвожа</string>
     <!--  The page title for adding new login. -->
-    <string name="add_login">Илова кардани воридшавии нав</string>
+    <string name="add_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Илова кардани воридшавии нав</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2">Илова кардани ниҳонвожа</string>
     <!--  The error message in add/edit login view when password field is blank. -->
-    <string name="saved_login_password_required">Ниҳонвожа лозим аст</string>
+    <string name="saved_login_password_required" moz:RemovedIn="125" tools:ignore="UnusedResources">Ниҳонвожа лозим аст</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2">Ниҳонвожаеро ворид намоед</string>
     <!--  The error message in add login view when username field is blank. -->
-    <string name="saved_login_username_required">Номи корбар лозим аст</string>
+    <string name="saved_login_username_required" moz:RemovedIn="125" tools:ignore="UnusedResources">Номи корбар лозим аст</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2">Номи корбареро ворид намоед</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Номи сервер лозим аст</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Нишонии сомонаеро ворид намоед</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Ҷустуҷӯи овозӣ</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2150,6 +2174,9 @@
     <string name="other_default_search_engine_suggestion_header">Ҷустуҷӯ дар «%s»</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Гузоштан ба браузери пешфарзи худ</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Пайвандҳоеро, танзим кунед, то ки онҳо аз сомонаҳо, почтаи электронӣ ва паёмҳо дар браузери «Firefox» ба таври худкор кушода шаванд.</string>
 
     <!-- Content description for close button in collection placeholder. -->
@@ -2159,7 +2186,7 @@
     <string name="radio_preference_info_content_description">Барои тафсилоти бештар зер кунед</string>
 
     <!-- Content description for the action bar "up" button -->
-    <string name="action_bar_up_description">Ба боло гузаред</string>
+    <string name="action_bar_up_description" moz:removedIn="124" tools:ignore="UnusedResources">Ба боло гузаред</string>
 
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Пӯшидан</string>
@@ -2200,8 +2227,6 @@
     <!-- Title for when the rating has been updated by the review checker -->
     <string name="review_quality_check_adjusted_rating_title">Баҳодиҳии санҷида дурустшуда</string>
     <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
-    <string name="review_quality_check_adjusted_rating_description" moz:RemovedIn="122" tools:ignore="UnusedResources">Тақризҳои беэътимод тоза карда шудаанд</string>
-    <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
     <string name="review_quality_check_adjusted_rating_description_2">Дар асоси тақризҳои беэътимод</string>
     <!-- Title for list of highlights from a product's review emphasizing a product's important traits. -->
     <string name="review_quality_check_highlights_title">Нуқтаҳои асосӣ аз тақризҳои охирин</string>
@@ -2223,8 +2248,6 @@
     <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Нуқтаҳои асосӣ</b> аз тақризҳои «%s» ба хулоса омаданд, ки дар давоми 80 рӯзи охир ҷамъ карда шудаанд ва онҳо ба умеди мо боэътимод мебошанд.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Маълумоти бештар дар бораи «%s».</string>
-    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">чӣ тавр «%s» аз ҷониби «Mozilla» сифати тақризҳоро муайян мекунад</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_info_learn_more_link_2">чӣ тавр «%s» сифати тақризҳоро муайян мекунад</string>
     <!-- Text for title of settings section. -->
@@ -2259,10 +2282,6 @@
     <string name="review_quality_check_product_availability_warning_body">Агар шумо бинед, ки ин маҳсул аз нав дастрас бошад, гузориш диҳед ва мо тақризҳои онро тафтиш мекунем.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
     <string name="review_quality_check_product_availability_warning_action_2">Огоҳ кунед, ки маҳсул дастрас аст</string>
-    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
-    <string name="review_quality_check_reanalysis_in_progress_warning_title" moz:RemovedIn="122">Дар ҳоли санҷиши сифати тақризҳо</string>
-    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_title" moz:RemovedIn="122">Дар ҳоли санҷиши сифати тақризҳо</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. The parameter is the percentage progress (0-100%) of the analysis process (e.g. 56%). -->
     <string name="review_quality_check_analysis_in_progress_warning_title_2">Дар ҳоли санҷиши сифати тақризҳо (%s)</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
@@ -2308,11 +2327,11 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Маълумоти бештар</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption">Бо интихоби «Ҳа, озмоед», шумо ба «%1$s» бо қабули «%2$s» ва «%3$s» аз ҷониби «Mozilla» розӣ мешавед.</string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="123" tools:ignore="UnusedResources">Бо интихоби «Ҳа, озмоед», шумо ба «%1$s» бо қабули «%2$s» ва «%3$s» аз ҷониби «Mozilla» розӣ мешавед.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
     <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Бо интихоби «Ҳа, озмоед», шумо бо зерин мувофиқи «%1$s» розӣ мешавед:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">сиёсати махфият</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="123" tools:ignore="UnusedResources">сиёсати махфият</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
     <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Сиёсати махфият</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
@@ -2409,6 +2428,8 @@
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Дар ҳоли тарҷума қарор дорад</string>
 
+    <!-- Default dropdown option when initially selecting a language from the translations dialog language selection dropdown. -->
+    <string name="translations_bottom_sheet_default_dropdown_selection">Забонеро интихоб кунед</string>
     <!-- The title of the warning card informs the user that a translation could not be completed. -->
     <string name="translation_error_could_not_translate_warning_text">Ҳангоми тарҷума мушкилие ба миён омад. Лутфан, аз нав кӯшиш кунед.</string>
     <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
@@ -2417,6 +2438,7 @@
     <string name="translation_error_language_not_supported_warning_text">Мутаассифона, забони %1$s то ҳол дастгирӣ карда намешавад.</string>
     <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
     <string name="translation_error_language_not_supported_learn_more">Маълумоти бештар</string>
+
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2430,6 +2452,10 @@
     <string name="translation_option_bottom_sheet_never_translate_in_language">%1$s ҳеҷ вақт тарҷума карда нашавад</string>
     <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
     <string name="translation_option_bottom_sheet_never_translate_site">Ин сомона ҳеҷ гоҳ тарҷума карда нашавад</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Ҳамаи танзимоти дигарро иваз мекунад</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Пешниҳодҳоро барои тарҷума иваз мекунад</string>
     <!-- Button text for the button that will take the user to the translation settings dialog. -->
     <string name="translation_option_bottom_sheet_translation_settings">Танзимоти сомона</string>
     <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->

@@ -12,6 +12,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
+import mozilla.appservices.fxaclient.FxaStateCheckerEvent
+import mozilla.appservices.fxaclient.FxaStateCheckerState
 import mozilla.appservices.syncmanager.DeviceSettings
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.base.crash.CrashReporting
@@ -451,14 +453,26 @@ open class FxaAccountManager(
      * Pumps the state machine until all events are processed and their side-effects resolve.
      */
     private suspend fun processQueue(event: Event) {
+        crashReporter?.recordCrashBreadcrumb(
+            Breadcrumb("fxa-state-machine-checker: a-c transition started (event: $event)"),
+        )
         eventQueue.add(event)
         do {
             val toProcess: Event = eventQueue.poll()!!
             val transitionInto = state.next(toProcess)
 
+            crashReporter?.recordCrashBreadcrumb(
+                Breadcrumb("fxa-state-machine-checker: a-c transition (event: $toProcess, into: $transitionInto)"),
+            )
+
             if (transitionInto == null) {
                 logger.warn("Got invalid event '$toProcess' for state $state.")
                 continue
+            }
+
+            AppServicesStateMachineChecker.handleEvent(toProcess, deviceConfig, scopes)
+            if (transitionInto is State.Idle) {
+                AppServicesStateMachineChecker.checkAccountState(transitionInto.accountState)
             }
 
             logger.info("Processing event '$toProcess' for state $state. Next state is $transitionInto")
@@ -467,6 +481,11 @@ open class FxaAccountManager(
 
             stateActions(state, toProcess)?.let { successiveEvent ->
                 logger.info("Ran '$toProcess' side-effects for state $state, got successive event $successiveEvent")
+                if (successiveEvent is Event.Progress) {
+                    // Note: stateActions should only return progress events, so this captures all
+                    // possibilities.
+                    AppServicesStateMachineChecker.validateProgressEvent(successiveEvent, toProcess, scopes)
+                }
                 eventQueue.add(successiveEvent)
             }
         } while (!eventQueue.isEmpty())
@@ -605,18 +624,35 @@ open class FxaAccountManager(
                         Event.Account.AuthenticationError("finalizeDevice")
                     }
                     ServiceResult.OtherError -> {
+                        AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                         Event.Progress.FailedToCompleteAuthRestore
                     }
                 }
             }
             is Event.Progress.AuthData -> {
                 val completeAuth = suspend {
+                    AppServicesStateMachineChecker.checkInternalState(
+                        FxaStateCheckerState.CompleteOAuthFlow(via.authData.code, via.authData.state),
+                    )
                     withRetries(logger, MAX_NETWORK_RETRIES) {
                         account.completeOAuthFlow(via.authData.code, via.authData.state)
+                    }.also {
+                        if (it is Result.Failure) {
+                            AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
+                        } else {
+                            AppServicesStateMachineChecker.handleInternalEvent(
+                                FxaStateCheckerEvent.CompleteOAuthFlowSuccess,
+                            )
+                        }
                     }
                 }
                 val finalize = suspend {
-                    withServiceRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }
+                    // Note: finalizeDevice state checking happens in the DeviceConstellation.kt
+                    withServiceRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }.also {
+                        if (it is ServiceResult.OtherError) {
+                            AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
+                        }
+                    }
                 }
                 // If we can't 'complete', we won't run 'finalize' due to short-circuiting.
                 if (completeAuth() is Result.Failure || finalize() !is ServiceResult.Ok) {

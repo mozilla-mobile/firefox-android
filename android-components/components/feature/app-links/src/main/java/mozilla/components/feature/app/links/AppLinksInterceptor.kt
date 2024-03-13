@@ -112,6 +112,19 @@ class AppLinksInterceptor(
         val redirect = useCases.interceptedAppLinkRedirect(uri)
         val result = handleRedirect(redirect, uri, engineSupportedSchemes.contains(uriScheme))
 
+        if (redirect.hasExternalApp()) {
+            val packageName = redirect.appIntent?.component?.packageName
+
+            if (
+                lastApplinksPackageWithTimestamp.first == packageName && lastApplinksPackageWithTimestamp.second +
+                APP_LINKS_DO_NOT_INTERCEPT_INTERVAL > SystemClock.elapsedRealtime()
+            ) {
+                return null
+            }
+
+            lastApplinksPackageWithTimestamp = Pair(packageName, SystemClock.elapsedRealtime())
+        }
+
         if (redirect.isRedirect()) {
             if (launchFromInterceptor && result is RequestInterceptor.InterceptionResponse.AppIntent) {
                 result.appIntent.flags = result.appIntent.flags or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -184,6 +197,9 @@ class AppLinksInterceptor(
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         internal var userDoNotInterceptCache: MutableMap<Int, Long> = mutableMapOf()
 
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal var lastApplinksPackageWithTimestamp: Pair<String?, Long> = Pair(null, 0L)
+
         @VisibleForTesting
         internal fun getCacheKey(url: String, appIntent: Intent?): Int? {
             return Uri.parse(url)?.let { uri ->
@@ -214,5 +230,8 @@ class AppLinksInterceptor(
 
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         internal const val APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL = 60 * 60 * 1000L // 1 hour
+
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal const val APP_LINKS_DO_NOT_INTERCEPT_INTERVAL = 2000L // 2 second
     }
 }

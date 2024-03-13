@@ -31,6 +31,8 @@ import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -49,8 +51,8 @@ import org.mozilla.fenix.ui.robots.searchScreen
  *
  */
 
-class ComposeSearchTest {
-    lateinit var searchMockServer: MockWebServer
+class ComposeSearchTest : TestSetup() {
+    private lateinit var searchMockServer: MockWebServer
     private val queryString: String = "firefox"
     private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
     private val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
@@ -69,7 +71,8 @@ class ComposeSearchTest {
     ) { it.activity }
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         searchMockServer = MockWebServer().apply {
             dispatcher = SearchDispatcher()
             start()
@@ -77,7 +80,8 @@ class ComposeSearchTest {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDown() {
+        super.tearDown()
         searchMockServer.shutdown()
     }
 
@@ -472,7 +476,7 @@ class ComposeSearchTest {
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
             clickDeleteAllHistoryButton()
             confirmDeleteAllHistory()
-            verifyDeleteSnackbarText("Group deleted")
+            verifySnackBarText(expectedText = "Group deleted")
             verifyHistoryItemExists(shouldExist = false, firstPageUrl.toString())
         }.goBack {}
         homeScreen {

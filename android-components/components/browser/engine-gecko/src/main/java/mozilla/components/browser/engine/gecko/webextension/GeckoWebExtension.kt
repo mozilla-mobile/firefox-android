@@ -13,6 +13,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.MessageHandler
 import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.Port
@@ -365,6 +366,8 @@ class GeckoWebExtension(
                 reviewUrl = it.reviewUrl,
                 version = it.version,
                 permissions = it.permissions.toList(),
+                optionalPermissions = it.optionalPermissions.toList(),
+                optionalOrigins = it.optionalOrigins.toList(),
                 // Origins is marked as @NonNull but may be null: https://bugzilla.mozilla.org/show_bug.cgi?id=1629957
                 hostPermissions = it.origins.orEmpty().toList(),
                 disabledFlags = DisabledFlags.select(it.disabledFlags),
@@ -373,6 +376,7 @@ class GeckoWebExtension(
                 baseUrl = it.baseUrl,
                 temporary = it.temporary,
                 detailUrl = it.amoListingUrl,
+                incognito = Incognito.fromString(it.incognito),
             )
         }
     }

@@ -16,7 +16,6 @@ import mozilla.components.feature.addons.amo.AMOAddonsProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
-import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
@@ -30,7 +29,6 @@ import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
-import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterState
@@ -101,15 +99,6 @@ class Components(private val context: Context) {
         )
     }
 
-    val downloadManager by lazyMonitored {
-        FetchDownloadManager(
-            context.applicationContext,
-            core.store,
-            DownloadService::class,
-            notificationsDelegate = notificationsDelegate,
-        )
-    }
-
     val intentProcessors by lazyMonitored {
         IntentProcessors(
             context,
@@ -170,6 +159,7 @@ class Components(private val context: Context) {
     }
 
     val analytics by lazyMonitored { Analytics(context, performance.visualCompletenessQueue.queue) }
+    val nimbus by lazyMonitored { NimbusComponents(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
     val performance by lazyMonitored { PerformanceComponent() }
@@ -231,14 +221,14 @@ class Components(private val context: Context) {
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(
-                    messagingStorage = analytics.messagingStorage,
+                    controller = nimbus.messaging,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
             ),
         )
     }
 
-    val fxSuggest by lazyMonitored { FxSuggest(context, analytics.crashReporter) }
+    val fxSuggest by lazyMonitored { FxSuggest(context) }
 }
 
 /**

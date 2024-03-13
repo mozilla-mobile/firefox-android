@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.suggest.SuggestApiException
 import mozilla.appservices.suggest.SuggestIngestionConstraints
 import mozilla.appservices.suggest.SuggestStore
+import mozilla.appservices.suggest.SuggestStoreBuilder
 import mozilla.appservices.suggest.Suggestion
 import mozilla.appservices.suggest.SuggestionQuery
 import mozilla.components.concept.base.crash.CrashReporting
@@ -26,15 +27,15 @@ import java.io.File
  * @param crashReporter An optional [CrashReporting] instance for reporting unexpected caught
  * exceptions.
  */
-class FxSuggestStorage(
-    context: Context,
-    private val crashReporter: CrashReporting? = null,
-) {
+class FxSuggestStorage(context: Context) {
     // Lazily initializes the store on first use. `cacheDir` and using the `File` constructor
     // does I/O, so `store.value` should only be accessed from the read or write scope.
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal val store: Lazy<SuggestStore> = lazy {
-        SuggestStore(File(context.cacheDir, DATABASE_NAME).absolutePath)
+        SuggestStoreBuilder()
+            .cachePath(File(context.cacheDir, CACHE_DATABASE_NAME).absolutePath)
+            .dataPath(context.getDatabasePath(DATABASE_NAME).absolutePath)
+            .build()
     }
 
     // We expect almost all Suggest storage operations to be reads, with infrequent writes. The
@@ -99,7 +100,6 @@ class FxSuggestStorage(
         return try {
             operation()
         } catch (e: SuggestApiException) {
-            crashReporter?.submitCaughtException(e)
             logger.warn("Ignoring exception from `$name`", e)
             default
         }
@@ -107,8 +107,13 @@ class FxSuggestStorage(
 
     internal companion object {
         /**
-         * The default Suggest database file name.
+         * The database file name for cached data.
          */
-        const val DATABASE_NAME = "suggest.sqlite"
+        const val CACHE_DATABASE_NAME = "suggest.sqlite"
+
+        /**
+         * The database file name for permanent data.
+         */
+        const val DATABASE_NAME = "suggest_data.sqlite"
     }
 }
