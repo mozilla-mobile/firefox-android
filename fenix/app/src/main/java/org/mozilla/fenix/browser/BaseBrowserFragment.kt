@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,6 +69,7 @@ import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.DownloadsFeature
+import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.downloads.temporary.CopyDownloadFeature
 import mozilla.components.feature.downloads.temporary.ShareDownloadFeature
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
@@ -123,7 +125,6 @@ import org.mozilla.fenix.OnBackLongPressedListener
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
-import org.mozilla.fenix.components.DownloadStyling
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
@@ -139,6 +140,7 @@ import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInte
 import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
+import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.downloads.FirstPartyDownloadDialog
 import org.mozilla.fenix.downloads.StartDownloadDialog
@@ -534,14 +536,31 @@ abstract class BaseBrowserFragment :
             useCases = context.components.useCases.downloadUseCases,
             fragmentManager = childFragmentManager,
             tabId = customTabSessionId,
-            downloadManager = context.components.downloadManager,
+            downloadManager = FetchDownloadManager(
+                context.applicationContext,
+                store,
+                DownloadService::class,
+                notificationsDelegate = context.components.notificationsDelegate,
+            ),
             shouldForwardToThirdParties = {
                 PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                     context.getPreferenceKey(R.string.pref_key_external_download_manager),
                     false,
                 )
             },
-            promptsStyling = DownloadStyling.createPrompt(context),
+            promptsStyling = DownloadsFeature.PromptsStyling(
+                gravity = Gravity.BOTTOM,
+                shouldWidthMatchParent = true,
+                positiveButtonBackgroundColor = ThemeManager.resolveAttribute(
+                    R.attr.accent,
+                    context,
+                ),
+                positiveButtonTextColor = ThemeManager.resolveAttribute(
+                    R.attr.textOnColorPrimary,
+                    context,
+                ),
+                positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat(),
+            ),
             onNeedToRequestPermissions = { permissions ->
                 requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
             },
@@ -594,46 +613,7 @@ abstract class BaseBrowserFragment :
         )
 
         downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
-            val onCannotOpenFile: (DownloadState) -> Unit = {
-                FenixSnackbar.make(
-                    view = binding.dynamicSnackbarContainer,
-                    duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedWithBrowserToolbar = true,
-                ).setText(
-                    DynamicDownloadDialog.getCannotOpenFileErrorMessage(
-                        context,
-                        downloadState,
-                    ),
-                ).show()
-            }
-
-            DownloadDialogUtils.handleOnDownloadFinished(
-                context = requireContext(),
-                downloadState = downloadState,
-                downloadJobStatus = downloadJobStatus,
-                currentTab = getCurrentTab(),
-                onFinishedDialogShown = {
-                    saveDownloadDialogState(
-                        downloadState.sessionId,
-                        downloadState,
-                        downloadJobStatus,
-                    )
-                    browserToolbarView.expand()
-
-                    DynamicDownloadDialog(
-                        context = context,
-                        downloadState = downloadState,
-                        didFail = downloadJobStatus == DownloadState.Status.FAILED,
-                        tryAgain = downloadFeature::tryAgain,
-                        onCannotOpenFile = onCannotOpenFile,
-                        binding = binding.viewDynamicDownloadDialog,
-                        toolbarHeight = toolbarHeight,
-                    ) {
-                        sharedViewModel.downloadDialogState.remove(downloadState.sessionId)
-                    }.show()
-                },
-                onCannotOpenFile = onCannotOpenFile,
-            )
+            handleOnDownloadFinished(downloadState, downloadJobStatus, downloadFeature::tryAgain)
         }
 
         resumeDownloadDialogState(
@@ -1126,12 +1106,7 @@ abstract class BaseBrowserFragment :
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
             onCannotOpenFile = {
-                FenixSnackbar.make(
-                    view = binding.dynamicSnackbarContainer,
-                    duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedWithBrowserToolbar = true,
-                ).setText(DynamicDownloadDialog.getCannotOpenFileErrorMessage(context, it))
-                    .show()
+                showCannotOpenFileError(binding.dynamicSnackbarContainer, context, it)
             },
             binding = binding.viewDynamicDownloadDialog,
             toolbarHeight = toolbarHeight,
@@ -1633,6 +1608,19 @@ abstract class BaseBrowserFragment :
         breadcrumb(
             message = "onDetach()",
         )
+    }
+
+    internal fun showCannotOpenFileError(
+        container: ViewGroup,
+        context: Context,
+        downloadState: DownloadState,
+    ) {
+        FenixSnackbar.make(
+            view = container,
+            duration = Snackbar.LENGTH_SHORT,
+            isDisplayedWithBrowserToolbar = true,
+        ).setText(DynamicDownloadDialog.getCannotOpenFileErrorMessage(context, downloadState))
+            .show()
     }
 
     companion object {
