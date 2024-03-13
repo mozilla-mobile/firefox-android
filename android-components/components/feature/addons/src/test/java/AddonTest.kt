@@ -6,6 +6,7 @@ package mozilla.components.feature.addons
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.support.test.mock
@@ -363,6 +364,8 @@ class AddonTest {
         whenever(extension.getMetadata()).thenReturn(metadata)
         whenever(metadata.version).thenReturn(version)
         whenever(metadata.permissions).thenReturn(permissions)
+        whenever(metadata.optionalPermissions).thenReturn(listOf("clipboardRead"))
+        whenever(metadata.optionalOrigins).thenReturn(listOf("*://*.example.com/*", "*://opt-host-perm.example.com/*"))
         whenever(metadata.hostPermissions).thenReturn(hostPermissions)
         whenever(metadata.name).thenReturn(name)
         whenever(metadata.description).thenReturn(description)
@@ -378,12 +381,15 @@ class AddonTest {
         whenever(metadata.reviewCount).thenReturn(0)
         whenever(metadata.averageRating).thenReturn(0f)
         whenever(metadata.detailUrl).thenReturn("detail-url")
+        whenever(metadata.incognito).thenReturn(Incognito.NOT_ALLOWED)
 
         val addon = Addon.newFromWebExtension(extension)
         assertEquals("some-id", addon.id)
         assertEquals("some-url", addon.homepageUrl)
         assertEquals("some-download-url", addon.downloadUrl)
         assertEquals(permissions + hostPermissions, addon.permissions)
+        assertEquals(listOf("clipboardRead"), addon.optionalPermissions)
+        assertEquals(listOf("*://*.example.com/*", "*://opt-host-perm.example.com/*"), addon.optionalOrigins)
         assertEquals("", addon.updatedAt)
         assertEquals("some name", addon.translatableName[Addon.DEFAULT_LOCALE])
         assertEquals("fullDescription", addon.translatableDescription[Addon.DEFAULT_LOCALE])
@@ -394,6 +400,7 @@ class AddonTest {
         assertEquals("some-review-url", addon.ratingUrl)
         assertEquals(0, addon.rating!!.reviews)
         assertEquals("detail-url", addon.detailUrl)
+        assertEquals(Addon.Incognito.NOT_ALLOWED, addon.incognito)
     }
 
     @Test

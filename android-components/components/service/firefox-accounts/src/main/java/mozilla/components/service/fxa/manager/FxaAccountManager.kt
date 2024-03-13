@@ -453,10 +453,17 @@ open class FxaAccountManager(
      * Pumps the state machine until all events are processed and their side-effects resolve.
      */
     private suspend fun processQueue(event: Event) {
+        crashReporter?.recordCrashBreadcrumb(
+            Breadcrumb("fxa-state-machine-checker: a-c transition started (event: $event)"),
+        )
         eventQueue.add(event)
         do {
             val toProcess: Event = eventQueue.poll()!!
             val transitionInto = state.next(toProcess)
+
+            crashReporter?.recordCrashBreadcrumb(
+                Breadcrumb("fxa-state-machine-checker: a-c transition (event: $toProcess, into: $transitionInto)"),
+            )
 
             if (transitionInto == null) {
                 logger.warn("Got invalid event '$toProcess' for state $state.")
@@ -617,6 +624,7 @@ open class FxaAccountManager(
                         Event.Account.AuthenticationError("finalizeDevice")
                     }
                     ServiceResult.OtherError -> {
+                        AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
                         Event.Progress.FailedToCompleteAuthRestore
                     }
                 }
@@ -640,7 +648,11 @@ open class FxaAccountManager(
                 }
                 val finalize = suspend {
                     // Note: finalizeDevice state checking happens in the DeviceConstellation.kt
-                    withServiceRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }
+                    withServiceRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }.also {
+                        if (it is ServiceResult.OtherError) {
+                            AppServicesStateMachineChecker.handleInternalEvent(FxaStateCheckerEvent.CallError)
+                        }
+                    }
                 }
                 // If we can't 'complete', we won't run 'finalize' due to short-circuiting.
                 if (completeAuth() is Result.Failure || finalize() !is ServiceResult.Ok) {
