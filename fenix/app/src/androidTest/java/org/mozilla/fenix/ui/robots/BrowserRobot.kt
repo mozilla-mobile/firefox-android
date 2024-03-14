@@ -278,8 +278,8 @@ class BrowserRobot {
     fun verifyPDFReaderToolbarItems() =
         assertUIObjectExists(
             itemWithResIdContainingText("download", "Download"),
-            itemWithResIdContainingText("openInApp", "Open in app"),
         )
+
     fun clickSubmitLoginButton() {
         clickPageObject(itemWithResId("submit"))
         assertUIObjectIsGone(itemWithResId("submit"))
@@ -1408,7 +1408,7 @@ fun setPageObjectText(webPageItem: UiObject, text: String) {
                 it.clearTextField()
                 Log.i(TAG, "setPageObjectText: Cleared ${webPageItem.selector} text field")
                 Log.i(TAG, "setPageObjectText: Trying to set ${webPageItem.selector} text to $text")
-                it.text = text
+                it.setText(text)
                 Log.i(TAG, "setPageObjectText: ${webPageItem.selector} text was set to $text")
             }
 

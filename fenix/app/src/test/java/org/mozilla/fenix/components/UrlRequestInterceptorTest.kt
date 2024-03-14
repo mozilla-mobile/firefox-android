@@ -8,6 +8,7 @@ import io.mockk.mockk
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_ADDITIONAL_HEADERS
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.BYPASS_CACHE
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.request.RequestInterceptor
 import org.junit.Assert.assertEquals
@@ -59,7 +60,7 @@ class UrlRequestInterceptorTest {
     fun `WHEN should intercept request is called THEN return the correct boolean value`() {
         val urlRequestInterceptor = getUrlRequestInterceptor()
 
-        assertTrue(
+        assertFalse(
             urlRequestInterceptor.shouldInterceptRequest(
                 uri = "https://www.google.com",
                 isSubframeRequest = false,
@@ -127,13 +128,34 @@ class UrlRequestInterceptorTest {
     }
 
     @Test
-    fun `WHEN a Google request is loaded THEN request is intercepted`() {
-        val uri = "https://www.google.com"
+    fun `WHEN a Google preferences request is loaded THEN request is intercepted`() {
+        val uri = "https://www.google.com/preferences"
 
         assertEquals(
             RequestInterceptor.InterceptionResponse.Url(
                 url = uri,
                 flags = LoadUrlFlags.select(
+                    LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE,
+                    ALLOW_ADDITIONAL_HEADERS,
+                ),
+                additionalHeaders = mapOf(
+                    "X-Search-Subdivision" to "0",
+                ),
+            ),
+            getUrlRequestInterceptor().onLoadRequest(
+                uri = uri,
+            ),
+        )
+    }
+
+    @Test
+    fun `WHEN a Google request end in #ip=1 is loaded THEN request bypass cache`() {
+        val uri = "https://www.google.com/search?q=test&ie=utf-8#ip=1"
+        assertEquals(
+            RequestInterceptor.InterceptionResponse.Url(
+                url = uri,
+                flags = LoadUrlFlags.select(
+                    BYPASS_CACHE,
                     LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE,
                     ALLOW_ADDITIONAL_HEADERS,
                 ),

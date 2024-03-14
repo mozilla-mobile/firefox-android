@@ -82,6 +82,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.TABS_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
@@ -171,6 +173,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 toolbarView.view.showKeyboard()
             }
         }
+
+        requireComponents.appStore.dispatch(
+            AppAction.UpdateSearchDialogVisibility(isVisible = true),
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -247,6 +253,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             binding.toolbar,
             fromHomeFragment,
         ).also {
+            if (!IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
+                it.view.hidePageActionSeparator()
+            } else {
+                it.view.showPageActionSeparator()
+            }
             inlineAutocompleteEditText = it.view.findViewById(R.id.mozac_browser_toolbar_edit_url_view)
             inlineAutocompleteEditText.increaseTapArea(TAP_INCREASE_DPS_4)
         }
@@ -597,6 +608,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         if (!dialogHandledAction) {
             requireComponents.core.store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
         }
+
+        requireComponents.appStore.dispatch(
+            AppAction.UpdateSearchDialogVisibility(isVisible = false),
+        )
     }
 
     override fun onBackPressed(): Boolean {

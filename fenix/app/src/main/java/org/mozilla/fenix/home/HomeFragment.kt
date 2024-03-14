@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
@@ -76,25 +78,33 @@ import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.lib.state.ext.flow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
+import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
+import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.tabstrip.TabStrip
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.components.toolbar.navbar.BottomToolbarContainerView
+import org.mozilla.fenix.components.toolbar.navbar.HomeNavBar
+import org.mozilla.fenix.components.toolbar.navbar.NavbarIntegration
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -103,6 +113,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.scaleToBottomOfView
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tabClosedUndoMessage
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
@@ -128,6 +139,7 @@ import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.search.toolbar.DefaultSearchSelectorController
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
+import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -154,6 +166,10 @@ class HomeFragment : Fragment() {
             ToolbarPosition.BOTTOM -> binding.toolbarLayout
             ToolbarPosition.TOP -> null
         }
+
+    private var _bottomToolbarContainerView: BottomToolbarContainerView? = null
+    private val bottomToolbarContainerView: BottomToolbarContainerView
+        get() = _bottomToolbarContainerView!!
 
     private val searchSelectorMenu by lazy {
         SearchSelectorMenu(
@@ -222,6 +238,7 @@ class HomeFragment : Fragment() {
     private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
     private val searchSelectorBinding = ViewBoundFeatureWrapper<SearchSelectorBinding>()
     private val searchSelectorMenuBinding = ViewBoundFeatureWrapper<SearchSelectorMenuBinding>()
+    private val navbarIntegration = ViewBoundFeatureWrapper<NavbarIntegration>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
@@ -455,12 +472,65 @@ class HomeFragment : Fragment() {
                 menuButton = WeakReference(menuButton),
             ).also { it.build() }
 
-            BottomToolbarContainerView(
+            _bottomToolbarContainerView = BottomToolbarContainerView(
                 context = requireContext(),
-                container = binding.homeLayout,
-                androidToolbarView = if (isToolbarAtBottom) binding.toolbarLayout else null,
-                menuButton = menuButton,
-                browsingModeManager = browsingModeManager,
+                parent = binding.homeLayout,
+                hideOnScroll = false,
+                composableContent = {
+                    FirefoxTheme {
+                        Column {
+                            if (isToolbarAtBottom) {
+                                AndroidView(factory = { _ -> binding.toolbarLayout })
+                            } else {
+                                Divider()
+                            }
+
+                            HomeNavBar(
+                                isPrivateMode = activity.browsingModeManager.mode.isPrivate,
+                                browserStore = requireContext().components.core.store,
+                                onSearchButtonClick = {
+                                    val directions =
+                                        NavGraphDirections.actionGlobalSearchDialog(
+                                            sessionId = null,
+                                        )
+
+                                    findNavController().nav(
+                                        findNavController().currentDestination?.id,
+                                        directions,
+                                        BrowserAnimator.getToolbarNavOptions(activity),
+                                    )
+
+                                    Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
+                                },
+                                menuButton = menuButton,
+                                onTabsButtonClick = {
+                                    StartOnHome.openTabsTray.record(NoExtras())
+                                    findNavController().nav(
+                                        findNavController().currentDestination?.id,
+                                        NavGraphDirections.actionGlobalTabsTrayFragment(
+                                            page = when (browsingModeManager.mode) {
+                                                BrowsingMode.Normal -> Page.NormalTabs
+                                                BrowsingMode.Private -> Page.PrivateTabs
+                                            },
+                                        ),
+                                    )
+                                },
+                            )
+                        }
+                    }
+                },
+            )
+
+            navbarIntegration.set(
+                feature = NavbarIntegration(
+                    toolbar = bottomToolbarContainerView.toolbarContainerView,
+                    store = requireComponents.core.store,
+                    appStore = requireComponents.appStore,
+                    bottomToolbarContainerView = bottomToolbarContainerView,
+                    sessionId = null,
+                ),
+                owner = this,
+                view = binding.root,
             )
         }
 
@@ -636,6 +706,11 @@ class HomeFragment : Fragment() {
 
         homeViewModel.sessionToDelete = null
 
+        requireComponents.appStore.state.wasLastTabClosedPrivate?.also {
+            showUndoSnackbar(requireContext().tabClosedUndoMessage(it))
+            requireComponents.appStore.dispatch(AppAction.TabStripAction.UpdateLastTabClosed(null))
+        }
+
         tabCounterView?.update(requireComponents.core.store.state)
 
         if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
@@ -707,6 +782,9 @@ class HomeFragment : Fragment() {
                             (requireActivity() as HomeActivity).openToBrowser(BrowserDirection.FromHome)
                         },
                         onLastTabClose = {},
+                        onCloseTabClick = { isPrivate ->
+                            showUndoSnackbar(requireContext().tabClosedUndoMessage(isPrivate))
+                        },
                     )
                 }
             }
@@ -765,18 +843,14 @@ class HomeFragment : Fragment() {
 
     private fun removeTabAndShowSnackbar(sessionId: String) {
         val tab = store.state.findTab(sessionId) ?: return
-
         requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+        showUndoSnackbar(requireContext().tabClosedUndoMessage(tab.content.private))
+    }
 
-        val snackbarMessage = if (tab.content.private) {
-            requireContext().getString(R.string.snackbar_private_tab_closed)
-        } else {
-            requireContext().getString(R.string.snackbar_tab_closed)
-        }
-
+    private fun showUndoSnackbar(message: String) {
         viewLifecycleOwner.lifecycleScope.allowUndo(
             requireView(),
-            snackbarMessage,
+            message,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
                 requireComponents.useCases.tabsUseCases.undo.invoke()
@@ -797,6 +871,7 @@ class HomeFragment : Fragment() {
         sessionControlView = null
         tabCounterView = null
         toolbarView = null
+        _bottomToolbarContainerView = null
         _binding = null
 
         bundleArgs.clear()
@@ -1136,12 +1211,15 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
+        // Used to set homeViewModel.sessionToDelete when all tabs of a browsing mode are closed
         const val ALL_NORMAL_TABS = "all_normal"
         const val ALL_PRIVATE_TABS = "all_private"
 
+        // Navigation arguments passed to HomeFragment
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
-
         private const val SCROLL_TO_COLLECTION = "scrollToCollection"
+
+        // Delay for scrolling to the collection header
         private const val ANIM_SCROLL_DELAY = 100L
 
         // Sponsored top sites titles and search engine names used for filtering

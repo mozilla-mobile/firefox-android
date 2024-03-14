@@ -30,6 +30,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -59,17 +60,20 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
         val manifest =
             args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
 
+        val isNavBarEnabled = IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled
+
         customTabsIntegration.set(
             feature = CustomTabsIntegration(
                 store = requireComponents.core.store,
                 useCases = requireComponents.useCases.customTabsUseCases,
-                toolbar = browserToolbar,
+                toolbar = browserToolbarView.view,
                 sessionId = customTabSessionId,
                 activity = activity,
                 onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
                 isPrivate = tab.content.private,
                 shouldReverseItems = !activity.settings().shouldUseBottomToolbar,
                 isSandboxCustomTab = args.isSandboxCustomTab,
+                isNavBarEnabled = isNavBarEnabled,
             ),
             owner = this,
             view = view,
@@ -98,7 +102,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
                 }
             },
             owner = this,
-            view = browserToolbar,
+            view = browserToolbarView.view,
         )
 
         if (manifest != null) {
