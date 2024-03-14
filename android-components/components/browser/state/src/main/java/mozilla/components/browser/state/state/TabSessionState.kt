@@ -79,7 +79,6 @@ data class TabSessionState(
 /**
  * Convenient function for creating a tab.
  */
-@Suppress("LongParameterList")
 fun createTab(
     url: String,
     private: Boolean = false,
@@ -139,4 +138,13 @@ fun createTab(
         mediaSessionState = mediaSessionState,
         historyMetadata = historyMetadata,
     )
+}
+
+/**
+ * Indicates if the specified tab should be considered "inactive"
+ */
+fun TabSessionState.isActive(maxActiveTime: Long): Boolean {
+    val lastActiveTime = maxOf(lastAccess, createdAt)
+    val now = System.currentTimeMillis()
+    return (now - lastActiveTime <= maxActiveTime)
 }

@@ -7,8 +7,10 @@ package org.mozilla.fenix.shopping.ui
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +37,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.CollectionItemInfo
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.collectionItemInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -49,10 +59,10 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
-import org.mozilla.fenix.shopping.store.forCompactMode
+import org.mozilla.fenix.shopping.ui.ext.headingResource
 import org.mozilla.fenix.theme.FirefoxTheme
-import java.util.SortedMap
 
 private val combinedParentHorizontalPadding = 32.dp
 private val productRecommendationImageSize = 60.dp
@@ -68,13 +78,14 @@ private const val PRODUCT_RECOMMENDATION_IMPRESSION_THRESHOLD = 0.5f
  * @param productVendor The vendor of the product.
  * @param isSettingsExpanded Whether or not the settings card is expanded.
  * @param isInfoExpanded Whether or not the info card is expanded.
+ * @param isHighlightsExpanded Whether or not the highlights card is expanded.
  * @param onOptOutClick Invoked when the user opts out of the review quality check feature.
  * @param onReanalyzeClick Invoked when the user clicks to re-analyze a product.
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
  * @param onFooterLinkClick Invoked when the user clicks on the footer link.
- * @param onShowMoreRecentReviewsClicked Invoked when the user clicks to show more recent reviews.
+ * @param onHighlightsExpandToggleClick Invoked when the user clicks to show more recent reviews.
  * @param onSettingsExpandToggleClick Invoked when the user expands or collapses the settings card.
  * @param onInfoExpandToggleClick Invoked when the user expands or collapses the info card.
  * @param onRecommendedProductClick Invoked when the user clicks on the product recommendation.
@@ -89,12 +100,13 @@ fun ProductAnalysis(
     productVendor: ReviewQualityCheckState.ProductVendor,
     isSettingsExpanded: Boolean,
     isInfoExpanded: Boolean,
+    isHighlightsExpanded: Boolean,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
-    onShowMoreRecentReviewsClicked: () -> Unit,
+    onHighlightsExpandToggleClick: () -> Unit,
     onSettingsExpandToggleClick: () -> Unit,
     onInfoExpandToggleClick: () -> Unit,
     onRecommendedProductClick: (aid: String, url: String) -> Unit,
@@ -105,16 +117,16 @@ fun ProductAnalysis(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NEEDS_ANALYSIS -> {
+        when (val analysisStatus = productAnalysis.analysisStatus) {
+            is AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
-            AnalysisStatus.REANALYZING -> {
-                ReanalysisInProgressCard()
+            is AnalysisStatus.Reanalyzing -> {
+                ReanalysisInProgress(analysisStatus)
             }
 
-            AnalysisStatus.UP_TO_DATE -> {
+            is AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -133,12 +145,11 @@ fun ProductAnalysis(
             )
         }
 
-        if (productAnalysis.highlights != null) {
+        if (productAnalysis.highlightsInfo != null) {
             HighlightsCard(
-                highlights = productAnalysis.highlights,
-                highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
-                showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
-                onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
+                highlightsInfo = productAnalysis.highlightsInfo,
+                onHighlightsExpandToggleClick = onHighlightsExpandToggleClick,
+                isExpanded = isHighlightsExpanded,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -190,12 +201,27 @@ private fun ReanalyzeCard(
 }
 
 @Composable
-private fun ReanalysisInProgressCard() {
-    ReviewQualityCheckInfoCard(
-        title = stringResource(R.string.review_quality_check_reanalysis_in_progress_warning_title),
-        type = ReviewQualityCheckInfoType.Loading,
-        modifier = Modifier.fillMaxWidth(),
-    )
+private fun ReanalysisInProgress(reanalyzing: AnalysisStatus.Reanalyzing) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
+    ) {
+        DeterminateProgressIndicator(
+            progress = reanalyzing.progress.normalizedProgress,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Text(
+            text = stringResource(
+                id = R.string.review_quality_check_analysis_in_progress_warning_title_2,
+                reanalyzing.progress.formattedProgress,
+            ),
+            style = FirefoxTheme.typography.subtitle1,
+            color = FirefoxTheme.colors.textPrimary,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
@@ -203,7 +229,7 @@ private fun ReviewGradeCard(
     reviewGrade: ReviewQualityCheckState.Grade,
     modifier: Modifier = Modifier,
 ) {
-    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) {}) {
+    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) { heading() }) {
         Text(
             text = stringResource(R.string.review_quality_check_grade_title),
             color = FirefoxTheme.colors.textPrimary,
@@ -222,7 +248,7 @@ private fun AdjustedProductRatingCard(
     rating: Float,
     modifier: Modifier = Modifier,
 ) {
-    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) {}) {
+    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) { heading() }) {
         FlowRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth(),
@@ -244,7 +270,7 @@ private fun AdjustedProductRatingCard(
         }
 
         Text(
-            text = stringResource(R.string.review_quality_check_adjusted_rating_description),
+            text = stringResource(R.string.review_quality_check_adjusted_rating_description_2),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.caption,
         )
@@ -254,27 +280,30 @@ private fun AdjustedProductRatingCard(
 @Suppress("LongMethod")
 @Composable
 private fun HighlightsCard(
-    highlights: Map<HighlightType, List<String>>,
-    highlightsFadeVisible: Boolean,
-    showMoreButtonVisible: Boolean,
-    onShowMoreRecentReviewsClicked: () -> Unit,
+    highlightsInfo: HighlightsInfo,
+    isExpanded: Boolean,
+    onHighlightsExpandToggleClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
-        var isExpanded by remember { mutableStateOf(false) }
-        val highlightsForCompactMode = remember(highlights) { highlights.forCompactMode() }
-        val highlightsToDisplay = remember(isExpanded, highlights) {
+        val highlightsToDisplay = remember(isExpanded, highlightsInfo.highlights) {
             if (isExpanded) {
-                highlights
+                highlightsInfo.highlights
             } else {
-                highlightsForCompactMode
+                highlightsInfo.highlightsForCompactMode
             }
         }
+        val titleContentDescription =
+            headingResource(id = R.string.review_quality_check_highlights_title)
 
         Text(
             text = stringResource(R.string.review_quality_check_highlights_title),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline8,
+            modifier = Modifier.semantics {
+                heading()
+                contentDescription = titleContentDescription
+            },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -288,19 +317,52 @@ private fun HighlightsCard(
                     .fillMaxWidth()
                     .animateContentSize(animationSpec = spring()),
             ) {
-                highlightsToDisplay.forEach { highlight ->
-                    HighlightTitle(highlight.key)
+                highlightsToDisplay.onEachIndexed { indexHighlightTitle, highlight ->
+                    Box(
+                        modifier = Modifier.semantics {
+                            collectionInfo = CollectionInfo(rowCount = highlightsToDisplay.size, columnCount = 1)
+                        },
+                    ) {
+                        HighlightTitle(
+                            highlightType = highlight.key,
+                            modifier = Modifier.semantics {
+                                collectionItemInfo = CollectionItemInfo(
+                                    rowIndex = indexHighlightTitle,
+                                    rowSpan = 1,
+                                    columnIndex = 1,
+                                    columnSpan = 1,
+                                )
+                            },
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    highlight.value.forEach {
-                        HighlightText(it)
+                    Column(
+                        modifier = Modifier.semantics {
+                            collectionInfo =
+                                CollectionInfo(rowCount = highlight.value.size, columnCount = 1)
+                        },
+                    ) {
+                        highlight.value.onEachIndexed { index, text ->
+                            HighlightText(
+                                text = text,
+                                modifier = Modifier.semantics {
+                                    collectionItemInfo = CollectionItemInfo(
+                                        rowIndex = index,
+                                        rowSpan = 1,
+                                        columnIndex = 1,
+                                        columnSpan = 1,
+                                    )
+                                },
+                            )
 
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
 
-                    if (highlightsToDisplay.entries.last().key != highlight.key) {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        if (highlightsToDisplay.entries.last().key != highlight.key) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -309,7 +371,7 @@ private fun HighlightsCard(
                 targetState = isExpanded,
                 label = "HighlightsCard-Crossfade",
             ) { expanded ->
-                if (expanded.not() && highlightsFadeVisible) {
+                if (expanded.not() && highlightsInfo.highlightsFadeVisible) {
                     Spacer(
                         modifier = Modifier
                             .height(32.dp)
@@ -327,7 +389,7 @@ private fun HighlightsCard(
             }
         }
 
-        if (showMoreButtonVisible) {
+        if (highlightsInfo.showMoreButtonVisible) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Divider(modifier = Modifier.extendWidthToParentBorder())
@@ -340,26 +402,25 @@ private fun HighlightsCard(
                 } else {
                     stringResource(R.string.review_quality_check_highlights_show_more)
                 },
-                onClick = {
-                    if (!isExpanded) {
-                        onShowMoreRecentReviewsClicked()
-                    }
-                    isExpanded = isExpanded.not()
-                },
+                onClick = onHighlightsExpandToggleClick,
             )
         }
     }
 }
 
 @Composable
-private fun HighlightText(text: String) {
+private fun HighlightText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
         Spacer(modifier = Modifier.width(32.dp))
 
         Text(
-            text = text,
+            text = stringResource(id = R.string.surrounded_with_quotes, text),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.body2,
         )
@@ -367,9 +428,13 @@ private fun HighlightText(text: String) {
 }
 
 @Composable
-private fun HighlightTitle(highlightType: HighlightType) {
+private fun HighlightTitle(
+    highlightType: HighlightType,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
         val highlight = remember(highlightType) { highlightType.toHighlight() }
 
@@ -389,16 +454,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
-private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
-    val placeable = measurable.measure(
-        constraints.copy(
-            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
-        ),
-    )
-    layout(placeable.width, placeable.height) {
-        placeable.place(0, 0)
+private fun Modifier.extendWidthToParentBorder(): Modifier =
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(
+            constraints.copy(
+                maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+            ),
+        )
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, 0)
+        }
     }
-}
 
 private fun HighlightType.toHighlight() =
     when (this) {
@@ -435,37 +501,58 @@ private enum class Highlight(
     ),
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun ProductRecommendation(
     product: RecommendedProductState.Product,
     onClick: (String, String) -> Unit,
     onImpression: (String) -> Unit,
 ) {
+    val titleContentDescription = headingResource(id = R.string.review_quality_check_ad_title)
+    val interactionSource = remember { MutableInteractionSource() }
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ReviewQualityCheckCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-                    onClick(product.aid, product.productUrl)
-                }
                 .onShown(
                     threshold = PRODUCT_RECOMMENDATION_IMPRESSION_THRESHOLD,
                     settleTime = PRODUCT_RECOMMENDATION_SETTLE_TIME_MS,
                     onVisible = { onImpression(product.aid) },
                 ),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .clearAndSetSemantics {
+                        heading()
+                        contentDescription = titleContentDescription
+                    }
+                    .clickable(interactionSource = interactionSource, indication = null) {
+                        onClick(product.aid, product.productUrl)
+                    },
+            ) {
                 Text(
                     text = stringResource(R.string.review_quality_check_ad_title),
                     color = FirefoxTheme.colors.textPrimary,
                     style = FirefoxTheme.typography.headline8,
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .clickable { onClick(product.aid, product.productUrl) },
+            ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Image(
                         url = product.imageUrl,
                         modifier = Modifier.size(productRecommendationImageSize),
                         targetSize = productRecommendationImageSize,
+                        placeholder = { ImagePlaceholder() },
+                        fallback = { ImagePlaceholder() },
                     )
 
                     Text(
@@ -505,6 +592,25 @@ private fun ProductRecommendation(
     }
 }
 
+@Composable
+private fun ImagePlaceholder() {
+    Box(
+        modifier = Modifier
+            .size(productRecommendationImageSize)
+            .background(
+                color = FirefoxTheme.colors.layer3,
+                shape = RoundedCornerShape(8.dp),
+            ),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_file_type_image),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center),
+        )
+    }
+}
+
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
@@ -514,34 +620,36 @@ private class ProductAnalysisPreviewModel(
         productRecommendationsEnabled: Boolean? = false,
         productId: String = "123",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
         adjustedRating: Float? = 3.6f,
         productUrl: String = "",
-        highlights: SortedMap<HighlightType, List<String>>? = sortedMapOf(
-            HighlightType.QUALITY to listOf(
-                "High quality",
-                "Excellent craftsmanship",
-                "Superior materials",
-            ),
-            HighlightType.PRICE to listOf(
-                "Affordable prices",
-                "Great value for money",
-                "Discounted offers",
-            ),
-            HighlightType.SHIPPING to listOf(
-                "Fast and reliable shipping",
-                "Free shipping options",
-                "Express delivery",
-            ),
-            HighlightType.PACKAGING_AND_APPEARANCE to listOf(
-                "Elegant packaging",
-                "Attractive appearance",
-                "Beautiful design",
-            ),
-            HighlightType.COMPETITIVENESS to listOf(
-                "Competitive pricing",
-                "Strong market presence",
-                "Unbeatable deals",
+        highlightsInfo: HighlightsInfo = HighlightsInfo(
+            mapOf(
+                HighlightType.QUALITY to listOf(
+                    "High quality",
+                    "Excellent craftsmanship",
+                    "Superior materials",
+                ),
+                HighlightType.PRICE to listOf(
+                    "Affordable prices",
+                    "Great value for money",
+                    "Discounted offers",
+                ),
+                HighlightType.SHIPPING to listOf(
+                    "Fast and reliable shipping",
+                    "Free shipping options",
+                    "Express delivery",
+                ),
+                HighlightType.PACKAGING_AND_APPEARANCE to listOf(
+                    "Elegant packaging",
+                    "Attractive appearance",
+                    "Beautiful design",
+                ),
+                HighlightType.COMPETITIVENESS to listOf(
+                    "Competitive pricing",
+                    "Strong market presence",
+                    "Unbeatable deals",
+                ),
             ),
         ),
         recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
@@ -554,7 +662,7 @@ private class ProductAnalysisPreviewModel(
             analysisStatus = analysisStatus,
             adjustedRating = adjustedRating,
             productUrl = productUrl,
-            highlights = highlights,
+            highlightsInfo = highlightsInfo,
             recommendedProductState = recommendedProductState,
         ),
         productVendor = productVendor,
@@ -567,19 +675,28 @@ private class ProductAnalysisPreviewModelParameterProvider :
         get() = sequenceOf(
             ProductAnalysisPreviewModel(),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.REANALYZING,
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(40f),
+                ),
+            ),
+            ProductAnalysisPreviewModel(
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(95f),
+                ),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,
             ),
             ProductAnalysisPreviewModel(
-                highlights = sortedMapOf(
-                    HighlightType.QUALITY to listOf(
-                        "High quality",
-                        "Excellent craftsmanship",
+                highlightsInfo = HighlightsInfo(
+                    mapOf(
+                        HighlightType.QUALITY to listOf(
+                            "High quality",
+                            "Excellent craftsmanship",
+                        ),
                     ),
                 ),
             ),
@@ -613,6 +730,7 @@ private fun ProductAnalysisPreview(
             var productRecommendationsEnabled by remember { mutableStateOf(model.productRecommendationsEnabled) }
             var isSettingsExpanded by remember { mutableStateOf(false) }
             var isInfoExpanded by remember { mutableStateOf(false) }
+            var isHighlightsExpanded by remember { mutableStateOf(false) }
 
             ProductAnalysis(
                 productRecommendationsEnabled = productRecommendationsEnabled,
@@ -620,6 +738,7 @@ private fun ProductAnalysisPreview(
                 productVendor = model.productVendor,
                 isSettingsExpanded = isSettingsExpanded,
                 isInfoExpanded = isInfoExpanded,
+                isHighlightsExpanded = isHighlightsExpanded,
                 onOptOutClick = {},
                 onReanalyzeClick = {},
                 onProductRecommendationsEnabledStateChange = {
@@ -627,7 +746,7 @@ private fun ProductAnalysisPreview(
                 },
                 onReviewGradeLearnMoreClick = {},
                 onFooterLinkClick = {},
-                onShowMoreRecentReviewsClicked = {},
+                onHighlightsExpandToggleClick = { isHighlightsExpanded = !isHighlightsExpanded },
                 onSettingsExpandToggleClick = { isSettingsExpanded = !isSettingsExpanded },
                 onInfoExpandToggleClick = { isInfoExpanded = !isInfoExpanded },
                 onRecommendedProductClick = { _, _ -> },

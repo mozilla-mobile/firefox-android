@@ -242,11 +242,13 @@ class PromptRequestTest {
         val onLoginDismiss: () -> Unit = {}
         val onLoginConfirm: (Login) -> Unit = {}
         val login = Login(guid = "test-guid", origin = "origin", username = "username", password = "password")
+        val generatedPassword = "generatedPassword123#"
 
         val loginSelectRequest =
-            SelectLoginPrompt(listOf(login), onLoginConfirm, onLoginDismiss)
+            SelectLoginPrompt(listOf(login), generatedPassword, onLoginConfirm, onLoginDismiss)
 
         assertEquals(loginSelectRequest.logins, listOf(login))
+        assertEquals(loginSelectRequest.generatedPassword, generatedPassword)
 
         loginSelectRequest.onConfirm(login)
         loginSelectRequest.onDismiss()
@@ -320,9 +322,7 @@ class PromptRequestTest {
     fun `WHEN calling confirm or dismiss on the SelectAddress prompt request THEN the respective callback is invoked`() {
         val address = Address(
             guid = "1",
-            givenName = "Firefox",
-            additionalName = "-",
-            familyName = "-",
+            name = "Firefox",
             organization = "-",
             streetAddress = "street",
             addressLevel3 = "address3",

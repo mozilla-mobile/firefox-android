@@ -65,12 +65,12 @@
         <androidx.preference.Preference
             android:key="@string/pref_key_passwords"
             app:iconSpaceReserved="false"
-            android:title="@string/preferences_passwords_logins_and_passwords" />
+            android:title="@string/preferences_passwords_logins_and_passwords_2" />
 
         <androidx.preference.Preference
             app:iconSpaceReserved="false"
             android:key="@string/pref_key_credit_cards"
-            android:title="@string/preferences_credit_cards" />
+            android:title="@string/preferences_credit_cards_2" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_accessibility"
@@ -102,8 +102,7 @@
             app:iconSpaceReserved="false"
             android:title="@string/preferences_https_only_title" />
 
-        <androidx.preference.SwitchPreference
-            android:defaultValue="false"
+        <org.mozilla.fenix.settings.cookiebannerhandling.CustomCBHSwitchPreference
             android:key="@string/pref_key_cookie_banner_private_mode"
             app:iconSpaceReserved="false"
             app:isPreferenceVisible="false"
@@ -149,6 +148,12 @@
             android:key="@string/pref_key_addons"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_addons" />
+
+        <androidx.preference.Preference
+            android:key="@string/pref_key_install_local_addon"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_install_local_addon" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_override_amo_collection"

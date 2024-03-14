@@ -11,15 +11,10 @@ import android.media.AudioManager
 import android.os.Build
 import androidx.core.net.toUri
 import androidx.test.rule.GrantPermissionRule
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Assume.assumeTrue
-import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -28,6 +23,7 @@ import org.mozilla.fenix.helpers.MockLocationUpdatesRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -36,9 +32,8 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Tests for verifying site permissions prompts & functionality
  *
  */
-class SitePermissionsTest {
+class SitePermissionsTest : TestSetup() {
     /* Test page created and handled by the Mozilla mobile test-eng team */
-    private lateinit var mockWebServer: MockWebServer
     private val testPage = "https://mozilla-mobile.github.io/testapp/permissions"
     private val testPageSubstring = "https://mozilla-mobile.github.io:443"
     private val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -65,19 +60,6 @@ class SitePermissionsTest {
     @get: Rule
     val retryTestRule = RetryTestRule(3)
 
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334295
     @SmokeTest
     @Test
@@ -98,7 +80,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334294
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun blockAudioVideoPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -122,7 +103,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251388
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun allowAudioVideoPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -164,7 +144,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334190
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun blockMicrophonePermissionRememberingTheDecisionTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -187,7 +166,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251387
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun allowMicrophonePermissionRememberingTheDecisionTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -228,7 +206,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334077
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun blockCameraPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -251,7 +228,6 @@ class SitePermissionsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251386
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun allowCameraPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())

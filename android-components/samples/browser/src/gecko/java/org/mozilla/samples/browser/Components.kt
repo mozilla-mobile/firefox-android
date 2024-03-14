@@ -1,6 +1,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+// Needed until bug 1884527 is fixed.
+@file:Suppress("DEPRECATION")
+
 package org.mozilla.samples.browser
 
 import android.content.Context
@@ -31,13 +35,13 @@ class Components(private val applicationContext: Context) : DefaultComponents(ap
 
     override val engine: Engine by lazy {
         GeckoEngine(applicationContext, engineSettings, runtime).also {
-            it.installWebExtension("borderify@mozac.org", "resource://android/assets/extensions/borderify/") {
-                    ext, throwable ->
-                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install $ext")
+            it.installBuiltInWebExtension("borderify@mozac.org", "resource://android/assets/extensions/borderify/") {
+                    throwable ->
+                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install borderify")
             }
-            it.installWebExtension("testext@mozac.org", "resource://android/assets/extensions/test/") {
-                    ext, throwable ->
-                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install $ext")
+            it.installBuiltInWebExtension("testext@mozac.org", "resource://android/assets/extensions/test/") {
+                    throwable ->
+                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install testext")
             }
             WebCompatFeature.install(it)
             WebCompatReporterFeature.install(it)

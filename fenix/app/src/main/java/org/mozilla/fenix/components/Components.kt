@@ -159,6 +159,7 @@ class Components(private val context: Context) {
     }
 
     val analytics by lazyMonitored { Analytics(context, performance.visualCompletenessQueue.queue) }
+    val nimbus by lazyMonitored { NimbusComponents(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
     val performance by lazyMonitored { PerformanceComponent() }
@@ -220,7 +221,7 @@ class Components(private val context: Context) {
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(
-                    messagingStorage = analytics.messagingStorage,
+                    controller = nimbus.messaging,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
             ),

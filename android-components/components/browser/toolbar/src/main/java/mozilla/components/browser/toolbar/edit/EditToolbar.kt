@@ -7,6 +7,7 @@ package mozilla.components.browser.toolbar.edit
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
@@ -30,7 +31,6 @@ import mozilla.components.concept.toolbar.AutocompleteDelegate
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.utils.NamedThreadFactory
-import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import java.util.concurrent.Executors
 import mozilla.components.ui.colors.R as colorsR
@@ -70,6 +70,7 @@ class EditToolbar internal constructor(
      * @property text Text color of the URL.
      * @property suggestionBackground The background color used for autocomplete suggestions.
      * @property suggestionForeground The foreground color used for autocomplete suggestions.
+     * @property pageActionSeparator Color tint of separator dividing page actions.
      */
     data class Colors(
         @ColorInt val clear: Int,
@@ -78,6 +79,7 @@ class EditToolbar internal constructor(
         @ColorInt val text: Int,
         @ColorInt val suggestionBackground: Int,
         @ColorInt val suggestionForeground: Int?,
+        @ColorInt val pageActionSeparator: Int,
     )
 
     private val autocompleteDispatcher = SupervisorJob() +
@@ -127,6 +129,7 @@ class EditToolbar internal constructor(
                 false
             }
         },
+        pageActionSeparator = rootView.findViewById(R.id.mozac_browser_action_separator),
     )
 
     /**
@@ -139,6 +142,7 @@ class EditToolbar internal constructor(
         text = views.url.currentTextColor,
         suggestionBackground = views.url.autoCompleteBackgroundColor,
         suggestionForeground = views.url.autoCompleteForegroundColor,
+        pageActionSeparator = ContextCompat.getColor(context, colorsR.color.photonGrey80),
     )
         set(value) {
             field = value
@@ -153,6 +157,7 @@ class EditToolbar internal constructor(
             views.url.setTextColor(value.text)
             views.url.autoCompleteBackgroundColor = value.suggestionBackground
             views.url.autoCompleteForegroundColor = value.suggestionForeground
+            views.pageActionSeparator.setBackgroundColor(value.pageActionSeparator)
         }
 
     /**
@@ -215,8 +220,13 @@ class EditToolbar internal constructor(
      */
     fun focus() {
         views.url.run {
-            showKeyboard()
-            requestFocus()
+            if (!hasFocus()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    // On Android 14 this needs to be called before requestFocus() in order to receive focus.
+                    isFocusableInTouchMode = true
+                }
+                requestFocus()
+            }
         }
     }
 
@@ -327,6 +337,7 @@ class EditToolbar internal constructor(
     private fun onClear() {
         // We set text to an empty string instead of using clear to avoid #3612.
         views.url.setText("")
+        editListener?.onInputCleared()
     }
 
     private fun setUrlGoneMargin(anchor: Int, dimen: Int) {
@@ -359,11 +370,26 @@ class EditToolbar internal constructor(
         }
         editListener?.onTextChanged(text)
     }
+
+    /**
+     * Hides the page action separator in edit mode.
+     */
+    fun hidePageActionSeparator() {
+        views.pageActionSeparator.isVisible = false
+    }
+
+    /**
+     * Shows the page action separator in edit mode.
+     */
+    fun showPageActionSeparator() {
+        views.pageActionSeparator.isVisible = true
+    }
 }
 
 /**
  * Internal holder for view references.
  */
+@Suppress("LongParameterList")
 internal class EditToolbarViews(
     val background: ImageView,
     val icon: ImageView,
@@ -371,4 +397,5 @@ internal class EditToolbarViews(
     val editActionsEnd: ActionContainer,
     val clear: ImageView,
     val url: InlineAutocompleteEditText,
+    val pageActionSeparator: View,
 )

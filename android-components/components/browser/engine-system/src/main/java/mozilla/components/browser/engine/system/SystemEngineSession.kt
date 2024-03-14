@@ -25,6 +25,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import kotlin.reflect.KProperty
@@ -463,7 +464,7 @@ class SystemEngineSession(
      */
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
         throw UnsupportedOperationException("Requesting product analysis status is not available in this engine")
@@ -481,7 +482,7 @@ class SystemEngineSession(
     }
 
     /**
-     * See [EngineSession.requestAnalysisStatus]
+     * See [EngineSession.sendImpressionAttributionEvent]
      */
     override fun sendImpressionAttributionEvent(
         aid: String,
@@ -489,6 +490,28 @@ class SystemEngineSession(
         onException: (Throwable) -> Unit,
     ) {
         throw UnsupportedOperationException("Sending impression attribution event is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.sendPlacementAttributionEvent]
+     */
+    override fun sendPlacementAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Sending placement attribution event is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.reportBackInStock]
+     */
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Reporting back in stock is not available in this engine")
     }
 
     /**
@@ -507,6 +530,27 @@ class SystemEngineSession(
      */
     override fun requestTranslationRestore() {
         throw UnsupportedOperationException("Translate restore support is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.getNeverTranslateSiteSetting]
+     */
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Getting the site's translate setting is not available in this engine.")
+    }
+
+    /**
+     * See [EngineSession.setNeverTranslateSiteSetting]
+     */
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Setting the site's translate setting is not available in this engine")
     }
 
     override fun hasCookieBannerRuleForSession(

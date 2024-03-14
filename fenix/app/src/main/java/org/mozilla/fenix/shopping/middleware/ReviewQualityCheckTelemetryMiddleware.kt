@@ -4,18 +4,39 @@
 
 package org.mozilla.fenix.shopping.middleware
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.GleanMetrics.ShoppingSettings
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction.ShoppingAction
+import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+
+private const val ACTION_ENABLED = "enabled"
+private const val ACTION_DISABLED = "disabled"
 
 /**
  * Middleware that captures telemetry events for the review quality check feature.
+ *
+ * @param telemetryService The service that handles telemetry events for review checker.
+ * @param browserStore The [BrowserStore] instance to access the current tab.
+ * @param appStore The [AppStore] instance to access [ShoppingState].
+ * @param scope The [CoroutineScope] to use for launching coroutines.
  */
-class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
+class ReviewQualityCheckTelemetryMiddleware(
+    private val telemetryService: ReviewQualityCheckTelemetryService,
+    private val browserStore: BrowserStore,
+    private val appStore: AppStore,
+    private val scope: CoroutineScope,
+) : ReviewQualityCheckMiddleware {
 
     override fun invoke(
         context: MiddlewareContext<ReviewQualityCheckState, ReviewQualityCheckAction>,
@@ -32,6 +53,7 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
         }
     }
 
+    @Suppress("LongMethod")
     private fun processAction(
         store: Store<ReviewQualityCheckState, ReviewQualityCheckAction>,
         action: ReviewQualityCheckAction.TelemetryAction,
@@ -78,8 +100,11 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
                 Shopping.surfaceNotNowClicked.record()
             }
 
-            is ReviewQualityCheckAction.ShowMoreRecentReviewsClicked -> {
-                Shopping.surfaceShowMoreRecentReviewsClicked.record()
+            is ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn && state.isHighlightsExpanded) {
+                    Shopping.surfaceShowMoreRecentReviewsClicked.record()
+                }
             }
 
             is ReviewQualityCheckAction.ExpandCollapseSettings -> {
@@ -91,6 +116,13 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
 
             is ReviewQualityCheckAction.NoAnalysisDisplayed -> {
                 Shopping.surfaceNoReviewReliabilityAvailable.record()
+            }
+
+            is ReviewQualityCheckAction.UpdateProductReview -> {
+                val state = store.state
+                if (state.isStaleAnalysis() && !action.restoreAnalysis) {
+                    Shopping.surfaceStaleAnalysisShown.record()
+                }
             }
 
             is ReviewQualityCheckAction.AnalyzeProduct -> {
@@ -112,6 +144,60 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
             is ReviewQualityCheckAction.OpenPoweredByLink -> {
                 Shopping.surfacePoweredByFakespotLinkClicked.record()
             }
+
+            is ReviewQualityCheckAction.RecommendedProductImpression -> {
+                browserStore.state.selectedTab?.let { tabSessionState ->
+                    val key = ShoppingState.ProductRecommendationImpressionKey(
+                        tabId = tabSessionState.id,
+                        productUrl = tabSessionState.content.url,
+                        aid = action.productAid,
+                    )
+
+                    val recordedImpressions =
+                        appStore.state.shoppingState.recordedProductRecommendationImpressions
+
+                    if (!recordedImpressions.contains(key)) {
+                        Shopping.surfaceAdsImpression.record()
+                        scope.launch {
+                            val result =
+                                telemetryService.recordRecommendedProductImpression(action.productAid)
+                            if (result != null) {
+                                appStore.dispatch(ShoppingAction.ProductRecommendationImpression(key))
+                            }
+                        }
+                    }
+                }
+            }
+
+            is ReviewQualityCheckAction.RecommendedProductClick -> {
+                Shopping.surfaceAdsClicked.record()
+                scope.launch {
+                    telemetryService.recordRecommendedProductClick(action.productAid)
+                }
+            }
+
+            ReviewQualityCheckAction.ToggleProductRecommendation -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn &&
+                    state.productRecommendationsPreference != null
+                ) {
+                    val toggleAction = if (state.productRecommendationsPreference) {
+                        ACTION_ENABLED
+                    } else {
+                        ACTION_DISABLED
+                    }
+                    Shopping.surfaceAdsSettingToggled.record(
+                        Shopping.SurfaceAdsSettingToggledExtra(
+                            action = toggleAction,
+                        ),
+                    )
+                }
+            }
         }
     }
+
+    private fun ReviewQualityCheckState.isStaleAnalysis(): Boolean =
+        this is ReviewQualityCheckState.OptedIn &&
+            this.productReviewState is ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent &&
+            this.productReviewState.analysisStatus == AnalysisStatus.NeedsAnalysis
 }

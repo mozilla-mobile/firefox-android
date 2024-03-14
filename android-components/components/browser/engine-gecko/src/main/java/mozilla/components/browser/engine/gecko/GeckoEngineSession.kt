@@ -20,13 +20,13 @@ import mozilla.components.browser.engine.gecko.media.GeckoMediaDelegate
 import mozilla.components.browser.engine.gecko.mediasession.GeckoMediaSessionDelegate
 import mozilla.components.browser.engine.gecko.permission.GeckoPermissionRequest
 import mozilla.components.browser.engine.gecko.prompt.GeckoPromptDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslateSessionDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslationUtils.intoTranslationError
 import mozilla.components.browser.engine.gecko.window.GeckoWindowRequest
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_ADDITIONAL_HEADERS
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
-import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
-import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
@@ -39,7 +39,9 @@ import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.request.RequestInterceptor.InterceptionResponse
 import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
@@ -668,40 +670,41 @@ class GeckoEngineSession(
         onResult: (List<ProductRecommendation>) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestRecommendations(url).then({
-                response: List<Recommendation>? ->
-            if (response == null) {
-                logger.error("Invalid value: unable to get analysis result from Gecko Engine.")
-                onException(
-                    java.lang.IllegalStateException(
-                        "Invalid value: unable to get analysis result from Gecko Engine.",
-                    ),
-                )
-                return@then GeckoResult()
-            }
+        geckoSession.requestRecommendations(url).then(
+            { response: List<Recommendation>? ->
+                if (response == null) {
+                    logger.error("Invalid value: unable to get analysis result from Gecko Engine.")
+                    onException(
+                        java.lang.IllegalStateException(
+                            "Invalid value: unable to get analysis result from Gecko Engine.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
 
-            val productRecommendations = response.map { it: Recommendation ->
-                ProductRecommendation(
-                    it.url,
-                    it.analysisUrl,
-                    it.adjustedRating,
-                    it.sponsored,
-                    it.imageUrl,
-                    it.aid,
-                    it.name,
-                    it.grade,
-                    it.price,
-                    it.currency,
-                )
-            }
-            onResult(productRecommendations)
-            GeckoResult<ProductRecommendation>()
-        }, {
-                throwable: Throwable ->
-            logger.error("Requesting product analysis failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+                val productRecommendations = response.map { it: Recommendation ->
+                    ProductRecommendation(
+                        url = it.url,
+                        analysisUrl = it.analysisUrl,
+                        adjustedRating = it.adjustedRating,
+                        sponsored = it.sponsored,
+                        imageUrl = it.imageUrl,
+                        aid = it.aid,
+                        name = it.name,
+                        grade = it.grade,
+                        price = it.price,
+                        currency = it.currency,
+                    )
+                }
+                onResult(productRecommendations)
+                GeckoResult<ProductRecommendation>()
+            },
+            { throwable ->
+                logger.error("Requesting product analysis failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -713,59 +716,61 @@ class GeckoEngineSession(
         onResult: (ProductAnalysis) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestAnalysis(url).then({
-                response ->
-            if (response == null) {
-                logger.error(
-                    "Invalid value: unable to get analysis result from Gecko Engine.",
-                )
-                onException(
-                    java.lang.IllegalStateException(
+        geckoSession.requestAnalysis(url).then(
+            { response ->
+                if (response == null) {
+                    logger.error(
                         "Invalid value: unable to get analysis result from Gecko Engine.",
-                    ),
+                    )
+                    onException(
+                        java.lang.IllegalStateException(
+                            "Invalid value: unable to get analysis result from Gecko Engine.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+
+                val highlights = if (
+                    response.highlights?.quality == null &&
+                    response.highlights?.price == null &&
+                    response.highlights?.shipping == null &&
+                    response.highlights?.appearance == null &&
+                    response.highlights?.competitiveness == null
+                ) {
+                    null
+                } else {
+                    Highlight(
+                        response.highlights?.quality?.toList(),
+                        response.highlights?.price?.toList(),
+                        response.highlights?.shipping?.toList(),
+                        response.highlights?.appearance?.toList(),
+                        response.highlights?.competitiveness?.toList(),
+                    )
+                }
+
+                val analysisResult = ProductAnalysis(
+                    productId = response.productId,
+                    analysisURL = response.analysisURL,
+                    grade = response.grade,
+                    adjustedRating = response.adjustedRating,
+                    needsAnalysis = response.needsAnalysis,
+                    pageNotSupported = response.pageNotSupported,
+                    notEnoughReviews = response.notEnoughReviews,
+                    lastAnalysisTime = response.lastAnalysisTime,
+                    deletedProductReported = response.deletedProductReported,
+                    deletedProduct = response.deletedProduct,
+                    highlights = highlights,
                 )
-                return@then GeckoResult()
-            }
 
-            val highlights = if (
-                response.highlights?.quality == null &&
-                response.highlights?.price == null &&
-                response.highlights?.shipping == null &&
-                response.highlights?.appearance == null &&
-                response.highlights?.competitiveness == null
-            ) {
-                null
-            } else {
-                Highlight(
-                    response.highlights?.quality?.toList(),
-                    response.highlights?.price?.toList(),
-                    response.highlights?.shipping?.toList(),
-                    response.highlights?.appearance?.toList(),
-                    response.highlights?.competitiveness?.toList(),
-                )
-            }
-
-            val analysisResult = ProductAnalysis(
-                response.productId,
-                response.analysisURL,
-                response.grade,
-                response.adjustedRating,
-                response.needsAnalysis,
-                response.pageNotSupported,
-                response.lastAnalysisTime,
-                response.deletedProductReported,
-                response.deletedProduct,
-                highlights,
-            )
-
-            onResult(analysisResult)
-            GeckoResult<ProductAnalysis>()
-        }, {
-                throwable ->
-            logger.error("Requesting product analysis failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+                onResult(analysisResult)
+                GeckoResult<ProductAnalysis>()
+            },
+            { throwable ->
+                logger.error("Requesting product analysis failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -776,24 +781,25 @@ class GeckoEngineSession(
         onResult: (String) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestCreateAnalysis(url).then({
-                response ->
-            val errorMessage = "Invalid value: unable to reanalyze product from Gecko Engine."
-            if (response == null) {
-                logger.error(errorMessage)
-                onException(
-                    java.lang.IllegalStateException(errorMessage),
-                )
-                return@then GeckoResult()
-            }
-            onResult(response)
-            GeckoResult<String>()
-        }, {
-                throwable ->
-            logger.error("Request to reanalyze product failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+        geckoSession.requestCreateAnalysis(url).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to reanalyze product from Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<String>()
+            },
+            { throwable ->
+                logger.error("Request to reanalyze product failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -801,27 +807,32 @@ class GeckoEngineSession(
      */
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestAnalysisCreationStatus(url).then({
-                response ->
-            val errorMessage = "Invalid value: unable to request analysis status from Gecko Engine."
-            if (response == null) {
-                logger.error(errorMessage)
-                onException(
-                    java.lang.IllegalStateException(errorMessage),
+        geckoSession.requestAnalysisStatus(url).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to request analysis status from Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                val analysisStatusResult = ProductAnalysisStatus(
+                    status = response.status,
+                    progress = response.progress,
                 )
-                return@then GeckoResult()
-            }
-            onResult(response)
-            GeckoResult<String>()
-        }, {
-                throwable ->
-            logger.error("Request for product analysis status failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+                onResult(analysisStatusResult)
+                GeckoResult<ProductAnalysisStatus>()
+            },
+            { throwable ->
+                logger.error("Request for product analysis status failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -832,24 +843,25 @@ class GeckoEngineSession(
         onResult: (Boolean) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.sendClickAttributionEvent(aid).then({
-                response ->
-            val errorMessage = "Invalid value: unable to send click attribution event through Gecko Engine."
-            if (response == null) {
-                logger.error(errorMessage)
-                onException(
-                    java.lang.IllegalStateException(errorMessage),
-                )
-                return@then GeckoResult()
-            }
-            onResult(response)
-            GeckoResult<Boolean>()
-        }, {
-                throwable ->
-            logger.error("Sending click attribution event failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+        geckoSession.sendClickAttributionEvent(aid).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to send click attribution event through Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Sending click attribution event failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -860,33 +872,83 @@ class GeckoEngineSession(
         onResult: (Boolean) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.sendImpressionAttributionEvent(aid).then({
-                response ->
-            val errorMessage = "Invalid value: unable to send impression attribution event through Gecko Engine."
-            if (response == null) {
-                logger.error(errorMessage)
-                onException(
-                    java.lang.IllegalStateException(errorMessage),
-                )
-                return@then GeckoResult()
-            }
-            onResult(response)
-            GeckoResult<Boolean>()
-        }, {
-                throwable ->
-            logger.error("Sending impression attribution event failed.", throwable)
-            onException(throwable)
-            GeckoResult()
-        })
+        geckoSession.sendImpressionAttributionEvent(aid).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to send impression attribution event through Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Sending impression attribution event failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
-     * Convenience method for the error when session translation is not available.
+     * See [EngineSession.sendPlacementAttributionEvent]
      */
-    private fun sessionTranslationNotAvailable(): Throwable {
-        val errorMessage = "A translation session coordinator is not available."
-        logger.error(errorMessage)
-        return IllegalStateException(errorMessage)
+    override fun sendPlacementAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.sendPlacementAttributionEvent(aid).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to send placement attribution event through Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Sending placement attribution event failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
+     * See [EngineSession.reportBackInStock]
+     */
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.reportBackInStock(url).then(
+            { response ->
+                val errorMessage = "Invalid value: unable to report back in stock from Gecko Engine."
+                if (response == null) {
+                    logger.error(errorMessage)
+                    onException(
+                        java.lang.IllegalStateException(errorMessage),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<String>()
+            },
+            { throwable ->
+                logger.error("Request for reporting back in stock failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
     }
 
     /**
@@ -899,7 +961,10 @@ class GeckoEngineSession(
     ) {
         if (geckoSession.sessionTranslation == null) {
             notifyObservers {
-                onTranslateException(TranslationOperation.TRANSLATE, sessionTranslationNotAvailable())
+                onTranslateException(
+                    TranslationOperation.TRANSLATE,
+                    TranslationError.MissingSessionCoordinator(),
+                )
             }
             return
         }
@@ -920,7 +985,10 @@ class GeckoEngineSession(
                 throwable ->
             logger.error("Request for translation failed: ", throwable)
             notifyObservers {
-                onTranslateException(TranslationOperation.TRANSLATE, throwable)
+                onTranslateException(
+                    TranslationOperation.TRANSLATE,
+                    throwable.intoTranslationError(),
+                )
             }
             GeckoResult()
         })
@@ -932,7 +1000,10 @@ class GeckoEngineSession(
     override fun requestTranslationRestore() {
         if (geckoSession.sessionTranslation == null) {
             notifyObservers {
-                onTranslateException(TranslationOperation.RESTORE, sessionTranslationNotAvailable())
+                onTranslateException(
+                    TranslationOperation.RESTORE,
+                    TranslationError.MissingSessionCoordinator(),
+                )
             }
             return
         }
@@ -946,8 +1017,63 @@ class GeckoEngineSession(
                 throwable ->
             logger.error("Request for translation failed: ", throwable)
             notifyObservers {
-                onTranslateException(TranslationOperation.RESTORE, throwable)
+                onTranslateException(TranslationOperation.RESTORE, throwable.intoTranslationError())
             }
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.getNeverTranslateSiteSetting]
+     */
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(TranslationError.MissingSessionCoordinator())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.neverTranslateSiteSetting.then({
+                response ->
+            if (response == null) {
+                logger.error("Did not receive a site setting response.")
+                onException(
+                    TranslationError.UnexpectedNull(),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for site translation preference failed: ", throwable)
+            onException(throwable.intoTranslationError())
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.setNeverTranslateSiteSetting]
+     */
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(TranslationError.MissingSessionCoordinator())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(setting).then({
+            onResult()
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for setting site translation preference failed: ", throwable)
+            onException(throwable.intoTranslationError())
             GeckoResult()
         })
     }
@@ -981,6 +1107,7 @@ class GeckoEngineSession(
             session: GeckoSession,
             url: String?,
             geckoPermissions: List<ContentPermission>,
+            hasUserGesture: Boolean,
         ) {
             this@GeckoEngineSession.geckoPermissions = geckoPermissions
             if (url == null) {
@@ -1014,7 +1141,7 @@ class GeckoEngineSession(
             }
             // Reset the status of current page being product or not when user navigates away.
             notifyObservers { onProductUrlChange(false) }
-            notifyObservers { onLocationChange(url) }
+            notifyObservers { onLocationChange(url, hasUserGesture) }
         }
 
         override fun onLoadRequest(
@@ -1130,7 +1257,8 @@ class GeckoEngineSession(
                         is InterceptionResponse.Content -> loadData(data, mimeType, encoding)
                         is InterceptionResponse.Url -> loadUrl(
                             url = url,
-                            flags = LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+                            flags = flags,
+                            additionalHeaders = additionalHeaders,
                         )
                         is InterceptionResponse.AppIntent -> {
                             appRedirectUrl = lastLoadRequestUri
@@ -1682,6 +1810,7 @@ class GeckoEngineSession(
         geckoSession.historyDelegate = createHistoryDelegate()
         geckoSession.mediaSessionDelegate = GeckoMediaSessionDelegate(this)
         geckoSession.scrollDelegate = createScrollDelegate()
+        geckoSession.translationsSessionDelegate = GeckoTranslateSessionDelegate(this)
     }
 
     companion object {
@@ -1691,7 +1820,7 @@ class GeckoEngineSession(
         internal const val ABOUT_BLANK = "about:blank"
         internal const val JS_SCHEME = "javascript"
         internal val BLOCKED_SCHEMES =
-            listOf("content", "file", "resource", JS_SCHEME) // See 1684761 and 1684947
+            listOf("file", "resource", JS_SCHEME) // See 1684761 and 1684947
 
         /**
          * Provides an ErrorType corresponding to the error code provided.

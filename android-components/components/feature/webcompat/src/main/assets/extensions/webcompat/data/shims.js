@@ -321,20 +321,6 @@ const AVAILABLE_SHIMS = [
     onlyIfBlockedByETP: true,
   },
   {
-    id: "PBMWebAPIFixes",
-    platform: "all",
-    name: "Private Browsing Web APIs",
-    bug: "1773110",
-    runFirst: "private-browsing-web-api-fixes.js",
-    matches: [
-      "*://*.imgur.com/js/vendor.*.bundle.js",
-      "*://*.imgur.io/js/vendor.*.bundle.js",
-      "*://www.rva311.com/static/js/main.*.chunk.js",
-      "*://web-assets.toggl.com/app/assets/scripts/*.js", // bug 1783919
-    ],
-    onlyIfPrivateBrowsing: true,
-  },
-  {
     id: "Eluminate",
     platform: "all",
     name: "Eluminate",

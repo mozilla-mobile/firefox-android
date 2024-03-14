@@ -87,7 +87,6 @@ internal val sharedDiskCache = IconDiskCache()
  * @param generator The [IconGenerator] to generate an icon if no icon could be loaded.
  * @param decoders List of [ImageDecoder] instances to use when decoding a loaded icon into a [android.graphics.Bitmap].
  */
-@Suppress("LongParameterList")
 class BrowserIcons constructor(
     private val context: Context,
     httpClient: Client,
@@ -187,7 +186,7 @@ class BrowserIcons constructor(
      * Installs the "icons" extension in the engine in order to dynamically load icons for loaded websites.
      */
     fun install(engine: Engine, store: BrowserStore) {
-        engine.installWebExtension(
+        engine.installBuiltInWebExtension(
             id = "icons@mozac.org",
             url = "resource://android/assets/extensions/browser-icons/",
             onSuccess = { extension ->
@@ -195,7 +194,7 @@ class BrowserIcons constructor(
 
                 store.flowScoped { flow -> subscribeToUpdates(store, flow, extension) }
             },
-            onError = { _, throwable ->
+            onError = { throwable ->
                 Logger.error("Could not install browser-icons extension", throwable)
             },
         )
@@ -269,6 +268,7 @@ class BrowserIcons constructor(
      * via an in-memory cache is attempted first, followed by an asynchronous load as a fallback.
      *
      * @param url The URL of the website an icon should be loaded for.
+     * @param iconResource Optional [IconRequest.Resource] to load the icon from.
      * @param iconSize The preferred size of the icon that should be loaded.
      * @param isPrivate Whether this request for this icon came from a private session.
      * @param content The Composable content block to render the icon.
@@ -276,11 +276,13 @@ class BrowserIcons constructor(
     @Composable
     fun LoadableImage(
         url: String,
+        iconResource: IconRequest.Resource? = null,
         iconSize: IconRequest.Size = IconRequest.Size.DEFAULT,
         isPrivate: Boolean = false,
         content: @Composable IconLoaderScope.() -> Unit,
     ) {
-        val request = IconRequest(url, iconSize, emptyList(), null, isPrivate)
+        val iconResources = iconResource?.let { listOf(it) } ?: emptyList()
+        val request = IconRequest(url, iconSize, iconResources, null, isPrivate)
         val iconLoaderScope = remember(request) { InternalIconLoaderScope() }
 
         // Happy path: try to load icon synchronously from an in-memory cache.
@@ -460,7 +462,6 @@ private fun decodeBytes(
     return null
 }
 
-@Suppress("LongParameterList")
 private fun process(
     context: Context,
     processors: List<IconProcessor>,

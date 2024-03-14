@@ -54,7 +54,6 @@
     <string name="menu_remove_from_shortcuts">Verwijderen uit Snelkoppelingen</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Wat is er nieuw</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_about">Over</string>
     <string name="menu_help">Help</string>
@@ -85,10 +84,13 @@
          sharing an URL. -->
     <string name="share_dialog_title">Delen via</string>
 
-    <!-- While a browsing session is active (in the foreground or background) we will show a notification
-         so that the user doesn't forget about the website still being open. This text is shown in
-         the notification. Clicking the notification will have the same effect as clicking the "erase"
-         button in the application. -->
+    <string name="notification_erase_title_android_14">Navigatiegeschiedenis wissen?</string>
+    <string name="notification_erase_text_android_14" moz:RemovedIn="124" tools:ignore="UnusedResources">Tik op deze notificatie of sluit hem om uw navigatiegeschiedenis veilig te wissen.</string>
+
+    <!-- Text shown in the notification description that pops up to remind the user that a browsing session is active
+    for Android 14+. -->
+    <string name="notification_erase_text_android_14_1">Tik op deze notificatie of veeg er overheen om uw navigatiegeschiedenis veilig te wissen.</string>
+
     <string name="notification_erase_text">Navigatiegeschiedenis wissen</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->

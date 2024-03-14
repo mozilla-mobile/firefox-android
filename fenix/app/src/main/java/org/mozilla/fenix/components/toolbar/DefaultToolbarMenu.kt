@@ -42,7 +42,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.Settings
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
@@ -55,7 +54,7 @@ import org.mozilla.fenix.utils.Settings
  * @param pinnedSiteStorage Used to check if the current url is a pinned site.
  * @property isPinningSupported true if the launcher supports adding shortcuts.
  */
-@Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
+@Suppress("LargeClass", "TooManyFunctions")
 open class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
@@ -73,6 +72,7 @@ open class DefaultToolbarMenu(
 
     private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val shouldShowMenuToolbar = !IncompleteRedesignToolbarFeature(context.settings()).isEnabled
     private val shouldShowTopSites = context.settings().showTopSitesFeature
     private val accountManager = FenixAccountManager(context)
 
@@ -193,6 +193,15 @@ open class DefaultToolbarMenu(
     fun shouldShowReaderViewCustomization(): Boolean = selectedSession?.let {
         store.state.findTab(it.id)?.readerState?.active
     } ?: false
+
+    /**
+     * Should Translations menu item be visible?
+     */
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun shouldShowTranslations(): Boolean = selectedSession?.let {
+        store.state.translationEngine.isEngineSupported == true &&
+            FxNimbus.features.translations.value().mainFlowBrowserMenuEnabled
+    } ?: false
     // End of predicates //
 
     private val installToHomescreen = BrowserMenuHighlightableItem(
@@ -246,6 +255,14 @@ open class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
+    }
+
+    private val translationsItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_translations),
+        imageResource = R.drawable.mozac_ic_translate_24,
+        iconTintColorResource = primaryTextColor(),
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Translate)
     }
 
     private val desktopSiteItem = BrowserMenuImageSwitch(
@@ -395,7 +412,7 @@ open class DefaultToolbarMenu(
     val coreMenuItems by lazy {
         val menuItems =
             listOfNotNull(
-                if (shouldUseBottomToolbar) null else menuToolbar,
+                if (shouldUseBottomToolbar || !shouldShowMenuToolbar) null else menuToolbar,
                 newTabItem,
                 BrowserMenuDivider(),
                 bookmarksItem,
@@ -405,6 +422,7 @@ open class DefaultToolbarMenu(
                 syncMenuItem(),
                 BrowserMenuDivider(),
                 findInPageItem,
+                translationsItem.apply { visible = ::shouldShowTranslations },
                 desktopSiteItem,
                 openInRegularTabItem.apply { visible = ::shouldShowOpenInRegularTab },
                 customizeReaderView.apply { visible = ::shouldShowReaderViewCustomization },
@@ -420,7 +438,7 @@ open class DefaultToolbarMenu(
                 settingsItem,
                 if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
                 if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
-                if (shouldUseBottomToolbar) menuToolbar else null,
+                if (shouldUseBottomToolbar && shouldShowMenuToolbar) menuToolbar else null,
             )
 
         menuItems

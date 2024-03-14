@@ -20,10 +20,10 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
-import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.ui.widgets.VerticalSwipeRefreshLayout
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.components.toolbar.navbar.EngineViewClippingBehavior
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.utils.Settings
 
@@ -56,7 +56,10 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseBottomToolbar } returns false
         every { settings.shouldUseFixedTopToolbar } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
 
         verify { engineView.setDynamicToolbarMaxHeight(0) }
     }
@@ -66,7 +69,10 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseBottomToolbar } returns true
         every { settings.shouldUseFixedTopToolbar } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 13,
+        )
 
         verify { engineView.setDynamicToolbarMaxHeight(0) }
     }
@@ -76,7 +82,10 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseFixedTopToolbar } returns false
         every { settings.isDynamicToolbarEnabled } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
 
         verify { engineView.setDynamicToolbarMaxHeight(13) }
     }
@@ -86,23 +95,30 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseFixedTopToolbar } returns false
         every { settings.isDynamicToolbarEnabled } returns false
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
 
         verify { engineView.setDynamicToolbarMaxHeight(0) }
     }
 
     @Test
-    fun `initializeEngineView should set EngineViewBrowserToolbarBehavior when dynamic toolbar is enabled`() {
+    fun `initializeEngineView should set EngineViewClippingBehavior when dynamic toolbar is enabled`() {
         every { settings.shouldUseFixedTopToolbar } returns false
         every { settings.isDynamicToolbarEnabled } returns true
+        every { settings.enableIncompleteToolbarRedesign } returns true
         val params: CoordinatorLayout.LayoutParams = mockk(relaxed = true)
         every { params.behavior } returns mockk(relaxed = true)
         every { swipeRefreshLayout.layoutParams } returns params
-        val behavior = slot<EngineViewBrowserToolbarBehavior>()
+        val behavior = slot<EngineViewClippingBehavior>()
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
 
-        // EngineViewBrowserToolbarBehavior constructor parameters are not properties, we cannot check them.
+        // EngineViewClippingBehavior constructor parameters are not properties, we cannot check them.
         // Ensure just that the right behavior is set.
         verify { params.behavior = capture(behavior) }
     }
@@ -112,7 +128,10 @@ class BaseBrowserFragmentTest {
         every { settings.isDynamicToolbarEnabled } returns false
         every { settings.shouldUseBottomToolbar } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 0,
+            bottomToolbarHeight = 13,
+        )
 
         verify { (swipeRefreshLayout.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = 13 }
     }
@@ -122,7 +141,10 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseBottomToolbar } returns false
         every { settings.shouldUseFixedTopToolbar } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
 
         verify { (swipeRefreshLayout.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = 13 }
     }
@@ -132,7 +154,10 @@ class BaseBrowserFragmentTest {
         every { settings.shouldUseBottomToolbar } returns true
         every { settings.shouldUseFixedTopToolbar } returns true
 
-        fragment.initializeEngineView(13)
+        fragment.initializeEngineView(
+            topToolbarHeight = 0,
+            bottomToolbarHeight = 13,
+        )
 
         verify { (swipeRefreshLayout.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = 13 }
     }
@@ -198,6 +223,30 @@ class BaseBrowserFragmentTest {
 
             assertFalse(result)
         }
+    }
+
+    @Test
+    fun `WHEN initializeEngineView is called  THEN setDynamicToolbarMaxHeight sets max height to the engine view as a sum of two toolbars heights`() {
+        every { settings.shouldUseFixedTopToolbar } returns false
+        every { settings.isDynamicToolbarEnabled } returns true
+
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 0,
+        )
+        verify { engineView.setDynamicToolbarMaxHeight(13) }
+
+        fragment.initializeEngineView(
+            topToolbarHeight = 0,
+            bottomToolbarHeight = 13,
+        )
+        verify { engineView.setDynamicToolbarMaxHeight(13) }
+
+        fragment.initializeEngineView(
+            topToolbarHeight = 13,
+            bottomToolbarHeight = 13,
+        )
+        verify { engineView.setDynamicToolbarMaxHeight(26) }
     }
 }
 

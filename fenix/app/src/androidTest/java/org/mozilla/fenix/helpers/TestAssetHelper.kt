@@ -17,6 +17,7 @@ object TestAssetHelper {
     val waitingTime: Long = TimeUnit.SECONDS.toMillis(15)
     val waitingTimeLong = TimeUnit.SECONDS.toMillis(25)
     val waitingTimeShort: Long = TimeUnit.SECONDS.toMillis(3)
+    val waitingTimeVeryShort: Long = TimeUnit.SECONDS.toMillis(1)
 
     data class TestAsset(val url: Uri, val content: String, val title: String)
 
@@ -143,6 +144,12 @@ object TestAssetHelper {
 
     fun getStorageTestAsset(server: MockWebServer, pageAsset: String): TestAsset {
         val url = server.url("pages/$pageAsset").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
+    fun getGPCTestAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/global_privacy_control.html").toString().toUri()!!
 
         return TestAsset(url, "", "")
     }

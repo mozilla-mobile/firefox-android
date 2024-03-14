@@ -4,26 +4,25 @@
 
 package org.mozilla.fenix.messaging
 
-import android.content.Intent
 import mozilla.components.service.nimbus.messaging.Message
-import mozilla.components.service.nimbus.messaging.NimbusMessagingController
+import mozilla.components.service.nimbus.messaging.NimbusMessagingControllerInterface
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageClicked
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageDismissed
 
 /**
- * Handles default interactions with the ui of GleanPlumb messages.
+ * Handles default interactions with the ui of Nimbus Messaging messages.
  */
 class DefaultMessageController(
     private val appStore: AppStore,
-    private val messagingController: NimbusMessagingController,
+    private val messagingController: NimbusMessagingControllerInterface,
     private val homeActivity: HomeActivity,
 ) : MessageController {
 
     override fun onMessagePressed(message: Message) {
-        val actionUri = messagingController.processMessageActionToUri(message)
-        homeActivity.processIntent(Intent(Intent.ACTION_VIEW, actionUri))
+        val intent = messagingController.getIntentForMessage(message)
+        homeActivity.processIntent(intent)
 
         appStore.dispatch(MessageClicked(message))
     }

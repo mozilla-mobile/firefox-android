@@ -9,9 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.middleware.DefaultNetworkChecker
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckService
+import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckTelemetryService
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckVendorsService
 import org.mozilla.fenix.shopping.middleware.GetReviewQualityCheckSumoUrl
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
@@ -43,31 +45,32 @@ object ReviewQualityCheckMiddlewareProvider {
         scope: CoroutineScope,
     ): List<ReviewQualityCheckMiddleware> =
         listOf(
-            providePreferencesMiddleware(settings, browserStore, scope),
-            provideNetworkMiddleware(browserStore, appStore, context, scope),
+            providePreferencesMiddleware(settings, browserStore, appStore, scope),
+            provideNetworkMiddleware(browserStore, context, scope),
             provideNavigationMiddleware(TabsUseCases.SelectOrAddUseCase(browserStore), context),
-            provideTelemetryMiddleware(),
+            provideTelemetryMiddleware(browserStore, appStore, scope),
         )
 
     private fun providePreferencesMiddleware(
         settings: Settings,
         browserStore: BrowserStore,
+        appStore: AppStore,
         scope: CoroutineScope,
     ) = ReviewQualityCheckPreferencesMiddleware(
         reviewQualityCheckPreferences = DefaultReviewQualityCheckPreferences(settings),
         reviewQualityCheckVendorsService = DefaultReviewQualityCheckVendorsService(browserStore),
+        appStore = appStore,
+        shoppingExperienceFeature = DefaultShoppingExperienceFeature(),
         scope = scope,
     )
 
     private fun provideNetworkMiddleware(
         browserStore: BrowserStore,
-        appStore: AppStore,
         context: Context,
         scope: CoroutineScope,
     ) = ReviewQualityCheckNetworkMiddleware(
         reviewQualityCheckService = DefaultReviewQualityCheckService(browserStore),
         networkChecker = DefaultNetworkChecker(context),
-        appStore = appStore,
         scope = scope,
     )
 
@@ -79,5 +82,15 @@ object ReviewQualityCheckMiddlewareProvider {
         GetReviewQualityCheckSumoUrl(context),
     )
 
-    private fun provideTelemetryMiddleware() = ReviewQualityCheckTelemetryMiddleware()
+    private fun provideTelemetryMiddleware(
+        browserStore: BrowserStore,
+        appStore: AppStore,
+        scope: CoroutineScope,
+    ) =
+        ReviewQualityCheckTelemetryMiddleware(
+            telemetryService = DefaultReviewQualityCheckTelemetryService(browserStore),
+            browserStore = browserStore,
+            appStore = appStore,
+            scope = scope,
+        )
 }

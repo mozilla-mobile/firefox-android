@@ -48,7 +48,7 @@ open class ApkSizeTask : DefaultTask() {
     }
 
     private fun determineApkSizes(): Map<String, Long> {
-        val variantOutputPath = variantName?.removePrefix("fenix")?.toLowerCase()
+        val variantOutputPath = variantName?.removePrefix("fenix")?.lowercase()
         val basePath = listOf(
             "${project.projectDir}", "build", "outputs", "apk", "fenix", variantOutputPath
         ).joinToString(File.separator)
@@ -108,6 +108,11 @@ open class ApkSizeTask : DefaultTask() {
             suite.put("lowerIsBetter", true)
             suite.put("alertChangeType", "absolute")
             suite.put("alertThreshold", 1024 * 1024)
+
+            // Debug variants do not have alerts
+            if (variantName?.contains("debug", ignoreCase = true) == true) {
+                suite.put("shouldAlert", false)
+            }
 
             val subtests = JSONArray()
             apkSize.forEach { (apk, size) ->

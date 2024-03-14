@@ -113,20 +113,6 @@ const AVAILABLE_INJECTIONS = [
     customFunc: "noSniffFix",
   },
   {
-    id: "bug1570328",
-    platform: "android",
-    domain: "developer.apple.com",
-    bug: "1570328",
-    contentScripts: {
-      matches: ["*://developer.apple.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1570328-developer-apple.com-transform-scale.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1575000",
     platform: "all",
     domain: "apply.lloydsbank.co.uk",
@@ -200,20 +186,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1654877",
-    platform: "android",
-    domain: "preev.com",
-    bug: "1654877",
-    contentScripts: {
-      matches: ["*://preev.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1654877-preev.com-moz-appearance-fix.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1654907",
     platform: "android",
     domain: "reactine.ca",
@@ -228,24 +200,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1631811",
-    platform: "all",
-    domain: "datastudio.google.com",
-    bug: "1631811",
-    contentScripts: {
-      matches: [
-        "https://datastudio.google.com/embed/reporting/*",
-        "https://lookerstudio.google.com/embed/reporting/*",
-      ],
-      js: [
-        {
-          file: "injections/js/bug1631811-datastudio.google.com-indexedDB.js",
-        },
-      ],
-      allFrames: true,
-    },
-  },
-  {
     id: "bug1694470",
     platform: "android",
     domain: "m.myvidster.com",
@@ -257,29 +211,6 @@ const AVAILABLE_INJECTIONS = [
           file: "injections/css/bug1694470-myvidster.com-content-not-shown.css",
         },
       ],
-    },
-  },
-  {
-    id: "bug1731825",
-    platform: "desktop",
-    domain: "Office 365 email handling prompt",
-    bug: "1731825",
-    contentScripts: {
-      matches: [
-        "*://*.live.com/*",
-        "*://*.office.com/*",
-        "*://*.office365.com/*",
-        "*://*.office365.us/*",
-        "*://*.outlook.cn/*",
-        "*://*.outlook.com/*",
-        "*://*.sharepoint.com/*",
-      ],
-      js: [
-        {
-          file: "injections/js/bug1731825-office365-email-handling-prompt-autohide.js",
-        },
-      ],
-      allFrames: true,
     },
   },
   {
@@ -572,38 +503,31 @@ const AVAILABLE_INJECTIONS = [
     bug: "1784199",
     contentScripts: {
       matches: [
+        "*://*.7streetbrownstones.com/*", // #129553
         "*://*.aptsovation.com/*",
         "*://*.avanabayview.com/*", // #118617
         "*://*.breakpointeandcoronado.com/*", // #117735
+        "*://*.courtsatspringmill.com/*", // #128404
+        "*://*.fieldstoneamherst.com/*", // #132974
+        "*://*.gslbriarcreek.com/*", // #126401
+        "*://*.hpixeniatrails.com/*", // #131703
         "*://*.liveatlasathens.com/*", // #111189
         "*://*.liveobserverpark.com/*", // #105244
+        "*://*.liveupark.com/*", // #121083
         "*://*.midwayurban.com/*", // #116523
         "*://*.nhcalaska.com/*",
         "*://*.prospectportal.com/*", // #115206
         "*://*.securityproperties.com/*",
+        "*://*.thefoundryat41st.com/*", // #128994
         "*://*.theloftsorlando.com/*",
         "*://*.vanallenapartments.com/*", // #120056
-        "*://*.waterfordapartmentstulsa.com/*", // #125870
       ],
       css: [
         {
           file: "injections/css/bug1784199-entrata-platform-unsupported.css",
         },
       ],
-    },
-  },
-  {
-    id: "bug1795490",
-    platform: "android",
-    domain: "www.china-airlines.com",
-    bug: "1795490",
-    contentScripts: {
-      matches: ["*://www.china-airlines.com/*"],
-      js: [
-        {
-          file: "injections/js/bug1795490-www.china-airlines.com-undisable-date-fields-on-mobile.js",
-        },
-      ],
+      allFrames: true,
     },
   },
   {
@@ -635,20 +559,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1800000",
-    platform: "desktop",
-    domain: "www.honda.co.uk",
-    bug: "1800000",
-    contentScripts: {
-      matches: ["*://www.honda.co.uk/cars/book-a-service.html*"],
-      css: [
-        {
-          file: "injections/css/bug1800000-www.honda.co.uk-choose-dealer-button-fix.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1448747",
     platform: "android",
     domain: "FastClick breakage",
@@ -673,6 +583,8 @@ const AVAILABLE_INJECTIONS = [
         "*://torguard.net/*", // 120113
         "*://*.arcsivr.com/*", // 120716
         "*://drafthouse.com/*", // 126385
+        "*://*.lafoodbank.org/*", // 127006
+        "*://rutamayacoffee.com/*", // 129353
       ],
       js: [
         {
@@ -969,20 +881,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1841991",
-    platform: "all",
-    domain: "wilton.com",
-    bug: "1841991",
-    contentScripts: {
-      matches: ["*://*.wilton.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1841991-wilton.com-flexbox-painting-order.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1848711",
     platform: "android",
     domain: "vio.com",
@@ -1006,20 +904,6 @@ const AVAILABLE_INJECTIONS = [
       css: [
         {
           file: "injections/css/bug1848713-cleanrider.com-slider.css",
-        },
-      ],
-    },
-  },
-  {
-    id: "bug1848716",
-    platform: "desktop",
-    domain: "elal.com",
-    bug: "1848716",
-    contentScripts: {
-      matches: ["*://*.elal.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1848716-elal.com-unsupported-banner.css",
         },
       ],
     },
@@ -1104,6 +988,70 @@ const AVAILABLE_INJECTIONS = [
       js: [
         {
           file: "injections/js/bug1855071-www.meteoam.it.js",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1864564",
+    platform: "all",
+    domain: "Esri breakage",
+    bug: "1864564",
+    contentScripts: {
+      matches: [
+        "*://*.ncep.noaa.gov/*",
+        "*://*.northumberland.gov.uk/*",
+        "*://webmap.gis.gov.mo/*",
+      ],
+      js: [
+        {
+          file: "injections/js/bug1864564-esri-transfrom-names-shim.js",
+        },
+      ],
+      allFrames: true,
+    },
+  },
+  {
+    id: "bug1868345",
+    platform: "desktop",
+    domain: "tvmovie.de",
+    bug: "1868345",
+    contentScripts: {
+      matches: [
+        "*://www.tvmovie.de/tv/fernsehprogramm",
+        "*://www.tvmovie.de/tv/fernsehprogramm*",
+      ],
+      css: [
+        {
+          file: "injections/css/bug1868345-tvmovie.de-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1877346",
+    platform: "android",
+    domain: "offerup.com",
+    bug: "1877346",
+    contentScripts: {
+      matches: ["*://offerup.com/*"],
+      css: [
+        {
+          file: "injections/css/bug1877346-offerup.com-infinite-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1884842",
+    platform: "android",
+    domain: "foodora.cz",
+    bug: "1884842",
+    contentScripts: {
+      matches: ["*://*.foodora.cz/*"],
+      css: [
+        {
+          file: "injections/css/bug1884842-foodora.cz-height-fix.css",
         },
       ],
     },

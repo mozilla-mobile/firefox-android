@@ -52,7 +52,6 @@ import org.mozilla.focus.menu.browser.CustomTabMenu
 import org.mozilla.focus.nimbus.FocusNimbus
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.ui.theme.focusTypography
 import org.mozilla.focus.utils.ClickableSubstringLink
 
@@ -101,8 +100,6 @@ class BrowserToolbarIntegration(
         listener = {
             val openedTabs = store.state.tabs.size
             TabCount.eraseButtonTapped.record(TabCount.EraseButtonTappedExtra(openedTabs))
-
-            TelemetryWrapper.eraseEvent()
 
             eraseActionListener.invoke()
         },
@@ -185,7 +182,7 @@ class BrowserToolbarIntegration(
                 window = fragment.activity?.window,
                 menuItemIndex = menu.menuBuilder.items.size - 1,
                 closeListener = { fragment.closeCustomTab() },
-                updateToolbarBackground = true,
+                updateTheme = true,
                 forceActionButtonTinting = false,
             )
         }

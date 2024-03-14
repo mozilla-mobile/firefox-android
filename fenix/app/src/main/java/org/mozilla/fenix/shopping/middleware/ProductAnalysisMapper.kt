@@ -10,14 +10,15 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 
 /**
  * Maps [ProductAnalysis] to [ProductReviewState].
  */
-fun ProductAnalysis?.toProductReviewState(isInitialAnalysis: Boolean = true): ProductReviewState =
-    this?.toProductReview(isInitialAnalysis) ?: ProductReviewState.Error.GenericError
+fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
+    this?.toProductReview() ?: ProductReviewState.Error.GenericError
 
-private fun ProductAnalysis.toProductReview(isInitialAnalysis: Boolean): ProductReviewState =
+private fun ProductAnalysis.toProductReview(): ProductReviewState =
     if (pageNotSupported) {
         ProductReviewState.Error.UnsupportedProductTypeError
     } else if (productId == null) {
@@ -26,17 +27,19 @@ private fun ProductAnalysis.toProductReview(isInitialAnalysis: Boolean): Product
         } else {
             ProductReviewState.Error.GenericError
         }
+    } else if (deletedProductReported) {
+        ProductReviewState.Error.ProductAlreadyReported
+    } else if (deletedProduct) {
+        ProductReviewState.Error.ProductNotAvailable
+    } else if (notEnoughReviews && !needsAnalysis) {
+        ProductReviewState.Error.NotEnoughReviews
     } else {
         val mappedRating = adjustedRating?.toFloat()
         val mappedGrade = grade?.asEnumOrDefault<ReviewQualityCheckState.Grade>()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
         if (mappedGrade == null && mappedRating == null && mappedHighlights == null) {
-            if (isInitialAnalysis) {
-                ProductReviewState.NoAnalysisPresent()
-            } else {
-                ProductReviewState.Error.NotEnoughReviews
-            }
+            ProductReviewState.NoAnalysisPresent()
         } else {
             ProductReviewState.AnalysisPresent(
                 productId = productId!!,
@@ -44,15 +47,15 @@ private fun ProductAnalysis.toProductReview(isInitialAnalysis: Boolean): Product
                 analysisStatus = needsAnalysis.toAnalysisStatus(),
                 adjustedRating = mappedRating,
                 productUrl = analysisURL!!,
-                highlights = mappedHighlights,
+                highlightsInfo = mappedHighlights?.let { HighlightsInfo(it) },
             )
         }
     }
 
 private fun Boolean.toAnalysisStatus(): AnalysisStatus =
     when (this) {
-        true -> AnalysisStatus.NEEDS_ANALYSIS
-        false -> AnalysisStatus.UP_TO_DATE
+        true -> AnalysisStatus.NeedsAnalysis
+        false -> AnalysisStatus.UpToDate
     }
 
 private fun Highlight.toHighlights(): Map<HighlightType, List<String>>? =
@@ -69,7 +72,4 @@ private fun Highlight.highlightsForType(highlightType: HighlightType) =
         HighlightType.SHIPPING -> shipping
         HighlightType.PACKAGING_AND_APPEARANCE -> appearance
         HighlightType.COMPETITIVENESS -> competitiveness
-    }?.map { it.surroundWithQuotes() }
-
-private fun String.surroundWithQuotes(): String =
-    "\"$this\""
+    }

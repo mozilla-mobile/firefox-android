@@ -241,6 +241,16 @@ abstract class Settings {
      * Setting the HTTPS-Only mode for upgrading connections to HTTPS.
      */
     open var httpsOnlyMode: Engine.HttpsOnlyMode by UnsupportedSetting()
+
+    /**
+     * Setting to control whether Global Privacy Control isenabled.
+     */
+    open var globalPrivacyControlEnabled: Boolean by UnsupportedSetting()
+
+    /**
+     * Setting to control the email tracker blocking feature in the private browsing mode.
+     */
+    open var emailTrackerBlockingPrivateBrowsing: Boolean by UnsupportedSetting()
 }
 
 /**
@@ -279,6 +289,7 @@ data class DefaultSettings(
     override var clearColor: Int? = null,
     override var enterpriseRootsEnabled: Boolean = false,
     override var httpsOnlyMode: Engine.HttpsOnlyMode = Engine.HttpsOnlyMode.DISABLED,
+    override var globalPrivacyControlEnabled: Boolean = false,
     override var cookieBannerHandlingMode: CookieBannerHandlingMode = CookieBannerHandlingMode.DISABLED,
     override var cookieBannerHandlingModePrivateBrowsing: CookieBannerHandlingMode =
         CookieBannerHandlingMode.DISABLED,
@@ -289,6 +300,7 @@ data class DefaultSettings(
     override var queryParameterStrippingPrivateBrowsing: Boolean = false,
     override var queryParameterStrippingAllowList: String = "",
     override var queryParameterStrippingStripList: String = "",
+    override var emailTrackerBlockingPrivateBrowsing: Boolean = false,
 ) : Settings()
 
 class UnsupportedSetting<T> {

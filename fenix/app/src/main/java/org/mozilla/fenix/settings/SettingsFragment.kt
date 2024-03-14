@@ -36,6 +36,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
+import mozilla.components.feature.addons.ui.AddonFilePicker
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.ui.widgets.withCenterAlignedButtons
@@ -70,6 +71,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val args by navArgs<SettingsFragmentArgs>()
     private lateinit var accountUiView: AccountUiView
+    private lateinit var addonFilePicker: AddonFilePicker
     private val profilerViewModel: ProfilerViewModel by activityViewModels()
 
     @VisibleForTesting
@@ -106,6 +108,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             httpClient = requireComponents.core.client,
             updateFxAAllowDomesticChinaServerMenu = ::updateFxAAllowDomesticChinaServerMenu,
         )
+
+        addonFilePicker = AddonFilePicker(requireContext(), requireComponents.addonManager)
+        addonFilePicker.registerForResults(this)
 
         // It's important to update the account UI state in onCreate since that ensures we'll never
         // display an incorrect state in the UI. We take care to not also call it as part of onResume
@@ -231,7 +236,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         autofillPreference.title = if (settings.addressFeature) {
             getString(R.string.preferences_autofill)
         } else {
-            getString(R.string.preferences_credit_cards)
+            getString(R.string.preferences_credit_cards_2)
         }
 
         val openLinksInAppsSettingsPreference =
@@ -256,139 +261,112 @@ class SettingsFragment : PreferenceFragmentCompat() {
         recyclerView.isVerticalScrollBarEnabled = false
 
         val directions: NavDirections? = when (preference.key) {
+            /* Top level account preferences.
+            Note: Only ONE of these preferences is visible at a time. */
             resources.getString(R.string.pref_key_sign_in) -> {
                 SettingsMetrics.signIntoSync.add()
                 SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment(
                     entrypoint = FenixFxAEntryPoint.SettingsMenu,
                 )
             }
-            resources.getString(R.string.pref_key_tabs) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToTabsSettingsFragment()
-            }
-            resources.getString(R.string.pref_key_home) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToHomeSettingsFragment()
-            }
-            resources.getString(R.string.pref_key_search_settings) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
-            }
-            resources.getString(R.string.pref_key_tracking_protection_settings) -> {
-                TrackingProtection.etpSettings.record(NoExtras())
-                SettingsFragmentDirections.actionSettingsFragmentToTrackingProtectionFragment()
-            }
-            resources.getString(R.string.pref_key_site_permissions) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSitePermissionsFragment()
-            }
-            resources.getString(R.string.pref_key_private_browsing) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToPrivateBrowsingFragment()
-            }
-            resources.getString(R.string.pref_key_https_only_settings) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
-            }
-            resources.getString(R.string.pref_key_accessibility) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
-            }
-            resources.getString(R.string.pref_key_language) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToLocaleSettingsFragment()
-            }
-            resources.getString(R.string.pref_key_addons) -> {
-                Addons.openAddonsInSettings.record(mozilla.components.service.glean.private.NoExtras())
-                SettingsFragmentDirections.actionSettingsFragmentToAddonsFragment()
-            }
-            resources.getString(R.string.pref_key_open_links_in_apps) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToOpenLinksInAppsFragment()
-            }
-            resources.getString(R.string.pref_key_data_choices) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToDataChoicesFragment()
-            }
-            resources.getString(R.string.pref_key_sync_debug) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSyncDebugFragment()
-            }
-            resources.getString(R.string.pref_key_help) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                        requireContext(),
-                        SupportUtils.SumoTopic.HELP,
-                    ),
-                    newTab = true,
-                    from = BrowserDirection.FromSettings,
-                )
-                null
-            }
-            resources.getString(R.string.pref_key_rate) -> {
-                try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SupportUtils.RATE_APP_URL)))
-                } catch (e: ActivityNotFoundException) {
-                    // Device without the play store installed.
-                    // Opening the play store website.
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
-                        newTab = true,
-                        from = BrowserDirection.FromSettings,
-                    )
-                }
-                null
-            }
-            resources.getString(R.string.pref_key_passwords) -> {
-                SettingsMetrics.passwords.record()
-                SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
-            }
-            resources.getString(R.string.pref_key_credit_cards) -> {
-                SettingsMetrics.autofill.record()
-                SettingsFragmentDirections.actionSettingsFragmentToAutofillSettingFragment()
-            }
-            resources.getString(R.string.pref_key_about) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
-            }
+
             resources.getString(R.string.pref_key_account) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()
             }
+
             resources.getString(R.string.pref_key_account_auth_error) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccountProblemFragment(
                     entrypoint = FenixFxAEntryPoint.SettingsMenu,
                 )
             }
+
+            /* General preferences */
+            resources.getString(R.string.pref_key_search_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
+            }
+
+            resources.getString(R.string.pref_key_tabs) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToTabsSettingsFragment()
+            }
+
+            resources.getString(R.string.pref_key_home) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToHomeSettingsFragment()
+            }
+
+            resources.getString(R.string.pref_key_customize) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToCustomizationFragment()
+            }
+
+            resources.getString(R.string.pref_key_passwords) -> {
+                SettingsMetrics.passwords.record()
+                SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
+            }
+
+            resources.getString(R.string.pref_key_credit_cards) -> {
+                SettingsMetrics.autofill.record()
+                SettingsFragmentDirections.actionSettingsFragmentToAutofillSettingFragment()
+            }
+
+            resources.getString(R.string.pref_key_accessibility) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
+            }
+
+            resources.getString(R.string.pref_key_language) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToLocaleSettingsFragment()
+            }
+
+            /* Privacy and security preferences */
+            resources.getString(R.string.pref_key_private_browsing) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToPrivateBrowsingFragment()
+            }
+
+            resources.getString(R.string.pref_key_https_only_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
+            }
+
+            resources.getString(R.string.pref_key_tracking_protection_settings) -> {
+                TrackingProtection.etpSettings.record(NoExtras())
+                SettingsFragmentDirections.actionSettingsFragmentToTrackingProtectionFragment()
+            }
+
+            resources.getString(R.string.pref_key_site_permissions) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSitePermissionsFragment()
+            }
+
             resources.getString(R.string.pref_key_delete_browsing_data) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataFragment()
             }
+
             resources.getString(R.string.pref_key_delete_browsing_data_on_quit_preference) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataOnQuitFragment()
             }
+
             resources.getString(R.string.pref_key_notifications) -> {
                 context?.navigateToNotificationsSettings {}
                 null
             }
-            resources.getString(R.string.pref_key_customize) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToCustomizationFragment()
+
+            resources.getString(R.string.pref_key_data_choices) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToDataChoicesFragment()
             }
-            resources.getString(R.string.pref_key_privacy_link) -> {
-                val intent = SupportUtils.createCustomTabIntent(
-                    requireContext(),
-                    SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-                )
-                startActivity(intent)
+
+            /* Advanced preferences */
+            resources.getString(R.string.pref_key_addons) -> {
+                Addons.openAddonsInSettings.record(mozilla.components.service.glean.private.NoExtras())
+                SettingsFragmentDirections.actionSettingsFragmentToAddonsFragment()
+            }
+
+            // Only displayed when secret settings are enabled
+            resources.getString(R.string.pref_key_install_local_addon) -> {
+                addonFilePicker.launch()
                 null
             }
-            resources.getString(R.string.pref_key_your_rights) -> {
-                val context = requireContext()
-                val intent = SupportUtils.createCustomTabIntent(
-                    context,
-                    SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.YOUR_RIGHTS),
-                )
-                startActivity(intent)
-                null
-            }
-            resources.getString(R.string.pref_key_debug_settings) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
-            }
-            resources.getString(R.string.pref_key_secret_debug_info) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSecretInfoSettingsFragment()
-            }
-            resources.getString(R.string.pref_key_nimbus_experiments) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToNimbusExperimentsFragment()
-            }
+
+            // Only displayed when secret settings are enabled
             resources.getString(R.string.pref_key_override_amo_collection) -> {
                 val context = requireContext()
-                val dialogView = LayoutInflater.from(context).inflate(R.layout.amo_collection_override_dialog, null)
+                val dialogView = LayoutInflater.from(context)
+                    .inflate(R.layout.amo_collection_override_dialog, null)
 
                 val binding = AmoCollectionOverrideDialogBinding.bind(dialogView)
                 AlertDialog.Builder(context).apply {
@@ -400,7 +378,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                     setPositiveButton(R.string.customize_addon_collection_ok) { _, _ ->
                         context.settings().overrideAmoUser = binding.customAmoUser.text.toString()
-                        context.settings().overrideAmoCollection = binding.customAmoCollection.text.toString()
+                        context.settings().overrideAmoCollection =
+                            binding.customAmoCollection.text.toString()
 
                         Toast.makeText(
                             context,
@@ -425,6 +404,51 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                 null
             }
+
+            resources.getString(R.string.pref_key_open_links_in_apps) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToOpenLinksInAppsFragment()
+            }
+
+            resources.getString(R.string.pref_key_sync_debug) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSyncDebugFragment()
+            }
+
+            /* About preferences */
+            resources.getString(R.string.pref_key_rate) -> {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SupportUtils.RATE_APP_URL)))
+                } catch (e: ActivityNotFoundException) {
+                    // Device without the play store installed.
+                    // Opening the play store website.
+                    (activity as HomeActivity).openToBrowserAndLoad(
+                        searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
+                        newTab = true,
+                        from = BrowserDirection.FromSettings,
+                    )
+                }
+                null
+            }
+
+            resources.getString(R.string.pref_key_about) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
+            }
+
+            // Only displayed when secret settings are enabled
+            resources.getString(R.string.pref_key_debug_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
+            }
+
+            // Only displayed when secret settings are enabled
+            resources.getString(R.string.pref_key_secret_debug_info) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSecretInfoSettingsFragment()
+            }
+
+            // Only displayed when secret settings are enabled
+            resources.getString(R.string.pref_key_nimbus_experiments) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToNimbusExperimentsFragment()
+            }
+
+            // Only displayed when secret settings are enabled
             resources.getString(R.string.pref_key_start_profiler) -> {
                 if (profilerViewModel.getProfilerState().value == true) {
                     SettingsFragmentDirections.actionSettingsFragmentToStopProfilerDialog()
@@ -432,6 +456,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     SettingsFragmentDirections.actionSettingsFragmentToStartProfilerDialog()
                 }
             }
+
             else -> null
         }
         directions?.let { navigateFromSettings(directions) }
@@ -488,6 +513,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 (requireContext().components.core.engine.profiler?.isProfilerActive() != null)
         }
         setupCookieBannerPreference()
+        setupInstallAddonFromFilePreference(requireContext().settings())
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupGeckoLogsPreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
@@ -695,6 +721,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     return super.onPreferenceChange(preference, newValue)
                 }
             }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun setupInstallAddonFromFilePreference(settings: Settings) {
+        with(requirePreference<Preference>(R.string.pref_key_install_local_addon)) {
+            // Below Android 10, the OS doesn't seem to recognize
+            // the "application/x-xpinstall" mime type (for XPI files).
+            isVisible =
+                settings.showSecretDebugMenuThisSession && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         }
     }
 

@@ -14,12 +14,19 @@ import java.net.URISyntaxException
 private const val AMAZON_COM = "amazon.com"
 private const val BEST_BUY_COM = "bestbuy.com"
 private const val WALMART_COM = "walmart.com"
+private const val AMAZON_DE = "amazon.de"
+private const val AMAZON_FR = "amazon.fr"
 private val defaultVendorsList = enumValues<ProductVendor>().toList()
 
 /**
  * Service for getting the list of product vendors.
  */
 interface ReviewQualityCheckVendorsService {
+
+    /**
+     * Returns the selected tab url.
+     */
+    fun selectedTabUrl(): String?
 
     /**
      * Returns the list of product vendors in order.
@@ -37,8 +44,11 @@ class DefaultReviewQualityCheckVendorsService(
     private val browserStore: BrowserStore,
 ) : ReviewQualityCheckVendorsService {
 
+    override fun selectedTabUrl(): String? =
+        browserStore.state.selectedTab?.content?.url
+
     override fun productVendors(): List<ProductVendor> {
-        val selectedTabUrl = browserStore.state.selectedTab?.content?.url
+        val selectedTabUrl = selectedTabUrl()
 
         return if (selectedTabUrl == null) {
             defaultVendorsList
@@ -49,6 +59,7 @@ class DefaultReviewQualityCheckVendorsService(
                 host.contains(AMAZON_COM) -> createProductVendorsList(ProductVendor.AMAZON)
                 host.contains(BEST_BUY_COM) -> createProductVendorsList(ProductVendor.BEST_BUY)
                 host.contains(WALMART_COM) -> createProductVendorsList(ProductVendor.WALMART)
+                host.contains(AMAZON_DE) || host.contains(AMAZON_FR) -> listOf(ProductVendor.AMAZON)
                 else -> defaultVendorsList
             }
         }

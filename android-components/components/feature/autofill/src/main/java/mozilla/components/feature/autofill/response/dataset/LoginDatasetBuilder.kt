@@ -47,10 +47,14 @@ internal data class LoginDatasetBuilder(
     ): Dataset {
         val dataset = Dataset.Builder()
 
+        val attributionIntent = Intent().apply {
+            `package` = context.packageName
+        }
+
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
-            Intent(),
+            attributionIntent,
             PendingIntentUtils.defaultFlags or PendingIntent.FLAG_CANCEL_CURRENT,
         )
 
@@ -100,9 +104,7 @@ internal data class LoginDatasetBuilder(
 }
 
 internal fun Login.usernamePresentationOrFallback(context: Context): String {
-    return if (username.isNotEmpty()) {
-        username
-    } else {
+    return username.ifEmpty {
         context.getString(mozilla.components.feature.autofill.R.string.mozac_feature_autofill_popup_no_username)
     }
 }

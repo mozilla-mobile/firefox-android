@@ -5,16 +5,11 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.assertExternalAppOpens
-import org.mozilla.fenix.helpers.AppAndSystemHelper.clearDownloadsFolder
 import org.mozilla.fenix.helpers.AppAndSystemHelper.deleteDownloadedFileOnStorage
 import org.mozilla.fenix.helpers.AppAndSystemHelper.setNetworkEnabled
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
@@ -25,6 +20,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.downloadRobot
@@ -40,43 +36,13 @@ import org.mozilla.fenix.ui.robots.notificationShade
  *  - Verifies download notification and actions
  *  - Verifies managing downloads inside the Downloads listing.
  **/
-class DownloadTest {
-    private lateinit var mockWebServer: MockWebServer
-
+class DownloadTest : TestSetup() {
     /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
     private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
     private var downloadFile: String = ""
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
-
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-
-        // clear all existing notifications
-        notificationShade {
-            mDevice.openNotification()
-            clearNotifications()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        notificationShade {
-            cancelAllShownNotifications()
-        }
-
-        mockWebServer.shutdown()
-
-        setNetworkEnabled(enabled = true)
-
-        // Check and clear the downloads folder
-        clearDownloadsFolder()
-    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243844
     @Test
@@ -137,7 +103,7 @@ class DownloadTest {
     @Test
     fun pauseResumeCancelDownloadTest() {
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         mDevice.openNotification()
         notificationShade {
@@ -147,7 +113,7 @@ class DownloadTest {
             verifySystemNotificationExists("Download paused")
             clickDownloadNotificationControlButton("RESUME")
             clickDownloadNotificationControlButton("CANCEL")
-            verifySystemNotificationDoesNotExist("1GB.zip")
+            verifySystemNotificationDoesNotExist("3GB.zip")
             mDevice.pressBack()
         }
         browserScreen {
@@ -201,7 +167,7 @@ class DownloadTest {
         downloadRobot {
             openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = firstDownloadedFile)
             verifyDownloadedFileName(firstDownloadedFile)
-        }.closeCompletedDownloadPrompt {
+        }.closeDownloadPrompt {
         }.clickDownloadLink(secondDownloadedFile) {
             verifyDownloadPrompt(secondDownloadedFile)
         }.clickDownload {
@@ -260,11 +226,10 @@ class DownloadTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/457112
-    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1840994")
     @Test
     fun systemNotificationCantBeDismissedWhileInProgressTest() {
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openNotificationShade {
@@ -278,6 +243,7 @@ class DownloadTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2299297
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1842154")
     @Test
     fun notificationCanBeDismissedIfDownloadIsInterruptedTest() {
         downloadRobot {
@@ -288,8 +254,8 @@ class DownloadTest {
 
         browserScreen {
         }.openNotificationShade {
-            verifySystemNotificationExists("Download failed")
             expandNotificationMessage()
+            verifySystemNotificationExists("Download failed")
             swipeDownloadNotification("Left", true)
             verifySystemNotificationDoesNotExist("Firefox Fenix")
         }.closeNotificationTray {}
@@ -306,7 +272,7 @@ class DownloadTest {
         homeScreen {
         }.togglePrivateBrowsingMode()
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openTabDrawer {
@@ -326,7 +292,7 @@ class DownloadTest {
         homeScreen {
         }.togglePrivateBrowsingMode()
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openTabDrawer {
@@ -367,7 +333,7 @@ class DownloadTest {
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244125
     @Test
     fun restartDownloadFromAppNotificationAfterConnectionIsInterruptedTest() {
-        downloadFile = "1GB.zip"
+        downloadFile = "3GB.zip"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {

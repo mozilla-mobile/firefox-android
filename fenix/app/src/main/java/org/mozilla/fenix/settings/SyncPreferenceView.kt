@@ -15,7 +15,7 @@ import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 
 /**
- * A view to help manage the sync preference in the "Logins and passwords" and "Credit cards"
+ * A view to help manage the sync preference in the "Passwords" and "Payment Methods"
  * settings. The provided [syncPreference] is used to navigate to the different fragments
  * that manages the sync account authentication. A toggle will be also added
  * depending on the sync account status.
@@ -30,7 +30,6 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
  * @param onReconnectClicked A callback executed when the [syncPreference] is clicked with a
  * preference status of "Reconnect".
  */
-@Suppress("LongParameterList")
 class SyncPreferenceView(
     private val syncPreference: SyncPreference,
     lifecycleOwner: LifecycleOwner,

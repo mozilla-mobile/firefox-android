@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.appstate
 
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
@@ -15,6 +16,7 @@ import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.browser.StandardSnackbarError
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -24,6 +26,7 @@ import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.library.history.PendingDeletionHistory
 import org.mozilla.fenix.messaging.MessagingState
+import org.mozilla.fenix.search.SearchDialogFragment
 import org.mozilla.fenix.wallpapers.Wallpaper
 
 /**
@@ -36,6 +39,11 @@ sealed class AppAction : Action {
      * Updates whether the first frame of the homescreen has been [drawn].
      */
     data class UpdateFirstFrameDrawn(val drawn: Boolean) : AppAction()
+
+    /**
+     * Updates whether the [SearchDialogFragment] is visible.
+     */
+    data class UpdateSearchDialogVisibility(val isVisible: Boolean) : AppAction()
     data class AddNonFatalCrash(val crash: NativeCodeCrash) : AppAction()
     data class RemoveNonFatalCrash(val crash: NativeCodeCrash) : AppAction()
     object RemoveAllNonFatalCrashes : AppAction()
@@ -126,6 +134,13 @@ sealed class AppAction : Action {
      * from the recent synced tabs list.
      */
     data class RemoveRecentSyncedTab(val syncedTab: RecentSyncedTab) : AppAction()
+
+    /**
+     * Action indicating that the selected tab has been changed.
+     *
+     * @property tab The tab that has been selected.
+     */
+    data class SelectedTabChanged(val tab: TabSessionState) : AppAction()
 
     /**
      * [Action]s related to interactions with the Messaging Framework.
@@ -228,14 +243,46 @@ sealed class AppAction : Action {
         data class ShoppingSheetStateUpdated(val expanded: Boolean) : ShoppingAction()
 
         /**
-         * [ShoppingAction] used to add a product to a set of products that are being analysed.
+         * [ShoppingAction] used to update the expansion state of the highlights card.
          */
-        data class AddToProductAnalysed(val productPageUrl: String) : ShoppingAction()
+        data class HighlightsCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
 
         /**
-         * [ShoppingAction] used to remove a product from the set of products that are being
-         * analysed.
+         * [ShoppingAction] used to update the expansion state of the info card.
          */
-        data class RemoveFromProductAnalysed(val productPageUrl: String) : ShoppingAction()
+        data class InfoCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the expansion state of the settings card.
+         */
+        data class SettingsCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the recorded product recommendation impressions set.
+         */
+        data class ProductRecommendationImpression(
+            val key: ShoppingState.ProductRecommendationImpressionKey,
+        ) : ShoppingAction()
+    }
+
+    /**
+     * [AppAction]s related to the tab strip.
+     */
+    sealed class TabStripAction : AppAction() {
+
+        /**
+         * [TabStripAction] used to update whether the last remaining tab that was closed was private.
+         * Null means the state should reset and no snackbar should be shown.
+         */
+        data class UpdateLastTabClosed(val private: Boolean?) : TabStripAction()
     }
 }

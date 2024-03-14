@@ -76,11 +76,6 @@
         private mode in our new Total Private Browsing mode.
         The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
         The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
-    <string name="felt_privacy_info_card_subtitle" moz:removedIn="120" tools:ignore="UnusedResources">%1$s löscht Ihre Cookies, Chronik und Website-Daten, wenn Sie alle Ihre privaten Fenster schließen. %2$s</string>
-    <!-- Explanation for private browsing displayed to users on home view when they first enable
-        private mode in our new Total Private Browsing mode.
-        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
-        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
     <string name="felt_privacy_info_card_subtitle_2">%1$s löscht Ihre Cookies, Chronik und Website-Daten, wenn Sie alle Ihre privaten Tabs schließen. %2$s</string>
     <!-- Clickable portion of the explanation for private browsing that links the user to our
         about privacy page.
@@ -219,6 +214,8 @@
     <string name="resync_button_content_description">Neu synchronisieren</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Seite durchsuchen</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">Seite übersetzen</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">In Sammlung speichern</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -250,6 +247,7 @@
 
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Startbildschirm anpassen</string>
+
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Startbildschirm</string>
@@ -257,6 +255,14 @@
     <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
          history and go back to the home screen. -->
     <string name="browser_toolbar_erase">Browser-Chronik löschen</string>
+    <!-- Content description for the translate page toolbar button that opens the translations dialog when no translation has occurred. -->
+    <string name="browser_toolbar_translate">Seite übersetzen</string>
+
+    <!-- Content description (not visible, for screen readers etc.) for the translate page toolbar button that opens the translations dialog when the page is translated successfully.
+         The first parameter is the name of the language that is displayed in the original page. (For example: English)
+         The second parameter is the name of the language which the page was translated to. (For example: French) -->
+    <string name="browser_toolbar_translated_successfully">Seite von %1$s in %2$s übersetzt.</string>
+
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Gewählte Sprache</string>
@@ -268,8 +274,6 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Scannen</string>
-    <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Suchmaschine</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Suchmaschinen-Einstellungen</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -282,7 +286,7 @@
     <!-- Search suggestion onboarding hint title text -->
     <string name="search_suggestions_onboarding_title">Suchvorschläge in privaten Sitzungen erlauben?</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
-    <string name="search_suggestions_onboarding_text">%s übermittelt Ihre Eingaben in die Adressleiste an Ihre Standard-Suchmaschine.</string>
+    <string name="search_suggestions_onboarding_text">%s übermittelt Ihre Eingaben in die Adressleiste an Ihre Standardsuchmaschine.</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">Suchen mit %s</string>
@@ -325,39 +329,44 @@
     <!-- Notification pre-permission dialog -->
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_title">Benachrichtigungen helfen Ihnen, mehr aus %s zu machen</string>
+    <string name="onboarding_home_enable_notifications_title" moz:removedIn="124" tools:ignore="UnusedResources">Benachrichtigungen helfen Ihnen, mehr aus %s zu machen</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_description">Synchronisieren Sie Ihre Tabs zwischen Geräten, verwalten Sie Downloads, erhalten Sie Tipps, wie Sie den Datenschutz von %s am besten nutzen können, und mehr.</string>
+    <string name="onboarding_home_enable_notifications_description" moz:removedIn="124" tools:ignore="UnusedResources">Synchronisieren Sie Ihre Tabs zwischen Geräten, verwalten Sie Downloads, erhalten Sie Tipps, wie Sie den Datenschutz von %s am besten nutzen können, und mehr.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="onboarding_home_enable_notifications_positive_button">Fortsetzen</string>
+    <string name="onboarding_home_enable_notifications_positive_button" moz:removedIn="124" tools:ignore="UnusedResources">Fortsetzen</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
-    <string name="onboarding_home_enable_notifications_negative_button">Nicht jetzt</string>
+    <string name="onboarding_home_enable_notifications_negative_button" moz:removedIn="124" tools:ignore="UnusedResources">Nicht jetzt</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
-    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
-        Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Machen Sie Firefox zu Ihrem Browser Nr. 1.</string>
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Firefox-Datenschutzhinweis</string>
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text_2" moz:removedIn="125" tools:ignore="UnusedResources">Weitere Informationen finden Sie in unserem Datenschutzhinweis</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Wir schützen Sie gerne</string>
-    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Firefox stellt Menschen über Gewinne und schützt Ihre Privatsphäre, indem er websiteübergreifende Tracker blockiert.\n\nErfahren Sie mehr in unserem Datenschutzhinweis.</string>
+    <string name="juno_onboarding_default_browser_title_nimbus_3" tools:ignore="UnusedResources">Erfahren Sie, warum Millionen Firefox lieben</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_4" tools:ignore="UnusedResources">Sicheres Surfen mit mehr Auswahl</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Unser gemeinnütziger Browser verhindert, dass Unternehmen heimlich Ihre Aktivitäten im Internet verfolgen.\n\nWeitere Informationen finden Sie in unserem Datenschutzhinweis.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Unser gemeinnütziger Browser verhindert, dass Unternehmen heimlich Ihre Aktivitäten im Internet verfolgen.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_4" tools:ignore="UnusedResources">Mehr als 100 Millionen Menschen schützen ihre Privatsphäre, indem sie einen Browser wählen, der von einer gemeinnützigen Organisation unterstützt wird.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_5" tools:ignore="UnusedResources">Bekannte Elemente zur Aktivitätenverfolgung? Automatisch blockiert. Erweiterungen? Alle 700 PDFs ausprobieren? Unser eingebautes Lesezeichen macht sie einfach zu verwalten.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Unser gemeinnütziger Browser verhindert, dass Unternehmen heimlich Ihre Aktivitäten im Internet verfolgen.\n\nWeitere Informationen finden Sie in unserem Datenschutzhinweis.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">Datenschutzhinweis</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">Datenschutzhinweis</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Als Standardbrowser festlegen</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Nicht jetzt</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title" moz:removedIn="120" tools:ignore="UnusedResources">Wechseln Sie vom Handy zum Laptop und zurück</string>
-    <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title_2">Verschlüsseln Sie ihre Daten, wenn Sie geräteübergreifend arbeiten</string>
-    <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" moz:removedIn="120" tools:ignore="UnusedResources">Holen Sie sich die Tabs und Passwörter von Ihren anderen Geräten, um dort weiterzumachen, wo Sie aufgehört haben.</string>
+    <string name="juno_onboarding_sign_in_title_2">Verschlüsseln Sie Ihre Daten, wenn Sie geräteübergreifend arbeiten</string>
     <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
      Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_sign_in_description_2">Wenn Sie angemeldet sind und Ihre Daten synchronisieren, sind Sie sicherer. Firefox verschlüsselt Ihre Passwörter, Lesezeichen und mehr.</string>
@@ -367,13 +376,7 @@
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Nicht jetzt</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_enable_notifications_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Benachrichtigungen helfen Ihnen, mehr aus Firefox zu machen</string>
-    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
-        Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus_2">Benachrichtigungen helfen Ihnen, Firefox noch sicherer zu machen</string>
-    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
-       Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_enable_notifications_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Versenden Sie Tabs zwischen Geräten, verwalten Sie Downloads und erhalten Sie Tipps zur optimalen Nutzung von Firefox.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_description_nimbus_2">Versenden Sie Tabs sicher zwischen Ihren Geräten und entdecken Sie andere Datenschutzfunktionen in Firefox.</string>
@@ -416,8 +419,6 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">Eine Option auswählen</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" moz:removedIn="120" tools:ignore="UnusedResources">Kürzel für die Suche verwalten</string>
-    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts_2">Alternative Suchmaschinen verwalten</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts_summary">Im Suchmenü sichtbare Suchmaschinen bearbeiten</string>
@@ -431,8 +432,6 @@
     <string name="preferences_search_engines">Suchmaschinen</string>
     <!-- Preference for settings related to Search engines suggestions-->
     <string name="preferences_search_engines_suggestions">Vorschläge von Suchmaschinen</string>
-    <!-- Preference for settings related to Search address bar -->
-    <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">Adressleiste</string>
     <!-- Preference Category for settings related to Search address bar -->
     <string name="preferences_settings_address_bar">Einstellungen der Adressleiste</string>
     <!-- Preference Category for settings to Firefox Suggest -->
@@ -465,17 +464,11 @@
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Nur-HTTPS-Modus</string>
 
-    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">Reduzierung von Cookie-Bannern</string>
-    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">Cookie-Banner reduzieren</string>
-    <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">Aus</string>
-    <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">Ein</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">Cookie-Banner-Blocker</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Cookie-Banner-Blocker im privaten Modus</string>
 
-    <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">%1$s versucht automatisch, Cookie-Anforderungen auf Cookie-Bannern abzulehnen.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Für diese Website deaktiviert</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -493,27 +486,21 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Website derzeit nicht unterstützt</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">Cookie-Banner-Reduzierung für %1$s aktivieren?</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Cookie-Banner-Blocker für %1$s aktivieren?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">Cookie-Banner-Reduzierung für %1$s deaktivieren?</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Cookie-Banner-Blocker für %1$s deaktivieren?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s kann Cookie-Anfragen auf dieser Website nicht automatisch ablehnen. Sie können eine Anfrage senden, um diese Website in Zukunft zu unterstützen.</string>
+
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s löscht die Cookies dieser Webseite und aktualisiert die Seite. Das Löschen aller Cookies kann Sie abmelden oder Warenkörbe leeren.</string>
-
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Beim Deaktivieren löscht %1$s die Cookies und lädt die Website neu. Dies kann Sie abmelden oder Warenkörbe leeren.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s versucht, alle Cookie-Anfragen auf unterstützten Websites automatisch abzulehnen.</string>
-    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s erlauben, Cookie-Banner abzulehnen?</string>
-    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s kann viele Cookie-Banner-Anfragen automatisch ablehnen.</string>
-    <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Nicht jetzt</string>
-    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Sie sehen weniger Cookie-Anfragen</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Wenn dies aktiviert ist, wird %1$s versuchen, alle Cookie-Banner auf dieser Website automatisch abzulehnen.</string>
 
-    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Erlauben</string>
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">%1$s hat Cookies für Sie abgelehnt</string>
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">Weniger Ablenkungen, weniger Cookies, die Sie auf dieser Website verfolgen.</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Automatisch versuchen, eine Verbindung zu Websites herzustellen, die das HTTPS-Verschlüsselungsprotokoll verwenden, um die Sicherheit zu erhöhen.</string>
@@ -537,14 +524,10 @@
     <string name="errorpage_httpsonly_message_summary">Möglicherweise handelt es sich aber auch um einen Angriff. Wenn Sie die Website trotzdem besuchen, sollten Sie keine sensiblen Informationen eingeben. Wenn Sie fortfahren, wird der Nur-HTTPS-Modus vorübergehend für die Webseite deaktiviert.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Barrierefreiheit</string>
-    <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Benutzerdefinierter Firefox-Kontoserver</string>
     <!-- Preference to override the Mozilla account server -->
     <string name="preferences_override_account_server">Benutzerdefinierter Mozilla-Kontoserver</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Benutzerdefinierter Sync-Server</string>
-    <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">Server für Firefox-Konto/Sync geändert. Anwendung wird beendet, um Änderungen zu übernehmen…</string>
     <!-- Toast shown after updating the Mozilla account/Sync server override preferences -->
     <string name="toast_override_account_sync_server_done">Server für Mozilla-Konto/Sync geändert. Anwendung wird beendet, um Änderungen zu übernehmen…</string>
     <!-- Preference category for account information -->
@@ -562,8 +545,6 @@
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Melden Sie sich an, um Tabs, Lesezeichen, Passwörter und mehr zu synchronisieren.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Firefox-Konto</string>
-    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name_2">Mozilla-Konto</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Stellen Sie die Verbindung erneut her, um die Synchronisierung fortzusetzen</string>
@@ -575,8 +556,6 @@
     <string name="preferences_data_collection">Datenerhebung</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Externes Debugging über USB</string>
-    <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Suchmaschinen anzeigen</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Suchvorschläge anzeigen</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -625,6 +604,8 @@
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
 
+    <!-- Preference for installing a local add-on -->
+    <string name="preferences_install_local_addon">Add-on aus Datei installieren</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Benachrichtigungen</string>
 
@@ -706,12 +687,6 @@
     <!-- Button text of the Nimbus message for add-ons general availability. -->
     <string name="addon_ga_message_button" tools:ignore="UnusedResources">Entdecken Sie weitere Add-ons</string>
 
-    <!-- Add-on Installation from AMO-->
-    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Add-on wird nicht unterstützt</string>
-    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Add-on ist bereits installiert</string>
-
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
     <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Add-ons sind temporär deaktiviert</string>
@@ -737,7 +712,9 @@
     <!-- Preference for syncing bookmarks -->
     <string name="preferences_sync_bookmarks">Lesezeichen</string>
     <!-- Preference for syncing logins -->
-    <string name="preferences_sync_logins">Zugangsdaten</string>
+    <string name="preferences_sync_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2">Passwörter</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Offene Tabs</string>
     <!-- Preference for signing out -->
@@ -763,7 +740,9 @@
     <string name="default_device_name_2">%1$s auf %2$s %3$s</string>
 
     <!-- Preference for syncing credit cards -->
-    <string name="preferences_sync_credit_cards">Kreditkarten</string>
+    <string name="preferences_sync_credit_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Kreditkarten</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2">Zahlungsmethoden</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Adressen</string>
 
@@ -1323,8 +1302,6 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Schließen</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Drucken nicht möglich</string>
-    <!-- Text for error message when printing a page and it fails. -->
     <string name="unable_to_print_page_error">Seite kann nicht gedruckt werden</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Drucken</string>
@@ -1370,6 +1347,11 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Private Tabs schließen</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">Private Tabs schließen?</string>
+    <string name="notification_erase_text_android_14">Tippen oder wischen Sie auf diese Benachrichtigung, um private Tabs zu schließen.</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Marketing</string>
 
@@ -1612,6 +1594,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Alle Cookies (einige Websites funktionieren dann nicht mehr)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_5">Seitenübergreifende Cookies</string>
+    <!-- Preference for Global Privacy Control for the custom privacy settings for Global Privacy Control. '&amp;' is replaced with the ampersand symbol: &-->
+    <string name="preference_enhanced_tracking_protection_custom_global_privacy_control">Websites anweisen, meine Daten nicht zu verkaufen oder weiterzugeben</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Inhalte zur Aktivitätenverfolgung</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1726,9 +1710,13 @@
     <string name="add_to_homescreen_description_2">Sie können diese Website einfach zum Startbildschirm Ihres Geräts hinzufügen, um unmittelbaren Zugriff darauf zu haben und sie wie eine App zu nutzen.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords">Zugangsdaten und Passwörter</string>
+    <string name="preferences_passwords_logins_and_passwords" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten und Passwörter</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2">Passwörter</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
-    <string name="preferences_passwords_save_logins">Zugangsdaten und Passwörter speichern</string>
+    <string name="preferences_passwords_save_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten und Passwörter speichern</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2">Passwörter speichern</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Zum Speichern nachfragen</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1744,28 +1732,47 @@
     <string name="preferences_android_autofill_description">Benutzernamen und Passwörter auf Webseite bei Nutzung von anderen Apps auf Ihrem Gerät automatisch ausfüllen.</string>
 
     <!-- Preference option for adding a login -->
-    <string name="preferences_logins_add_login">Zugangsdaten hinzufügen</string>
+    <string name="preferences_logins_add_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten hinzufügen</string>
 
-    <!-- Preference for syncing saved logins in Fenix -->
-    <string name="preferences_passwords_sync_logins">Zugangsdaten synchronisieren</string>
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2">Passwort hinzufügen</string>
+
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten synchronisieren</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2">Passwörter synchronisieren</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
-    <string name="preferences_passwords_sync_logins_across_devices">Zugangsdaten zwischen Geräten synchronisieren</string>
+    <string name="preferences_passwords_sync_logins_across_devices" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten zwischen Geräten synchronisieren</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2">Passwörter geräteübergreifend synchronisieren</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">Gespeicherte Zugangsdaten</string>
+    <string name="preferences_passwords_saved_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Gespeicherte Zugangsdaten</string>
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2">Gespeicherte Passwörter</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
-    <string name="preferences_passwords_saved_logins_description_empty_text">Die Zugangsdaten, die Sie speichern oder mit %s synchronisieren, werden hier angezeigt.</string>
+    <string name="preferences_passwords_saved_logins_description_empty_text" moz:RemovedIn="125" tools:ignore="UnusedResources">Die Zugangsdaten, die Sie speichern oder mit %s synchronisieren, werden hier angezeigt.</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2">Die Passwörter, die Sie speichern oder mit %s synchronisieren, werden hier aufgelistet. Alle gespeicherten Passwörter werden verschlüsselt.</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Erfahren Sie mehr über Sync.</string>
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link" moz:RemovedIn="125" tools:ignore="UnusedResources">Erfahren Sie mehr über Sync.</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2">Weitere Informationen über Sync</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Ausnahmen</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description_empty">Zugangsdaten und Passwörter, die nicht gespeichert werden, werden hier angezeigt.</string>
+    <string name="preferences_passwords_exceptions_description_empty" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten und Passwörter, die nicht gespeichert werden, werden hier angezeigt.</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2">%s speichert keine Passwörter für die hier aufgeführten Websites.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description">Zugangsdaten und Passwörter werden für diese Websites nicht gespeichert.</string>
+    <string name="preferences_passwords_exceptions_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten und Passwörter werden für diese Websites nicht gespeichert.</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2">%s speichert keine Passwörter für diese Websites.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Alle Ausnahmen löschen</string>
     <!-- Hint for search box in logins list -->
-    <string name="preferences_passwords_saved_logins_search">Zugangsdaten durchsuchen</string>
+    <string name="preferences_passwords_saved_logins_search" moz:RemovedIn="125" tools:ignore="UnusedResources">Zugangsdaten durchsuchen</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2">Passwörter durchsuchen</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Website</string>
     <!-- The header for the username for a login -->
@@ -1793,11 +1800,17 @@
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">Passwort verbergen</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
-    <string name="logins_biometric_prompt_message">Zum Anzeigen Ihrer gespeicherten Zugangsdaten entsperren</string>
+    <string name="logins_biometric_prompt_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Zum Anzeigen Ihrer gespeicherten Zugangsdaten entsperren</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2">Zum Anzeigen Ihrer gespeicherten Passwörter entsperren</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_title">Sichern Sie Ihre Zugangsdaten und Passwörter</string>
+    <string name="logins_warning_dialog_title" moz:RemovedIn="125" tools:ignore="UnusedResources">Sichern Sie Ihre Zugangsdaten und Passwörter</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2">Sichern Sie Ihre gespeicherten Passwörter</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Zugangsdaten und Passwörter zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
+    <string name="logins_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Zugangsdaten und Passwörter zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Passwörter zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Später</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1815,7 +1828,10 @@
     <string name="saved_logins_sort_strategy_last_used">Zuletzt verwendet</string>
 
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
-    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Menü mit Zugangsdaten sortieren</string>
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Menü mit Zugangsdaten sortieren</string>
+
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2">Menü „Passwörter sortieren“</string>
 
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
@@ -1823,28 +1839,43 @@
     <!-- Preference and title for managing the settings for addresses -->
     <string name="preferences_addresses">Adressen</string>
     <!-- Preference and title for managing the settings for credit cards -->
-    <string name="preferences_credit_cards">Kreditkarten</string>
+    <string name="preferences_credit_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Kreditkarten</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2">Zahlungsmethoden</string>
     <!-- Preference for saving and autofilling credit cards -->
-    <string name="preferences_credit_cards_save_and_autofill_cards">Autovervollständigung für Kreditkartendaten</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Autovervollständigung für Kreditkartendaten</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2">Zahlungsmethoden speichern und ausfüllen</string>
     <!-- Preference summary for saving and autofilling credit card data -->
-    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Daten sind verschlüsselt</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Daten sind verschlüsselt</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2">%s verschlüsselt alle von Ihnen gespeicherten Zahlungsmethoden</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Karten zwischen Geräten synchronisieren</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
     <string name="preferences_credit_cards_sync_cards">Kreditkarten synchronisieren</string>
     <!-- Preference option for adding a credit card -->
-    <string name="preferences_credit_cards_add_credit_card">Kreditkarte hinzufügen</string>
+    <string name="preferences_credit_cards_add_credit_card" moz:RemovedIn="125" tools:ignore="UnusedResources">Kreditkarte hinzufügen</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2">Karte hinzufügen</string>
     <!-- Preference option for managing saved credit cards -->
-    <string name="preferences_credit_cards_manage_saved_cards">Gespeicherte Karten verwalten</string>
+    <string name="preferences_credit_cards_manage_saved_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Gespeicherte Karten verwalten</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2">Karten verwalten</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Adresse hinzufügen</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Adressen verwalten</string>
     <!-- Preference for saving and autofilling addresses -->
-    <string name="preferences_addresses_save_and_autofill_addresses">Autovervollständigung für Adressen</string>
+    <string name="preferences_addresses_save_and_autofill_addresses" moz:RemovedIn="125" tools:ignore="UnusedResources">Autovervollständigung für Adressen</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2">Adressen speichern und ausfüllen</string>
     <!-- Preference summary for saving and autofilling address data -->
-    <string name="preferences_addresses_save_and_autofill_addresses_summary">Dies beinhaltetet Nummern, E-Mail- und Lieferadressen</string>
+    <string name="preferences_addresses_save_and_autofill_addresses_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Dies beinhaltetet Nummern, E-Mail- und Lieferadressen</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2">Enthält Telefonnummern und E-Mail-Adressen</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Karte hinzufügen</string>
@@ -1865,7 +1896,9 @@
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Karte löschen</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
-    <string name="credit_cards_delete_dialog_confirmation">Soll diese Kreditkarte wirklich gelöscht werden?</string>
+    <string name="credit_cards_delete_dialog_confirmation" moz:RemovedIn="125" tools:ignore="UnusedResources">Soll diese Kreditkarte wirklich gelöscht werden?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2">Karte löschen?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Löschen</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1879,16 +1912,24 @@
     <string name="credit_cards_saved_cards">Gespeicherte Karten</string>
 
     <!-- Error message for credit card number validation -->
-    <string name="credit_cards_number_validation_error_message">Bitte geben Sie eine gültige Kreditkartennummer ein</string>
+    <string name="credit_cards_number_validation_error_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Bitte geben Sie eine gültige Kreditkartennummer ein</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2">Geben Sie eine gültige Kartennummer ein</string>
     <!-- Error message for credit card name on card validation -->
-    <string name="credit_cards_name_on_card_validation_error_message">Bitte füllen Sie dieses Feld aus</string>
+    <string name="credit_cards_name_on_card_validation_error_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Bitte füllen Sie dieses Feld aus</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2">Fügen Sie einen Namen hinzu</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Zum Anzeigen Ihrer gespeicherten Karten entsperren</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="credit_cards_warning_dialog_title">Sichern Sie Ihre Kreditkarten</string>
+    <string name="credit_cards_warning_dialog_title" moz:RemovedIn="125" tools:ignore="UnusedResources">Sichern Sie Ihre Kreditkarten</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title_2">Sichern Sie Ihre gespeicherten Zahlungsmethoden</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="credit_cards_warning_dialog_message">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Karten zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
+    <string name="credit_cards_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Karten zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message_3">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Zahlungsmethoden zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Jetzt einrichten</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1897,8 +1938,10 @@
     <string name="credit_cards_biometric_prompt_message_pin">Entsperren Sie Ihr Gerät</string>
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
-    <string name="credit_cards_biometric_prompt_unlock_message">Entsperren, um gespeicherte Kreditkartendaten zu verwenden</string>
+    <string name="credit_cards_biometric_prompt_unlock_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Entsperren, um gespeicherte Kreditkartendaten zu verwenden</string>
 
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored payment method information -->
+    <string name="credit_cards_biometric_prompt_unlock_message_2">Zum Verwenden Ihrer gespeicherten Zahlungsmethoden entsperren</string>
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Adresse hinzufügen</string>
     <!-- Title of the "Edit address" screen -->
@@ -1906,11 +1949,13 @@
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Adressen verwalten</string>
     <!-- The header for the first name of an address -->
-    <string name="addresses_first_name">Vorname</string>
+    <string name="addresses_first_name" moz:removedIn="125" tools:ignore="UnusedResources">Vorname</string>
     <!-- The header for the middle name of an address -->
-    <string name="addresses_middle_name">Zweiter Vorname</string>
+    <string name="addresses_middle_name" moz:removedIn="125" tools:ignore="UnusedResources">Zweiter Vorname</string>
     <!-- The header for the last name of an address -->
-    <string name="addresses_last_name">Nachname</string>
+    <string name="addresses_last_name" moz:removedIn="125" tools:ignore="UnusedResources">Nachname</string>
+    <!-- The header for the name of an address. Name represents a person's full name, typically made up of a first, middle and last name, e.g. John Joe Doe. -->
+    <string name="addresses_name">Name</string>
     <!-- The header for the street address of an address -->
     <string name="addresses_street_address">Straße und Hausnummer</string>
     <!-- The header for the city of an address -->
@@ -1935,7 +1980,9 @@
     <string name="addressess_delete_address_button">Adresse löschen</string>
 
     <!-- The title for the "Delete address" confirmation dialog -->
-    <string name="addressess_confirm_dialog_message">Soll diese Adresse wirklich gelöscht werden?</string>
+    <string name="addressess_confirm_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Soll diese Adresse wirklich gelöscht werden?</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2">Diese Adresse löschen?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Löschen</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -1951,27 +1998,17 @@
     <string name="search_engine_add_custom_search_engine_button_content_description">Neue Suchmaschine hinzufügen</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Suchmaschine bearbeiten</string>
-    <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
-    <string name="search_engine_add_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Hinzufügen</string>
-    <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Speichern</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Bearbeiten</string>
     <!-- Text for the menu button to delete a search engine -->
     <string name="search_engine_delete">Löschen</string>
 
-    <!-- Text for the button to create a custom search engine on the Add search engine screen -->
-    <string name="search_add_custom_engine_label_other" moz:RemovedIn="120" tools:ignore="UnusedResources">Andere</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
     <string name="search_add_custom_engine_name_label">Name</string>
-    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Name</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
     <string name="search_add_custom_engine_name_hint_2">Name der Suchmaschine</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
     <string name="search_add_custom_engine_url_label">Such-String-URL</string>
-    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Zu verwendender Such-String</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint_2">Für die Suche zu verwendende URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
@@ -2043,31 +2080,53 @@
     <!-- Login overflow menu edit button -->
     <string name="login_menu_edit_button">Bearbeiten</string>
     <!-- Message in delete confirmation dialog for logins -->
-    <string name="login_deletion_confirmation">Sollen diese Zugangsdaten wirklich gelöscht werden?</string>
+    <string name="login_deletion_confirmation" moz:RemovedIn="125" tools:ignore="UnusedResources">Sollen diese Zugangsdaten wirklich gelöscht werden?</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2">Soll dieses Passwort wirklich gelöscht werden?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Löschen</string>
     <!-- Negative action of a dialog asking to delete login -->
     <string name="dialog_delete_negative">Abbrechen</string>
     <!--  The saved login options menu description. -->
-    <string name="login_options_menu">Optionen für Zugangsdaten</string>
+    <string name="login_options_menu" moz:RemovedIn="125" tools:ignore="UnusedResources">Optionen für Zugangsdaten</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2">Passwort-Optionen</string>
     <!--  The editable text field for a login's web address. -->
-    <string name="saved_login_hostname_description">Das bearbeitbare Textfeld für die Internetadresse der Zugangsdaten.</string>
+    <string name="saved_login_hostname_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Das bearbeitbare Textfeld für die Internetadresse der Zugangsdaten.</string>
+    <!--  The editable text field for a website address. -->
+    <string name="saved_login_hostname_description_3">Das bearbeitbare Textfeld für die Adresse der Website.</string>
     <!--  The editable text field for a login's username. -->
-    <string name="saved_login_username_description">Das bearbeitbare Textfeld für den Benutzernamen der Zugangsdaten.</string>
+    <string name="saved_login_username_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Das bearbeitbare Textfeld für den Benutzernamen der Zugangsdaten.</string>
+    <!--  The editable text field for a username. -->
+    <string name="saved_login_username_description_3">Das bearbeitbare Textfeld für den Benutzernamen.</string>
     <!--  The editable text field for a login's password. -->
-    <string name="saved_login_password_description">Das bearbeitbare Textfeld für das Passwort der Zugangsdaten.</string>
+    <string name="saved_login_password_description" moz:RemovedIn="125" tools:ignore="UnusedResources">Das bearbeitbare Textfeld für das Passwort der Zugangsdaten.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description_2">Das bearbeitbare Textfeld für das Passwort.</string>
     <!--  The button description to save changes to an edited login. -->
-    <string name="save_changes_to_login">Änderungen an Zugangsdaten speichern.</string>
+    <string name="save_changes_to_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Änderungen an Zugangsdaten speichern.</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2">Änderungen speichern.</string>
     <!--  The page title for editing a saved login. -->
-    <string name="edit">Bearbeiten</string>
+    <string name="edit" moz:RemovedIn="125" tools:ignore="UnusedResources">Bearbeiten</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2">Passwort bearbeiten</string>
     <!--  The page title for adding new login. -->
-    <string name="add_login">Neue Zugangsdaten hinzufügen</string>
+    <string name="add_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Neue Zugangsdaten hinzufügen</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2">Passwort hinzufügen</string>
     <!--  The error message in add/edit login view when password field is blank. -->
-    <string name="saved_login_password_required">Passwort erforderlich</string>
+    <string name="saved_login_password_required" moz:RemovedIn="125" tools:ignore="UnusedResources">Passwort erforderlich</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2">Passwort eingeben</string>
     <!--  The error message in add login view when username field is blank. -->
-    <string name="saved_login_username_required">Benutzername erforderlich</string>
+    <string name="saved_login_username_required" moz:RemovedIn="125" tools:ignore="UnusedResources">Benutzername erforderlich</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2">Benutzername eingeben</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostname erforderlich</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Internetadresse eingeben</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Sprachsuche</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2163,6 +2222,9 @@
     <string name="other_default_search_engine_suggestion_header">%s-Suche</string>
 
     <!-- Default browser experiment -->
+    <!-- Default browser card title -->
+    <string name="default_browser_experiment_card_title">Wechseln Sie Ihren Standardbrowser</string>
+    <!-- Default browser card text -->
     <string name="default_browser_experiment_card_text">Stellen Sie Links von Websites, E-Mails und Nachrichten so ein, dass sie in Firefox automatisch geöffnet werden.</string>
 
     <!-- Content description for close button in collection placeholder. -->
@@ -2172,7 +2234,7 @@
     <string name="radio_preference_info_content_description">Klicken Sie hier für weitere Details</string>
 
     <!-- Content description for the action bar "up" button -->
-    <string name="action_bar_up_description">Nach oben navigieren</string>
+    <string name="action_bar_up_description" moz:removedIn="124" tools:ignore="UnusedResources">Nach oben navigieren</string>
 
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Schließen</string>
@@ -2201,8 +2263,6 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Rezensionsprüfer</string>
-    <!-- Name for the review quality check feature used as title for the panel. -->
     <string name="review_quality_check_feature_name_2">Rezensionsprüfer</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Zuverlässige Bewertungen</string>
@@ -2215,7 +2275,7 @@
     <!-- Title for when the rating has been updated by the review checker -->
     <string name="review_quality_check_adjusted_rating_title">Bewertungen angepasst</string>
     <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
-    <string name="review_quality_check_adjusted_rating_description">Unzuverlässige Bewertungen entfernt</string>
+    <string name="review_quality_check_adjusted_rating_description_2">Basierend auf zuverlässigen Bewertungen</string>
     <!-- Title for list of highlights from a product's review emphasizing a product's important traits. -->
     <string name="review_quality_check_highlights_title">Highlights aus aktuellen Bewertungen</string>
     <!-- Title for section explaining how we analyze the reliability of a product's reviews. -->
@@ -2226,30 +2286,22 @@
     <string name="review_quality_check_info_review_grade_header"><![CDATA[Wir geben den Bewertungen jedes Produkts eine <b>Bewertung</b> von A bis F.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">Zuverlässige Bewertungen. Wir glauben, dass die Bewertungen von echten Kunden stammen, die ehrliche und unvoreingenommene Bewertungen hinterlassen.</string>
-    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wir halten die Bewertungen für zuverlässig.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Wir glauben, dass es eine Mischung aus zuverlässigen und unzuverlässigen Bewertungen gibt.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_DF">Unzuverlässige Bewertungen. Wir glauben, dass die Bewertungen wahrscheinlich gefälscht, oder von voreingenommenen Bewertern sind.</string>
-    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wir halten die Bewertungen für unzuverlässig.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[Die <b>angepasste Bewertung</b> basiert nur auf Bewertungen, die wir für zuverlässig halten.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
     <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Highlights</b> stammen von %s-Bewertungen innerhalb der letzten 80 Tage, die wir für zuverlässig halten.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Weitere Informationen zu %s.</string>
-    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">Wie %s von Mozilla die Qualität der Bewertungen feststellt</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_info_learn_more_link_2">Wie %s die Qualität der Rezensionen bestimmt</string>
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">Einstellungen</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Werbung im Rezensionsprüfer anzeigen</string>
-    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Sie sehen gelegentlich Anzeigen für relevante Produkte. Alle Anzeigen müssen unseren Qualitätsstandards für Bewertungen entsprechen. %s</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
     <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Sie sehen gelegentlich Anzeigen für relevante Produkte. Wir bewerben nur Produkte mit vertrauenswürdigen Bewertungen. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
@@ -2260,8 +2312,6 @@
     <string name="review_quality_check_ad_title" tools:ignore="UnusedResources">Weitere Möglichkeiten</string>
     <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Anzeige von %s</string>
-    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
-    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">Rezensionsprüfer wird bereitgestellt von %s.</string>
     <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
     <string name="review_quality_check_powered_by_2">Rezensionsprüfer wird bereitgestellt von %s</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
@@ -2275,23 +2325,19 @@
     <!-- Text for body of warning card informing the user that the current product does not have enough reviews for a review analysis. -->
     <string name="review_quality_check_no_reviews_warning_body">Wenn dieses Produkt mehr Bewertungen hat, können wir deren Qualität überprüfen.</string>
     <!-- Title for warning card informing the user that the current product is currently not available. -->
-    <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">Produkt ist nicht verfügbar</string>
+    <string name="review_quality_check_product_availability_warning_title">Produkt ist nicht verfügbar</string>
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
-    <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">Wenn Sie sehen, dass dieses Produkt wieder auf Lager ist, melden Sie es und wir arbeiten an der Überprüfung der Bewertungen.</string>
+    <string name="review_quality_check_product_availability_warning_body">Wenn Sie sehen, dass dieses Produkt wieder auf Lager ist, melden Sie es und wir arbeiten an der Überprüfung der Bewertungen.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">Melden, dass dieses Produkt wieder auf Lager ist</string>
-    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">Melden, dass das Produkt vorrätig ist</string>
-    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
-    <string name="review_quality_check_reanalysis_in_progress_warning_title">Qualität der Bewertung wird überprüft</string>
-    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_title">Qualität der Bewertung wird überprüft</string>
+    <string name="review_quality_check_product_availability_warning_action_2">Melden, dass das Produkt vorrätig ist</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. The parameter is the percentage progress (0-100%) of the analysis process (e.g. 56%). -->
+    <string name="review_quality_check_analysis_in_progress_warning_title_2">Qualität der Bewertungen wird überprüft (%s)</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
     <string name="review_quality_check_analysis_in_progress_warning_body">Dies kann etwa 60 Sekunden dauern.</string>
     <!-- Title for info card displayed after the user reports a product is back in stock. -->
-    <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">Danke für die Meldung!</string>
+    <string name="review_quality_check_analysis_requested_info_title">Danke für die Meldung!</string>
     <!-- Text for body of info card displayed after the user reports a product is back in stock. -->
-    <string name="review_quality_check_analysis_requested_info_body" tools:ignore="UnusedResources">Wir sollten innerhalb von 24 Stunden Informationen über die Bewertungen dieses Produkts haben. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="review_quality_check_analysis_requested_info_body">Wir sollten innerhalb von 24 Stunden Informationen über die Bewertungen dieses Produkts haben. Bitte versuchen Sie es später noch einmal.</string>
     <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
     <string name="review_quality_check_not_analyzable_info_title">Wir können diese Bewertungen nicht überprüfen</string>
     <!-- Text for body of info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
@@ -2322,22 +2368,30 @@
     <string name="review_quality_check_contextual_onboarding_title">Lesen Sie unseren vertrauenswürdigen Leitfaden zur Produktbewertung</string>
     <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
     <string name="review_quality_check_contextual_onboarding_description">Sehen Sie sich vor dem Kauf an, wie zuverlässig Produktbewertungen auf %1$s sind. Der Rezensionsprüfer, eine experimentelle Funktion von %2$s, ist direkt in den Browser integriert. Es funktioniert auch auf %3$s und %4$s.</string>
+    <!-- Description for review quality check contextual onboarding card. The first parameters is for retailer name (e.g. Amazon). The second parameter is for the name of the application (e.g. Firefox). -->
+    <string name="review_quality_check_contextual_onboarding_description_one_vendor">Sehen Sie sich vor dem Kauf an, wie zuverlässig Produktbewertungen auf %1$s sind. Der Rezensionsprüfer, eine experimentelle Funktion von %2$s, ist direkt in den Browser integriert.</string>
     <!-- Paragraph presenting review quality check feature. First parameter is the Fakespot product name. Second parameter is for clickable text defined in review_quality_check_contextual_onboarding_learn_more_link. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_contextual_onboarding_learn_more">Wir nutzen das Potenzial von %1$s von Mozilla, um Ihnen dabei zu helfen, voreingenommene und nicht authentische Bewertungen zu vermeiden. Unser KI-Modell wird ständig verbessert, um Sie beim Einkaufen zu schützen. %2$s</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Weitere Informationen</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie der %2$s und den %3$s von %1$s zu, das von Mozilla angeboten wird.</string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="123" tools:ignore="UnusedResources">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie der %2$s und den %3$s von %1$s zu, das von Mozilla angeboten wird.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie dem folgenden von %1$s zu:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie dem folgenden von %1$s zu:</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_3" moz:RemovedIn="124" tools:ignore="UnusedResources">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie dem %2$s von %1$s und dem %4$s von %3$s zu.</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_4">Indem Sie „Ja, ausprobieren“ auswählen, stimmen Sie dem %2$s von %1$s und dem %4$s von %3$s zu.</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">Datenschutzerklärung</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="123" tools:ignore="UnusedResources">Datenschutzerklärung</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Datenschutzrichtlinie</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Datenschutzrichtlinie</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy notice. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_3">Datenschutzhinweis</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">Nutzungsbedingungen</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">Nutzungsbedingungen</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">Nutzungsbedingungen</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Nutzungsbedingungen</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Ja, ausprobieren</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2373,6 +2427,9 @@
     <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
     <string name="review_quality_check_highlights_type_competitiveness">Wettbewerbsfähigkeit</string>
 
+    <!-- Text that is surrounded by quotes. The parameter is the actual text that is in quotes. An example of that text could be: Excellent craftsmanship, and that is displayed as “Excellent craftsmanship”. The text comes from a buyer's review that the feature is highlighting"   -->
+    <string name="surrounded_with_quotes">„%s“</string>
+
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
     <string name="a11y_action_label_collapse">Einklappen</string>
@@ -2388,4 +2445,227 @@
     <string name="a11y_action_label_read_article">den Artikel zu lesen</string>
     <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
     <string name="a11y_action_label_pocket_learn_more">Link öffnen, um mehr zu erfahren</string>
+    <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
+    <string name="a11y_heading">%s, Überschrift</string>
+
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">Links</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Verfügbare Links</string>
+
+    <!-- Translations feature-->
+
+    <!-- Translation request dialog -->
+    <!-- Title for the translation dialog that allows a user to translate the webpage. -->
+    <string name="translations_bottom_sheet_title">Diese Seite übersetzen?</string>
+    <!-- Title for the translation dialog after a translation was completed successfully.
+    The first parameter is the name of the language that the page was translated from, for example, "French".
+    The second parameter is the name of the language that the page was translated to, for example, "English". -->
+    <string name="translations_bottom_sheet_title_translation_completed">Seite von %1$s in %2$s übersetzt</string>
+    <!-- Title for the translation dialog that allows a user to translate the webpage when a user uses the translation feature the first time. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translations_bottom_sheet_title_first_time">Private Übersetzungen in %1$s ausprobieren</string>
+    <!-- Additional information on the translation dialog that appears when a user uses the translation feature the first time. The first parameter is clickable text with a link, for example, "Learn more". -->
+    <string name="translations_bottom_sheet_info_message">Zu Sicherstellung Ihrer Privatsphäre verlassen Übersetzungen niemals Ihr Gerät. Neue Sprachen und Verbesserungen folgen bald! %1$s</string>
+    <!-- Text that links to additional information about the Firefox translations feature. -->
+    <string name="translations_bottom_sheet_info_message_learn_more">Weitere Informationen</string>
+    <!-- Label for the dropdown to select which language to translate from on the translations dialog. Usually the translate from language selected will be the same as the page language. -->
+    <string name="translations_bottom_sheet_translate_from">Übersetzen von</string>
+    <!-- Label for the dropdown to select which language to translate to on the translations dialog. Usually the translate to language selected will be the user's preferred language. -->
+    <string name="translations_bottom_sheet_translate_to">Übersetzen auf</string>
+    <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button">Nicht jetzt</string>
+    <!-- Button text on the translations dialog to restore the translated website back to the original untranslated version. -->
+    <string name="translations_bottom_sheet_negative_button_restore">Original anzeigen</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">Fertig</string>
+    <!-- Button text on the translations dialog to begin a translation of the website. -->
+    <string name="translations_bottom_sheet_positive_button">Übersetzen</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">Erneut versuchen</string>
+    <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
+    <string name="translations_bottom_sheet_translating_in_progress">Übersetzen</string>
+    <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
+    <string name="translations_bottom_sheet_translating_in_progress_content_description">Übersetzung läuft</string>
+
+    <!-- Default dropdown option when initially selecting a language from the translations dialog language selection dropdown. -->
+    <string name="translations_bottom_sheet_default_dropdown_selection">Sprache auswählen</string>
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">Beim Übersetzen ist ein Problem aufgetreten. Bitte versuchen Sie es erneut.</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">Sprachen konnten nicht geladen werden. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">Es tut uns leid, wir unterstützen %1$s noch nicht.</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">Weitere Informationen</string>
+
+    <!-- Snackbar title shown if the user closes the Translation Request dialogue and a translation is in progress. -->
+    <string name="translation_in_progress_snackbar">Wird übersetzt…</string>
+
+    <!-- Title for the data saving mode warning dialog used in the translation request dialog.
+    This dialog will be presented when the user attempts to perform
+    a translation without the necessary language files downloaded first when Android's data saver mode is enabled and the user is not using WiFi.
+    The first parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="translations_download_language_file_dialog_title">Sprache im Datensparmodus herunterladen (%1$s)?</string>
+
+
+    <!-- Translations options dialog -->
+    <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
+    <string name="translation_option_bottom_sheet_title">Übersetzungsoptionen</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to always offer or suggest translations when available. -->
+    <string name="translation_option_bottom_sheet_always_translate">Übersetzung immer anbieten</string>
+    <!-- Toggle switch label that allows a user to set if they would like a given language to automatically translate or not. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_always_translate_in_language">%1$s immer übersetzen</string>
+    <!-- Toggle switch label that allows a user to set if they would like to never be offered a translation of the given language. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_never_translate_in_language">%1$s nie übersetzen</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
+    <string name="translation_option_bottom_sheet_never_translate_site">Diese Website nie übersetzen</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Überschreibt alle anderen Einstellungen</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Überschreibt Angebote zur Übersetzung</string>
+    <!-- Button text for the button that will take the user to the translation settings dialog. -->
+    <string name="translation_option_bottom_sheet_translation_settings">Einstellungen für die Übersetzung</string>
+    <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translation_option_bottom_sheet_about_translations">Über Übersetzungen in %1$s</string>
+
+    <!-- Translation settings dialog -->
+    <!-- Title of the translation settings dialog that allows a user to set their preferred translation settings. -->
+    <string name="translation_settings_toolbar_title">Übersetzungen</string>
+    <!-- Toggle switch label that indicates that the browser should signal or indicate when a translation is possible for any page. -->
+    <string name="translation_settings_offer_to_translate">Übersetzung nach Möglichkeit anbieten</string>
+    <!-- Toggle switch label that indicates that downloading files required for translating is permitted when using data saver mode in Android. -->
+    <string name="translation_settings_always_download">Sprachen immer im Datensparmodus herunterladen</string>
+    <!-- Section header text that begins the section of a list of different options the user may select to adjust their translation preferences. -->
+    <string name="translation_settings_translation_preference">Einstellungen für die Übersetzung</string>
+    <!-- Button text for the button that will take the user to the automatic translations settings dialog. On the automatic translations settings dialog, the user can set if translations should occur automatically for a given language. -->
+    <string name="translation_settings_automatic_translation">Automatische Übersetzung</string>
+    <!-- Button text for the button that will take the user to the never translate these sites dialog. On the never translate these sites dialog, the user can set if translations should never occur on certain websites. -->
+    <string name="translation_settings_automatic_never_translate_sites">Diese Websites nie übersetzen</string>
+    <!-- Button text for the button that will take the user to the download languages dialog. On the download languages dialog, the user can manage which languages they would like to download for translations. -->
+    <string name="translation_settings_download_language">Sprachen herunterladen</string>
+
+    <!-- Automatic translation preference screen -->
+    <!-- Title of the automatic translation preference screen that will appear on the toolbar.-->
+    <string name="automatic_translation_toolbar_title_preference">Automatische Übersetzung</string>
+    <!-- Screen header presenting the automatic translation preference feature. It will appear under the toolbar. -->
+    <string name="automatic_translation_header_preference">Wählen Sie eine Sprache aus, um die Einstellungen für „Immer übersetzen“ und „Nie übersetzen“ zu verwalten.</string>
+
+    <!-- Automatic translation options preference screen -->
+    <!-- Preference option for offering to translate. Radio button title text.-->
+    <string name="automatic_translation_option_offer_to_translate_title_preference">Übersetzung anbieten (Standard)</string>
+    <!-- Preference option for offering to translate. Radio button summary text. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="automatic_translation_option_offer_to_translate_summary_preference">%1$s bietet an, Websites in diese Sprache zu übersetzen.</string>
+    <!-- Preference option for always translate. Radio button title text. -->
+    <string name="automatic_translation_option_always_translate_title_preference">Immer übersetzen</string>
+    <!-- Preference option for always translate. Radio button summary text. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="automatic_translation_option_always_translate_summary_preference">%1$s übersetzt diese Sprache automatisch, wenn die Seite geladen wird.</string>
+    <!-- Preference option for never translate. Radio button title text.-->
+    <string name="automatic_translation_option_never_translate_title_preference">Nie übersetzen</string>
+    <!-- Preference option for never translate. Radio button summary text. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="automatic_translation_option_never_translate_summary_preference">%1$s wird niemals anbieten, Websites in diese Sprache zu übersetzen.</string>
+
+    <!-- Never translate site preference screen -->
+    <!-- Title of the never translate site preference screen that will appear on the toolbar.-->
+    <string name="never_translate_site_toolbar_title_preference">Diese Websites nie übersetzen</string>
+    <!-- Screen header presenting the never translate site preference feature. It will appear under the toolbar. -->
+    <string name="never_translate_site_header_preference">Um eine neue Website hinzuzufügen: Besuchen Sie diese und wählen Sie „Diese Website nie übersetzen“ aus dem Übersetzungsmenü.</string>
+    <!-- Content description (not visible, for screen readers etc.): For a never-translated site list item that is selected.
+             The first parameter is web site url (for example:"wikipedia.com") -->
+    <string name="never_translate_site_item_list_content_description_preference">%1$s entfernen</string>
+    <!-- The Delete site dialogue title will appear when the user clicks on a list item.
+             The first parameter is web site url (for example:"wikipedia.com") -->
+    <string name="never_translate_site_dialog_title_preference">%1$s löschen?</string>
+    <!-- The Delete site dialogue positive button will appear when the user clicks on a list item. The site will be deleted. -->
+    <string name="never_translate_site_dialog_confirm_delete_preference">Löschen</string>
+    <!-- The Delete site dialogue negative button will appear when the user clicks on a list item. The dialog will be dismissed. -->
+    <string name="never_translate_site_dialog_cancel_preference">Abbrechen</string>
+
+    <!-- Download languages preference screen -->
+    <!-- Title of the download languages preference screen toolbar.-->
+    <string name="download_languages_toolbar_title_preference">Sprachen herunterladen</string>
+    <!-- Screen header presenting the download language preference feature. It will appear under the toolbar.The first parameter is "Learn More," a clickable text with a link. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="download_languages_header_preference">Laden Sie vollständige Sprachen herunter, um schnellere Übersetzungen zu erhalten und offline zu übersetzen. %1$s</string>
+    <!-- Clickable text from the screen header that links to a website. -->
+    <string name="download_languages_header_learn_more_preference">Weitere Informationen</string>
+    <!-- The subhead of the download language preference screen will appear above the pivot language. -->
+    <string name="download_languages_available_languages_preference">Verfügbare Sprachen</string>
+    <!-- Text that will appear beside a core or pivot language package name to show that the language is necessary for the translation feature to function. -->
+    <string name="download_languages_default_system_language_require_preference">erforderlich</string>
+    <!-- A text for download language preference item.
+    The first parameter is the language name, for example, "Spanish".
+    The second parameter is the language file size, for example, "(3.91 KB)" or, if the language package name is a pivot language, "(required)". -->
+    <string name="download_languages_language_item_preference">%1$s (%2$s)</string>
+    <!-- The subhead of the download language preference screen will appear above the items that were not downloaded. -->
+    <string name="download_language_header_preference">Sprachen herunterladen</string>
+    <!-- All languages list item. When the user presses this item, they can download or delete all languages. -->
+    <string name="download_language_all_languages_item_preference">Alle Sprachen</string>
+    <!-- Content description (not visible, for screen readers etc.): For a language list item that was downloaded, the user can now delete it. -->
+    <string name="download_languages_item_content_description_downloaded_state">Löschen</string>
+    <!-- Content description (not visible, for screen readers etc.): For a language list item, downloading is in progress. -->
+    <string name="download_languages_item_content_description_in_progress_state">In Arbeit</string>
+    <!-- Content description (not visible, for screen readers etc.): For a language list item that was not downloaded. -->
+    <string name="download_languages_item_content_description_not_downloaded_state">Herunterladen</string>
+    <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
+    <string name="download_languages_item_content_description_selected_state">Ausgewählt</string>
+
+    <!-- Title for the dialog used by the translations feature to confirm deleting a language.
+    The dialog will be presented when the user requests deletion of a language.
+    The first parameter is the name of the language, for example, "Spanish" and the second parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_file_dialog_title">%1$s (%2$s) löschen?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting a language. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_file_dialog_message">Wenn Sie diese Sprache löschen, lädt %1$s beim Übersetzen Teile der Sprachen in Ihren Cache herunter.</string>
+    <!-- Title for the dialog used by the translations feature to confirm deleting all languages file.
+    The dialog will be presented when the user requests deletion of all languages file.
+    The first parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_all_languages_file_dialog_title">Alle Sprachen löschen (%1$s)?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting all languages file. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_all_languages_file_dialog_message">Wenn Sie alle Sprachen löschen, lädt %1$s während der Übersetzung Teile davon in Ihren Cache herunter.</string>
+    <!-- Button text on the dialog used by the translations feature to confirm deleting a language. -->
+    <string name="delete_language_file_dialog_positive_button_text">Löschen</string>
+    <!-- Button text on the dialog used by the translations feature to cancel deleting a language. -->
+    <string name="delete_language_file_dialog_negative_button_text">Abbrechen</string>
+
+    <!-- Title for the data saving mode warning dialog used by the translations feature.
+    This dialog will be presented when the user attempts to download a language or perform
+    a translation without the necessary language files downloaded first when Android's data saver mode is enabled and the user is not using WiFi.
+    The first parameter is the size in kilobytes or megabytes of the language file.-->
+    <string name="download_language_file_dialog_title">Im Datensparmodus herunterladen (%1$s)?</string>
+    <!-- Additional information for the data saving mode warning dialog used by the translations feature. This text explains the reason a download is required for a translation. -->
+    <string name="download_language_file_dialog_message_all_languages">Wir laden Teile von Sprachen in Ihren Cache herunter, um die Übersetzungen privat zu halten.</string>
+    <!-- Checkbox label text on the data saving mode warning dialog used by the translations feature. This checkbox allows users to ignore the data usage warnings. -->
+    <string name="download_language_file_dialog_checkbox_text">Immer im Datensparmodus herunterladen</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file. -->
+    <string name="download_language_file_dialog_positive_button_text">Herunterladen</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file and perform a translation. -->
+    <string name="download_language_file_dialog_positive_button_text_all_languages">Herunterladen und übersetzen</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to cancel the action and not perform a download of the language file. -->
+    <string name="download_language_file_dialog_negative_button_text">Abbrechen</string>
+
+    <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">Werkzeuge zur Fehlerbehebung</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">Rückwärts navigieren</string>
+    <!-- The title of the Tab Tools feature in the Debug Drawer. -->
+    <string name="debug_drawer_tab_tools_title">Tab-Werkzeuge</string>
+    <!-- The title of the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_title">Tab-Anzahl</string>
+    <!-- The active tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_normal">Aktiv</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">Inaktiv</string>
+    <!-- The private tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_private">Privat</string>
+    <!-- The total tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_total">Gesamt</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Werkzeug zur Tab-Erstellung</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">Zu erstellende Tab-Anzahl</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Zu aktiven Tabs hinzufügen</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">Zu inaktiven Tabs hinzufügen</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Zu privaten Tabs hinzufügen</string>
 </resources>

@@ -45,8 +45,17 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.search.SearchRequest
+import mozilla.components.concept.engine.translate.Language
+import mozilla.components.concept.engine.translate.LanguageModel
+import mozilla.components.concept.engine.translate.LanguageSetting
+import mozilla.components.concept.engine.translate.TranslationDownloadSize
+import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
+import mozilla.components.concept.engine.translate.TranslationPageSettingOperation
+import mozilla.components.concept.engine.translate.TranslationPageSettings
+import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
 import mozilla.components.concept.engine.webextension.WebExtensionPageAction
 import mozilla.components.concept.engine.window.WindowRequest
@@ -449,7 +458,11 @@ sealed class ContentAction : BrowserAction() {
     /**
      * Updates the URL of the [ContentState] with the given [sessionId].
      */
-    data class UpdateUrlAction(val sessionId: String, val url: String) : ContentAction()
+    data class UpdateUrlAction(
+        val sessionId: String,
+        val url: String,
+        val hasUserGesture: Boolean = false,
+    ) : ContentAction()
 
     /**
      * Updates the progress of the [ContentState] with the given [sessionId].
@@ -843,6 +856,53 @@ sealed class ContentAction : BrowserAction() {
  * [BrowserAction] implementations related to translating a web content page.
  */
 sealed class TranslationsAction : BrowserAction() {
+
+    /**
+     * Requests that the initialization data for the global translations engine state
+     * be fetched from the translations engine and set on [BrowserState.translationEngine].
+     */
+    object InitTranslationsBrowserState : TranslationsAction()
+
+    /**
+     * Indicates that the translations engine expects the user may want to translate the page on
+     * the given [tabId].
+     *
+     * For example, could be used to show toolbar UI that translations are an option.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateExpectedAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates that the translations engine suggests the user should be notified of the ability to
+     * translate on the given [tabId].
+     *
+     * For example, could be used to show a reminder UI popup or a star beside the toolbar UI to strongly signal that
+     * translations are an option.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateOfferAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the translation state on the given [tabId].
+     *
+     * This provides the translations engine state.  Not to be confused with
+     * the browser engine state of the translations component.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property translationEngineState The state of the translation engine for the
+     * page.
+     */
+    data class TranslateStateChangeAction(
+        override val tabId: String,
+        val translationEngineState: TranslationEngineState,
+    ) : TranslationsAction(), ActionWithTab
+
     /**
      * Used to translate the page for a given [tabId].
      *
@@ -868,7 +928,34 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction(), ActionWithTab
 
     /**
-     * Indicates the given [tabId] was successful in translating or restoring the page.
+     * Fetch the translation download size for the given [tabId]. Will use the specified
+     * [fromLanguage] and [toLanguage] to query the download size.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should set the state on.
+     * @property fromLanguage The from [Language] in the translation pair.
+     * @property toLanguage The to [Language] in the translation pair.
+     */
+    data class FetchTranslationDownloadSizeAction(
+        override val tabId: String,
+        val fromLanguage: Language,
+        val toLanguage: Language,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Set the [TranslationDownloadSize] for the given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should set the state on.
+     * @property translationSize The [TranslationDownloadSize] that contains a to/from translations
+     * pair and a download size.
+     */
+    data class SetTranslationDownloadSizeAction(
+        override val tabId: String,
+        val translationSize: TranslationDownloadSize,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in translating or restoring the page
+     * or acquiring a necessary resource.
      *
      * @property tabId The ID of the tab the [EngineSession] should be linked to.
      * @property operation The translation operation that was successful.
@@ -879,17 +966,125 @@ sealed class TranslationsAction : BrowserAction() {
     ) : TranslationsAction(), ActionWithTab
 
     /**
-     * Indicates the given [tabId] was unable to translate or restore the page.
+     * Indicates the given [tabId] was unable to translate or restore the page or acquire a
+     * necessary resource.
      *
      * @property tabId The ID of the tab the [EngineSession] should be linked to.
      * @property operation The translation operation that failed.
-     * @property throwable The throwable for error handling.
+     * @property translationError The error that occurred.
      */
     data class TranslateExceptionAction(
         override val tabId: String,
         val operation: TranslationOperation,
-        val throwable: Throwable,
+        val translationError: TranslationError,
     ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates an app level translations error occurred and to set the [TranslationError] on
+     * [BrowserState.translationEngine].
+     *
+     * @property error The [TranslationError] that occurred.
+     */
+    data class EngineExceptionAction(
+        val error: TranslationError,
+    ) : TranslationsAction()
+
+    /**
+     * Indicates that the given [operation] data should be fetched for the given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that failed.
+     */
+    data class OperationRequestedAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets whether the device architecture supports translations or not on
+     * [BrowserState.translationEngine].
+     *
+     * @property isEngineSupported If the engine supports translations on this device.
+     */
+    data class SetEngineSupportedAction(
+        val isEngineSupported: Boolean,
+    ) : TranslationsAction()
+
+    /**
+     * Sets the languages that are supported by the translations engine on the
+     * [BrowserState.translationEngine].
+     *
+     * @property supportedLanguages The languages the engine supports for translation.
+     */
+    data class SetSupportedLanguagesAction(
+        val supportedLanguages: TranslationSupport?,
+    ) : TranslationsAction()
+
+    /**
+     * Sets the given page settings on the page on the given [tabId]'s store.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property pageSettings The new page settings.
+     */
+    data class SetPageSettingsAction(
+        override val tabId: String,
+        val pageSettings: TranslationPageSettings?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Updates the specified page setting operation on the translation engine and ensures the final
+     * state on the given [tabId]'s store remains in-sync.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The page setting update operation to perform.
+     * @property setting The boolean value of the corresponding [operation].
+     */
+    data class UpdatePageSettingAction(
+        override val tabId: String,
+        val operation: TranslationPageSettingOperation,
+        val setting: Boolean,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the map of BCP 47 language codes (key) and the [LanguageSetting] option (value).
+     *
+     * @property languageSettings A map containing a key of BCP 47 language code and its
+     * [LanguageSetting].
+     */
+    data class SetLanguageSettingsAction(
+        val languageSettings: Map<String, LanguageSetting>,
+    ) : TranslationsAction()
+
+    /**
+     * Sets the list of sites that the user has opted to never translate.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the list.
+     * @property neverTranslateSites The never translate sites.
+     */
+    data class SetNeverTranslateSitesAction(
+        override val tabId: String,
+        val neverTranslateSites: List<String>,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Remove from the list of sites the user has opted to never translate.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the removal.
+     * @property origin A site origin URI that will have the specified never translate permission set.
+     */
+    data class RemoveNeverTranslateSiteAction(
+        override val tabId: String,
+        val origin: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the list of language machine learning translation models the translation engine has available.
+     *
+     * @property languageModels The list of language machine learning translation models.
+     */
+    data class SetLanguageModelsAction(
+        val languageModels: List<LanguageModel>,
+    ) : TranslationsAction()
 }
 
 /**

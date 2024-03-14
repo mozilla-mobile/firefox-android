@@ -11,12 +11,15 @@ import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import kotlinx.parcelize.Parcelize
+import mozilla.components.concept.engine.webextension.Incognito
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.support.base.log.logger.Logger
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+
+typealias GeckoIncognito = Incognito
 
 val logger = Logger("Addon")
 
@@ -29,6 +32,8 @@ val logger = Logger("Addon")
  * @property downloadUrl The (absolute) URL to download the latest version of the add-on file.
  * @property version The add-on version e.g "1.23.0".
  * @property permissions List of the add-on permissions for this File.
+ * @property optionalPermissions Optional permissions requested or granted to this add-on.
+ * @property optionalOrigins Optional origin permissions requested or granted to this add-on.
  * @property translatableName A map containing the different translations for the add-on name,
  * where the key is the language and the value is the actual translated text.
  * @property translatableDescription A map containing the different translations for the add-on description,
@@ -46,6 +51,7 @@ val logger = Logger("Addon")
  * @property defaultLocale Indicates which locale will be always available to display translatable fields.
  * @property ratingUrl The link to the ratings page (user reviews) for this [Addon].
  * @property detailUrl The link to the detail page for this [Addon].
+ * @property incognito Indicates how the extension works with private browsing windows.
  */
 @SuppressLint("ParcelCreator")
 @Parcelize
@@ -55,6 +61,8 @@ data class Addon(
     val downloadUrl: String = "",
     val version: String = "",
     val permissions: List<String> = emptyList(),
+    val optionalPermissions: List<Permission> = emptyList(),
+    val optionalOrigins: List<Permission> = emptyList(),
     val translatableName: Map<String, String> = emptyMap(),
     val translatableDescription: Map<String, String> = emptyMap(),
     val translatableSummary: Map<String, String> = emptyMap(),
@@ -68,6 +76,7 @@ data class Addon(
     val defaultLocale: String = DEFAULT_LOCALE,
     val ratingUrl: String = "",
     val detailUrl: String = "",
+    val incognito: Incognito = Incognito.SPANNING,
 ) : Parcelable {
 
     /**
@@ -101,6 +110,19 @@ data class Addon(
     data class Rating(
         val average: Float,
         val reviews: Int,
+    ) : Parcelable
+
+    /**
+     * Required or optional permission.
+     *
+     * @property name The name of this permission.
+     * @property granted Indicate if this permission is granted or not.
+     */
+    @SuppressLint("ParcelCreator")
+    @Parcelize
+    data class Permission(
+        val name: String,
+        val granted: Boolean,
     ) : Parcelable
 
     /**
@@ -163,6 +185,26 @@ data class Addon(
          * The [Addon] was disabled because it isn't compatible with the application version.
          */
         INCOMPATIBLE,
+    }
+
+    /**
+     * Incognito values that control how an [Addon] works with private browsing windows.
+     */
+    enum class Incognito {
+        /**
+         * The [Addon] will see events from private and non-private windows and tabs.
+         */
+        SPANNING,
+
+        /**
+         * The [Addon] will be split between private and non-private windows.
+         */
+        SPLIT,
+
+        /**
+         * Private tabs and windows are invisible to the [Addon].
+         */
+        NOT_ALLOWED,
     }
 
     /**
@@ -315,12 +357,35 @@ data class Addon(
                 null
             }
             val detailUrl = metadata?.detailUrl.orEmpty()
+            val incognito = when (metadata?.incognito) {
+                GeckoIncognito.NOT_ALLOWED -> Incognito.NOT_ALLOWED
+                GeckoIncognito.SPLIT -> Incognito.SPLIT
+                else -> Incognito.SPANNING
+            }
+
+            val grantedOptionalPermissions = metadata?.grantedOptionalPermissions ?: emptyList()
+            val grantedOptionalOrigins = metadata?.grantedOptionalOrigins ?: emptyList()
+            val optionalPermissions = metadata?.optionalPermissions?.map { permission ->
+                Permission(
+                    name = permission,
+                    granted = grantedOptionalPermissions.contains(permission),
+                )
+            } ?: emptyList()
+
+            val optionalOrigins = metadata?.optionalOrigins?.map { origin ->
+                Permission(
+                    name = origin,
+                    granted = grantedOptionalOrigins.contains(origin),
+                )
+            } ?: emptyList()
 
             return Addon(
                 id = extension.id,
                 author = author,
                 version = metadata?.version.orEmpty(),
                 permissions = permissions,
+                optionalPermissions = optionalPermissions,
+                optionalOrigins = optionalOrigins,
                 downloadUrl = metadata?.downloadUrl.orEmpty(),
                 rating = Rating(averageRating, reviewCount),
                 homepageUrl = homepageUrl,
@@ -332,6 +397,7 @@ data class Addon(
                 updatedAt = fromMetadataToAddonDate(metadata?.updateDate.orEmpty()),
                 ratingUrl = ratingUrl,
                 detailUrl = detailUrl,
+                incognito = incognito,
                 installedState = installedState,
             )
         }

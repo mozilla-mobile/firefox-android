@@ -166,7 +166,6 @@ object WebExtensionSupport {
      * engine. Note that the UI (browser/page actions etc.) may not be initialized at this point.
      * System add-ons (built-in extensions) will not be passed along.
      */
-    @Suppress("LongParameterList")
     fun initialize(
         runtime: WebExtensionRuntime,
         store: BrowserStore,
@@ -273,6 +272,10 @@ object WebExtensionSupport {
                 override fun onDisabled(extension: WebExtension) {
                     installedExtensions[extension.id] = extension
                     store.dispatch(WebExtensionAction.UpdateWebExtensionEnabledAction(extension.id, false))
+                }
+
+                override fun onReady(extension: WebExtension) {
+                    installedExtensions[extension.id] = extension
                 }
 
                 override fun onAllowedInPrivateBrowsingChanged(extension: WebExtension) {
@@ -475,7 +478,6 @@ object WebExtensionSupport {
         }
     }
 
-    @Suppress("LongParameterList")
     private fun openTab(
         store: BrowserStore,
         onNewTabOverride: ((WebExtension?, EngineSession, String) -> String)? = null,
