@@ -303,6 +303,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     R.drawable.mozac_ic_share_android_24,
                 )!!,
                 contentDescription = getString(R.string.browser_menu_share),
+                weight = { 4 },
                 iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
                 listener = { browserToolbarInteractor.onShareActionClicked() },
             )
@@ -394,6 +395,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )!!,
                 secondaryContentDescription = context.getString(R.string.browser_menu_stop),
                 disableInSecondaryState = false,
+                weight = { 5 },
                 longClickListener = {
                     browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
                         ToolbarMenu.Item.Reload(bypassCache = true),
