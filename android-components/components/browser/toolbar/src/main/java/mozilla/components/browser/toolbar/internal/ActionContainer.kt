@@ -52,11 +52,39 @@ internal class ActionContainer @JvmOverloads constructor(
 
             action.createView(this).let {
                 wrapper.view = it
-                addActionView(it)
+                if (action.weight() == -1) {
+                    addActionView(it)
+                } else {
+                    val insertionIndex = calculateInsertionIndex(action)
+                    addActionViewAt(it, insertionIndex)
+                }
             }
         }
 
         actions.add(wrapper)
+        actions.sortBy { it.actual.weight() }
+    }
+
+    private fun addActionViewAt(view: View, index: Int) {
+        addView(view, index, LayoutParams(actionSize ?: 0, actionSize ?: 0))
+    }
+
+    private fun calculateInsertionIndex(newAction: Toolbar.Action): Int {
+        // If it's a default-weight action, add it at the beginning
+        if (newAction.weight() == -1) {
+            return 0
+        }
+        // Map existing actions to their views' indices and weights, but only if they are visible.
+        val visibleActionsWithIndices = actions.filter { it.actual.visible() }
+            .mapNotNull { actionWrapper ->
+                val index = indexOfChild(actionWrapper.view)
+                if (index != -1) index to actionWrapper.actual.weight() else null
+            }.sortedBy { it.second } // Ensure they are sorted by weight for consistent order.
+
+        // Find the first action that has a higher weight than the new action, and use its index.
+        val insertionIndex = visibleActionsWithIndices.firstOrNull { it.second > newAction.weight() }?.first
+
+        return insertionIndex ?: childCount
     }
 
     fun removeAction(action: Toolbar.Action) {
@@ -66,9 +94,10 @@ internal class ActionContainer @JvmOverloads constructor(
         }
     }
 
+    @Suppress("NestedBlockDepth")
     fun invalidateActions() {
         TransitionManager.beginDelayedTransition(this)
-
+        actions.sortBy { it.actual.weight() }
         var updatedVisibility = View.GONE
 
         for (action in actions) {
@@ -79,14 +108,17 @@ internal class ActionContainer @JvmOverloads constructor(
             }
 
             if (!visible && action.view != null) {
-                // Action should not be visible anymore. Remove view.
                 removeView(action.view)
                 action.view = null
             } else if (visible && action.view == null) {
-                // Action should be visible. Add view for it.
                 action.actual.createView(this).let {
                     action.view = it
-                    addActionView(it)
+                    if (action.actual.weight() == -1) {
+                        addActionView(it)
+                    } else {
+                        val insertionIndex = calculateInsertionIndex(action.actual)
+                        addActionViewAt(it, insertionIndex)
+                    }
                 }
             }
 
@@ -94,6 +126,17 @@ internal class ActionContainer @JvmOverloads constructor(
         }
 
         visibility = updatedVisibility
+        reevaluateAndReorderActions()
+    }
+
+    private fun reevaluateAndReorderActions() {
+        // Remove all views and re-add them based on current visibility states and weights
+        removeAllViews()
+        actions.filter { it.actual.visible() }
+            .sortedBy { it.actual.weight() }
+            .forEach { action ->
+                addView(action.view)
+            }
     }
 
     fun autoHideAction(isVisible: Boolean) {

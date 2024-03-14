@@ -261,6 +261,9 @@ interface Toolbar : ScrollableToolbar {
         val autoHide: () -> Boolean
             get() = { false }
 
+        val weight: () -> Int
+            get() = { -1 }
+
         fun createView(parent: ViewGroup): View
 
         fun bind(view: View)
@@ -283,6 +286,7 @@ interface Toolbar : ScrollableToolbar {
         val contentDescription: String,
         override val visible: () -> Boolean = { true },
         override val autoHide: () -> Boolean = { false },
+        override val weight: () -> Int = { -1 },
         private val background: Int = 0,
         private val padding: Padding? = null,
         @ColorRes val iconTintColorResource: Int = ViewGroup.NO_ID,
@@ -353,6 +357,7 @@ interface Toolbar : ScrollableToolbar {
         private val contentDescription: String,
         private val contentDescriptionSelected: String,
         override val visible: () -> Boolean = { true },
+        override val weight: () -> Int = { -1 },
         private var selected: Boolean = false,
         @DrawableRes private val background: Int = 0,
         private val padding: Padding? = null,

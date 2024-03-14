@@ -162,6 +162,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 visible = {
                     readerModeAvailable && !reviewQualityCheckAvailable
                 },
+                weight = { 1 },
                 selected = getCurrentTab()?.let {
                     activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
                 } ?: false,
@@ -171,8 +172,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         browserToolbarView.view.addPageAction(readerModeAction)
 
         initTranslationsAction(context, view)
-        initSharePageAction(context)
         initReviewQualityCheck(context, view)
+        initSharePageAction(context)
         initReloadAction(context)
 
         thumbnailsFeature.set(
@@ -327,6 +328,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             contentDescription = context.getString(R.string.browser_toolbar_translate),
             iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
             visible = { translationsAvailable },
+            weight = { 2 },
             listener = {
                 browserToolbarInteractor.onTranslationsButtonClicked()
             },
@@ -430,6 +432,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 contentDescriptionSelected =
                 context.getString(R.string.review_quality_check_close_handle_content_description),
                 visible = { reviewQualityCheckAvailable },
+                weight = { 3 },
                 listener = { _ ->
                     requireComponents.appStore.dispatch(
                         AppAction.ShoppingAction.ShoppingSheetStateUpdated(expanded = true),
