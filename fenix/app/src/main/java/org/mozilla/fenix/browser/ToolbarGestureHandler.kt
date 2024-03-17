@@ -25,6 +25,8 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.view.getRectWithViewLocation
 import mozilla.components.support.utils.ext.bottom
 import mozilla.components.support.utils.ext.mandatorySystemGestureInsets
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getRectWithScreenLocation
 import org.mozilla.fenix.ext.getWindowInsets
@@ -38,7 +40,7 @@ import kotlin.math.min
  * Handles intercepting touch events on the toolbar for swipe gestures and executes the
  * necessary animations.
  */
-@Suppress("LargeClass", "TooManyFunctions")
+@Suppress("LargeClass", "TooManyFunctions", "LongParameterList")
 class ToolbarGestureHandler(
     private val activity: Activity,
     private val contentLayout: View,
@@ -46,6 +48,7 @@ class ToolbarGestureHandler(
     private val toolbarLayout: View,
     private val store: BrowserStore,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
+    private val onSwipeStarted: () -> Unit,
 ) : SwipeGestureListener {
 
     private enum class GestureDirection {
@@ -85,6 +88,7 @@ class ToolbarGestureHandler(
             abs(dy) < abs(dx)
         ) {
             preparePreview(getDestination())
+            onSwipeStarted.invoke()
             true
         } else {
             false
@@ -260,6 +264,7 @@ class ToolbarGestureHandler(
                         object : AnimatorListenerAdapter() {
                             override fun onAnimationEnd(animation: Animator) {
                                 tabPreview.isVisible = false
+                                Events.toolbarTabSwipe.record(NoExtras())
                             }
                         },
                     )

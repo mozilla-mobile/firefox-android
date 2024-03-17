@@ -101,7 +101,6 @@ function failure_check() {
     else
 	      echo "All UI test(s) have passed!"
     fi
-
     echo
     echo "RESULTS"
     echo

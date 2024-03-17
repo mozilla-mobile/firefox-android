@@ -6,45 +6,77 @@ package mozilla.components.browser.icons.decoder
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.core.graphics.drawable.toBitmap
-import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.executeBlocking
-import coil.request.ImageRequest
+import android.graphics.Bitmap.Config.ARGB_8888
+import android.graphics.Canvas
+import android.graphics.RectF
+import androidx.core.graphics.createBitmap
+import com.caverock.androidsvg.SVG
+import com.caverock.androidsvg.SVGParseException
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.images.DesiredSize
 import mozilla.components.support.images.decoder.ImageDecoder
 
 /**
- * [ImageDecoder] that will use the Coil library [SvgDecoder.Factory] in order to decode the byte data.
+ * [ImageDecoder] that will use the AndroidSVG in order to decode the byte data.
  *
- * ⚠️ For guidance on use of the Coil library see comment for [ComponentsDependencies.thirdparty_coil_svg].
+ * The code is largely borrowed from [coil-svg](https://github.com/coil-kt/coil/blob/2.4.0/coil-svg/src/main/java/coil/decode/SvgDecoder.kt)
+ * with some fixed options.
  */
 class SvgIconDecoder(val context: Context) : ImageDecoder {
+    private val logger = Logger("SvgIconDecoder")
 
-    override fun decode(data: ByteArray, desiredSize: DesiredSize): Bitmap? {
-        val request = ImageRequest.Builder(context)
-            .data(data)
-            .build()
+    @Suppress("TooGenericExceptionCaught")
+    override fun decode(data: ByteArray, desiredSize: DesiredSize): Bitmap? =
+        try {
+            val svg = SVG.getFromInputStream(data.inputStream())
 
-        return SvgImageLoader.getInstance(context).executeBlocking(request).drawable?.toBitmap()
-    }
-
-    private object SvgImageLoader {
-        @Volatile
-        private var instance: ImageLoader? = null
-
-        /**
-         *  Gets the [instance]. If [instance] is null also initialise the [ImageLoader].
-         *  @return the instance of the [ImageLoader].
-         */
-        fun getInstance(context: Context): ImageLoader {
-            instance?.let { return it }
-
-            synchronized(this) {
-                return ImageLoader.Builder(context)
-                    .components { add(SvgDecoder.Factory()) }
-                    .build().also { instance = it }
+            val svgWidth: Float
+            val svgHeight: Float
+            val viewBox: RectF? = svg.documentViewBox
+            if (viewBox != null) {
+                svgWidth = viewBox.width()
+                svgHeight = viewBox.height()
+            } else {
+                svgWidth = svg.documentWidth
+                svgHeight = svg.documentHeight
             }
+
+            var bitmapWidth = desiredSize.targetSize
+            var bitmapHeight = desiredSize.targetSize
+
+            // Scale the bitmap to SVG maintaining the aspect ratio
+            if (svgWidth > 0 && svgHeight > 0) {
+                val widthPercent = bitmapWidth / svgWidth.toDouble()
+                val heightPercent = bitmapHeight / svgHeight.toDouble()
+                val multiplier = minOf(widthPercent, heightPercent)
+
+                bitmapWidth = (multiplier * svgWidth).toInt()
+                bitmapHeight = (multiplier * svgHeight).toInt()
+            }
+
+            // Set the SVG's view box to enable scaling if it is not set.
+            if (viewBox == null && svgWidth > 0 && svgHeight > 0) {
+                svg.setDocumentViewBox(0f, 0f, svgWidth, svgHeight)
+            }
+
+            svg.setDocumentWidth("100%")
+            svg.setDocumentHeight("100%")
+
+            val bitmap = createBitmap(bitmapWidth, bitmapHeight, ARGB_8888)
+            svg.renderToCanvas(Canvas(bitmap))
+
+            bitmap
+        } catch (e: NullPointerException) {
+            logger.error("Failed to decode SVG: " + e.message.toString())
+            null
+        } catch (e: IllegalArgumentException) {
+            logger.error("Failed to decode SVG: " + e.message.toString())
+            null
+        } catch (e: SVGParseException) {
+            logger.error("Failed to parse the byte data to SVG")
+            null
+        } catch (e: OutOfMemoryError) {
+            logger.error("Failed to decode the byte data due to OutOfMemoryError")
+            null
         }
-    }
 }

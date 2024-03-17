@@ -63,11 +63,13 @@ import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.ext.maxActiveTime
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
 
@@ -102,6 +104,8 @@ class DefaultTabsTrayControllerTest {
 
     private val bookmarksUseCase: BookmarksUseCase = mockk(relaxed = true)
     private val collectionStorage: TabCollectionStorage = mockk(relaxed = true)
+
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel = mockk(relaxed = true)
 
     private val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
     private val testDispatcher = coroutinesTestRule.testDispatcher
@@ -955,6 +959,7 @@ class DefaultTabsTrayControllerTest {
 
             assertEquals(privateTab.id, browserStore.state.selectedTabId)
             assertEquals(true, browsingModeManager.mode.isPrivate)
+            verify { appStore.dispatch(AppAction.ModeChange(BrowsingMode.Private)) }
 
             controller.handleTabDeletion("privateTab")
             browserStore.dispatch(TabListAction.SelectTabAction(normalTab.id)).joinBlocking()
@@ -962,6 +967,7 @@ class DefaultTabsTrayControllerTest {
 
             assertEquals(normalTab.id, browserStore.state.selectedTabId)
             assertEquals(false, browsingModeManager.mode.isPrivate)
+            verify { appStore.dispatch(AppAction.ModeChange(BrowsingMode.Normal)) }
         } finally {
             unmockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
         }
@@ -1089,7 +1095,7 @@ class DefaultTabsTrayControllerTest {
             },
         ).handleBookmarkSelectedTabsClicked()
 
-        coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any()) }
+        coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any(), any()) }
         assertTrue(showBookmarkSnackbarInvoked)
 
         assertNotNull(TabsTray.bookmarkSelectedTabs.testGetValue())
@@ -1155,6 +1161,7 @@ class DefaultTabsTrayControllerTest {
             showCancelledDownloadWarning = showCancelledDownloadWarning,
             showCollectionSnackbar = showCollectionSnackbar,
             showBookmarkSnackbar = showBookmarkSnackbar,
+            bookmarksSharedViewModel = bookmarksSharedViewModel,
         )
     }
 }

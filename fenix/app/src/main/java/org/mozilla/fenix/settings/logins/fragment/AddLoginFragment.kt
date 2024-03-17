@@ -287,7 +287,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             currentValue.isEmpty() && usernameChanged -> {
                 // Invalid username because it's empty (although this is not true when editing logins)
                 validUsername = false
-                layout.error = context?.getString(R.string.saved_login_username_required)
+                layout.error = context?.getString(R.string.saved_login_username_required_2)
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
                     ColorStateList.valueOf(
@@ -327,7 +327,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private fun setPasswordError() {
         binding.inputLayoutPassword.let { layout ->
             validPassword = false
-            layout.error = context?.getString(R.string.saved_login_password_required)
+            layout.error = context?.getString(R.string.saved_login_password_required_2)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
@@ -377,7 +377,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
 
     override fun onResume() {
         super.onResume()
-        showToolbar(getString(R.string.add_login))
+        showToolbar(getString(R.string.add_login_2))
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean = when (item.itemId) {

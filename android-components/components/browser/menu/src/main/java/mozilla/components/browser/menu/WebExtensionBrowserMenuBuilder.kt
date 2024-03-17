@@ -32,7 +32,6 @@ import mozilla.components.ui.icons.R as iconsR
  * Default to false (bottom). This is also used to decide the back press menu item placement at top or bottom.
  * @param showAddonsInMenu Whether to show the 'Add-ons' item in menu
  */
-@Suppress("LongParameterList")
 class WebExtensionBrowserMenuBuilder(
     items: List<BrowserMenuItem>,
     extras: Map<String, Any> = emptyMap(),
@@ -92,7 +91,7 @@ class WebExtensionBrowserMenuBuilder(
     ): List<BrowserMenuItem> {
         val addonsMenuItem = if (filteredExtensionMenuItems.isNotEmpty()) {
             val backPressMenuItem = BackPressMenuItem(
-                contentDescription = context.getString(R.string.action_bar_up_description),
+                contentDescription = context.getString(R.string.mozac_browser_menu_addons_description),
                 label = context.getString(R.string.mozac_browser_menu_addons),
                 imageResource = style.backPressMenuItemDrawableRes,
                 iconTintColorResource = style.webExtIconTintColorResource,

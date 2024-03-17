@@ -107,7 +107,6 @@ import org.mozilla.focus.settings.permissions.permissionoptions.SitePermissionOp
 import org.mozilla.focus.settings.privacy.ConnectionDetailsPanel
 import org.mozilla.focus.settings.privacy.TrackingProtectionPanel
 import org.mozilla.focus.state.AppAction
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.topsites.DefaultTopSitesStorage.Companion.TOP_SITES_MAX_LIMIT
 import org.mozilla.focus.topsites.DefaultTopSitesView
 import org.mozilla.focus.utils.FocusSnackbar
@@ -325,6 +324,7 @@ class BrowserFragment :
                 tabsUseCases = components.tabsUseCases,
                 customTabId = tryGetCustomTabId(),
                 fragmentManager = parentFragmentManager,
+                fileUploadsDirCleaner = requireComponents.fileUploadsDirCleaner,
                 onNeedToRequestPermissions = { permissions ->
                     requestInPlacePermissions(REQUEST_KEY_PROMPT_PERMISSIONS, permissions) { result ->
                         promptFeature.get()?.onPermissionsResult(
@@ -679,8 +679,6 @@ class BrowserFragment :
             DownloadState.Status.COMPLETED -> {
                 Downloads.downloadCompleted.record(NoExtras())
 
-                TelemetryWrapper.downloadDialogDownloadEvent(sentToDownload = true)
-
                 showDownloadCompletedSnackbar(state, extension)
             }
 
@@ -825,7 +823,6 @@ class BrowserFragment :
                 Browser.backButtonPressed.record(
                     Browser.BackButtonPressedExtra("erase_to_external_app"),
                 )
-                TelemetryWrapper.eraseBackToAppEvent()
 
                 // This session has been started from a VIEW intent. Go back to the previous app
                 // immediately and erase the current browsing session.
@@ -845,8 +842,6 @@ class BrowserFragment :
                 Browser.backButtonPressed.record(
                     Browser.BackButtonPressedExtra("erase_to_home"),
                 )
-
-                TelemetryWrapper.eraseBackToHomeEvent()
 
                 erase()
             }
@@ -874,8 +869,6 @@ class BrowserFragment :
         if (title.isNotEmpty()) {
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, title)
         }
-
-        TelemetryWrapper.shareEvent()
         startActivity(
             IntentUtils.getIntentChooser(
                 context = requireContext(),
@@ -888,8 +881,6 @@ class BrowserFragment :
     private fun openInBrowser() {
         // Release the session from this view so that it can immediately be rendered by a different view
         sessionFeature.get()?.release()
-
-        TelemetryWrapper.openFullBrowser()
 
         requireComponents.customTabsUseCases.migrate(tab.id)
 
@@ -922,13 +913,10 @@ class BrowserFragment :
         }
 
         TabCount.sessionButtonTapped.record(TabCount.SessionButtonTappedExtra(openedTabs))
-
-        TelemetryWrapper.openTabsTrayEvent()
     }
 
     private fun showFindInPageBar() {
         findInPageIntegration.get()?.show(tab)
-        TelemetryWrapper.findInPageMenuEvent()
     }
 
     private fun openSelectBrowser() {
@@ -950,8 +938,6 @@ class BrowserFragment :
         fragment.show(requireFragmentManager(), OpenWithFragment.FRAGMENT_TAG)
 
         OpenWith.listDisplayed.record(OpenWith.ListDisplayedExtra(apps.size))
-
-        TelemetryWrapper.openSelectionEvent()
     }
 
     internal fun closeCustomTab() {

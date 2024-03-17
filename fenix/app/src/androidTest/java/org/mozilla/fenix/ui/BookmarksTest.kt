@@ -8,20 +8,13 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.uiautomator.UiDevice
 import kotlinx.coroutines.runBlocking
-import mozilla.appservices.places.BookmarkRoot
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
@@ -31,7 +24,10 @@ import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.bookmarksMenu
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -41,9 +37,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 /**
  *  Tests for verifying basic functionality of bookmarks
  */
-class BookmarksTest {
-    private lateinit var mockWebServer: MockWebServer
-    private lateinit var mDevice: UiDevice
+class BookmarksTest : TestSetup() {
     private val bookmarksFolderName = "New Folder"
     private val testBookmark = object {
         var title: String = "Bookmark title"
@@ -59,26 +53,6 @@ class BookmarksTest {
     @Rule(order = 1)
     @JvmField
     val retryTestRule = RetryTestRule(3)
-
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        // Clearing all bookmarks data after each test to avoid overlapping data
-        val bookmarksStorage = activityTestRule.activity?.bookmarkStorage
-        runBlocking {
-            val bookmarks = bookmarksStorage?.getTree(BookmarkRoot.Mobile.id)?.children
-            bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
-        }
-    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/522919
     @Test
@@ -137,7 +111,7 @@ class BookmarksTest {
             clickAddFolderButton()
             addNewFolderName(bookmarksFolderName)
             navigateUp()
-            verifyKeyboardHidden()
+            verifyKeyboardHidden(isExpectedToBeVisible = false)
             verifyBookmarkFolderIsNotCreated(bookmarksFolderName)
         }
     }
@@ -209,7 +183,7 @@ class BookmarksTest {
             ) {}
         }.openThreeDotMenu(defaultWebPage.title) {
         }.clickCopy {
-            verifyCopySnackBarText()
+            verifySnackBarText(expectedText = "URL copied")
             navigateUp()
         }
 
@@ -496,7 +470,7 @@ class BookmarksTest {
         }
 
         bookmarksMenu {
-            verifyDeleteMultipleBookmarksSnackBar()
+            verifySnackBarText(expectedText = "Bookmarks deleted")
             clickUndoDeleteButton()
             verifyBookmarkedURL(firstWebPage.url.toString())
             verifyBookmarkedURL(secondWebPage.url.toString())
@@ -514,7 +488,7 @@ class BookmarksTest {
         }
 
         bookmarksMenu {
-            verifyDeleteMultipleBookmarksSnackBar()
+            verifySnackBarText(expectedText = "Bookmarks deleted")
         }
     }
 
@@ -602,7 +576,7 @@ class BookmarksTest {
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list)),
             ) {
                 longTapDesktopFolder("Desktop Bookmarks")
-                verifySelectDefaultFolderSnackBarText()
+                verifySnackBarText(expectedText = "Can’t edit default folders")
             }
         }
     }
@@ -625,7 +599,7 @@ class BookmarksTest {
             cancelDeletion()
             clickDeleteInEditModeButton()
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             verifyBookmarkIsDeleted("Test_Page_1")
         }
     }
@@ -786,13 +760,13 @@ class BookmarksTest {
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             clickUndoDeleteButton()
             verifyFolderTitle("My Folder")
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             verifyBookmarkIsDeleted("My Folder")
             verifyBookmarkIsDeleted("My Folder 2")
             verifyBookmarkIsDeleted("Test_Page_1")

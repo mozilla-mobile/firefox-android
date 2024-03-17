@@ -33,6 +33,8 @@ import mozilla.components.concept.engine.media.RecordingDevice
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
@@ -84,8 +86,8 @@ internal class EngineObserver(
         store.dispatch(ContentAction.UpdateFirstContentfulPaintStateAction(tabId, false))
     }
 
-    override fun onLocationChange(url: String) {
-        store.dispatch(ContentAction.UpdateUrlAction(tabId, url))
+    override fun onLocationChange(url: String, hasUserGesture: Boolean) {
+        store.dispatch(ContentAction.UpdateUrlAction(tabId, url, hasUserGesture))
     }
 
     @Suppress("DEPRECATION") // Session observable is deprecated
@@ -467,11 +469,23 @@ internal class EngineObserver(
         store.dispatch(ContentAction.CheckForFormDataExceptionAction(tabId, throwable))
     }
 
+    override fun onTranslateExpected() {
+        store.dispatch(TranslationsAction.TranslateExpectedAction(tabId))
+    }
+
+    override fun onTranslateOffer() {
+        store.dispatch(TranslationsAction.TranslateOfferAction(tabId))
+    }
+
+    override fun onTranslateStateChange(state: TranslationEngineState) {
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId, state))
+    }
+
     override fun onTranslateComplete(operation: TranslationOperation) {
         store.dispatch(TranslationsAction.TranslateSuccessAction(tabId, operation))
     }
 
-    override fun onTranslateException(operation: TranslationOperation, throwable: Throwable) {
-        store.dispatch(TranslationsAction.TranslateExceptionAction(tabId, operation, throwable))
+    override fun onTranslateException(operation: TranslationOperation, translationError: TranslationError) {
+        store.dispatch(TranslationsAction.TranslateExceptionAction(tabId, operation, translationError))
     }
 }

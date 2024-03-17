@@ -106,8 +106,16 @@ allprojects {
     }
 }
 
+subprojects {
+    afterEvaluate {
+        kotlin {
+            jvmToolchain(config.jvmTargetCompatibility)
+        }
+    }
+}
+
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
 }
 
 

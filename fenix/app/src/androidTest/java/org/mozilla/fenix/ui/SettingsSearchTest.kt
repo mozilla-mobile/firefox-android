@@ -13,7 +13,6 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.helpers.AppAndSystemHelper.setSystemLocale
 import org.mozilla.fenix.helpers.DataGenerationHelper.setTextToClipBoard
@@ -27,14 +26,14 @@ import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.EngineShortcut
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.searchScreen
 import java.util.Locale
 
-class SettingsSearchTest {
-    private lateinit var mockWebServer: MockWebServer
+class SettingsSearchTest : TestSetup() {
     private lateinit var searchMockServer: MockWebServer
     private val defaultSearchEngineList =
         listOf(
@@ -49,12 +48,8 @@ class SettingsSearchTest {
     ) { it.activity }
 
     @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-
+    override fun setUp() {
+        super.setUp()
         searchMockServer = MockWebServer().apply {
             dispatcher = SearchDispatcher()
             start()
@@ -62,8 +57,9 @@ class SettingsSearchTest {
     }
 
     @After
-    fun tearDown() {
-        mockWebServer.shutdown()
+    override fun tearDown() {
+        super.tearDown()
+        searchMockServer.shutdown()
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203333
@@ -321,7 +317,6 @@ class SettingsSearchTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203312
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1848623")
     @Test
     fun verifyErrorMessagesForInvalidSearchEngineUrlsTest() {
         val customSearchEngine = object {
@@ -420,12 +415,15 @@ class SettingsSearchTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23817")
     @SmokeTest
     @Test
     fun verifyShowSearchSuggestionsToggleTest() {
         homeScreen {
         }.openSearch {
+            // The Google related suggestions aren't always displayed on cold run
+            // Bugzilla ticket: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("DuckDuckGo")
             typeSearch("mozilla ")
             verifySearchEngineSuggestionResults(
                 activityTestRule,
@@ -440,6 +438,10 @@ class SettingsSearchTest {
         }.goBack {
         }.goBack {
         }.openSearch {
+            // The Google related suggestions aren't always displayed on cold run
+            // Bugzilla ticket: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("DuckDuckGo")
             typeSearch("mozilla")
             verifySuggestionsAreNotDisplayed(activityTestRule, "mozilla firefox")
         }

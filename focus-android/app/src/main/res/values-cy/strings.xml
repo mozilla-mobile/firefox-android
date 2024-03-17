@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Tynnu o’r Llwybrau Byr</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Be sy\'n Newydd</string>
     <string name="menu_settings">Gosodiadau</string>
     <string name="menu_about">Ynghylch</string>
     <string name="menu_help">Cymorth</string>
@@ -84,10 +83,13 @@
          sharing an URL. -->
     <string name="share_dialog_title">Rhannu drwy</string>
 
-    <!-- While a browsing session is active (in the foreground or background) we will show a notification
-         so that the user doesn't forget about the website still being open. This text is shown in
-         the notification. Clicking the notification will have the same effect as clicking the "erase"
-         button in the application. -->
+    <string name="notification_erase_title_android_14">Dileu hanes pori?</string>
+    <string name="notification_erase_text_android_14" moz:RemovedIn="124" tools:ignore="UnusedResources">Tapio neu gau\'r hysbysiad hwn i ddileu eich hanes pori yn ddiogel.</string>
+
+    <!-- Text shown in the notification description that pops up to remind the user that a browsing session is active
+    for Android 14+. -->
+    <string name="notification_erase_text_android_14_1">Tapio neu lusgo\'r hysbysiad hwn i ddileu eich hanes pori yn ddiogel.</string>
+
     <string name="notification_erase_text">Dileu hanes pori</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->
@@ -253,7 +255,7 @@
     <string name="preference_autocomplete_title_remove">Tynnu URLau cyfaddas</string>
 
     <!-- A link to SUMO at autocomplete settings. -->
-    <string name="preference_autocomplete_learn_more">Dysgu rhagor</string>
+    <string name="preference_autocomplete_learn_more">Darllen rhagor</string>
 
     <!-- Preference summary: Custom (user-defined) autocomplete URLs. -->
     <string name="preference_autocomplete_custom_summary">Ychwanegu a rheoli URLs awtogwblhau cyfaddas.</string>
@@ -346,7 +348,7 @@
     <string name="preference_mozilla_telemetry2">Anfon data defnydd</string>
 
     <!-- A link to SUMO at the end of the summary (preference_mozilla_telemetry_summary2) of the "Send anonymous usage data" setting. -->
-    <string name="preference_mozilla_telemetry_summary">Dysgu rhagor</string>
+    <string name="preference_mozilla_telemetry_summary">Darllen rhagor</string>
 
     <!-- %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
     <string name="preference_mozilla_telemetry_summary2">Mae Mozilla\'n ceisio casglu dim ond yr hyn sydd ei angen arnom i ddarparu a gwella %1$s ar gyfer pawb.</string>
@@ -834,7 +836,7 @@
     <string name="preference_studies_summary">Efallai y bydd Firefox yn gosod a rhedeg astudiaethau o bryd i’w gilydd.</string>
 
     <!-- Learn more link for studies, links to an article for more information about studies. -->
-    <string name="studies_learn_more">Dysgu rhagor</string>
+    <string name="studies_learn_more">Darllen rhagor</string>
 
     <!-- Dialog message shown when some changes are made on studies -->
     <string name="studies_restart_app">Bydd yr ap yn cau er mwyn gosod y newidiadau</string>

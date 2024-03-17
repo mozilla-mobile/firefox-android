@@ -10,6 +10,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.search.telemetry.BaseSearchTelemetry
 import mozilla.components.feature.search.telemetry.ExtensionInfo
+import mozilla.components.feature.search.telemetry.SearchProviderModel
 import mozilla.components.feature.search.telemetry.getTrackKey
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.ktx.android.org.json.toList
@@ -27,9 +28,10 @@ class AdsTelemetry : BaseSearchTelemetry() {
     @VisibleForTesting
     internal var cachedCookies = listOf<JSONObject>()
 
-    override fun install(
+    override suspend fun install(
         engine: Engine,
         store: BrowserStore,
+        providerList: List<SearchProviderModel>,
     ) {
         val info = ExtensionInfo(
             id = ADS_EXTENSION_ID,
@@ -37,6 +39,7 @@ class AdsTelemetry : BaseSearchTelemetry() {
             messageId = ADS_MESSAGE_ID,
         )
         installWebExtension(engine, store, info)
+        setProviderList(providerList)
     }
 
     override fun processMessage(message: JSONObject) {
@@ -74,8 +77,9 @@ class AdsTelemetry : BaseSearchTelemetry() {
         val uri = Uri.parse(url) ?: return
         val provider = getProviderForUrl(url) ?: return
         val paramSet = uri.queryParameterNames
+        val containsQueryParam = provider.queryParamNames?.any { paramSet.contains(it) }
 
-        if (!paramSet.contains(provider.queryParam) || !provider.containsAdLinks(urlPath)) {
+        if (containsQueryParam == false || !provider.containsAdLinks(urlPath)) {
             // Do nothing if the URL does not have the search provider's query parameter or
             // there were no ad clicks.
             return

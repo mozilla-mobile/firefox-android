@@ -5,12 +5,24 @@
 package mozilla.components.feature.customtabs
 
 import android.app.PendingIntent
+import android.app.UiModeManager.MODE_NIGHT_YES
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.util.Size
 import android.view.Window
 import androidx.annotation.ColorInt
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_DARK
+import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_LIGHT
+import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_SYSTEM
+import androidx.browser.customtabs.CustomTabsIntent.ColorScheme
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.graphics.drawable.toDrawable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -19,6 +31,8 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuItem
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.state.selector.findCustomTab
+import mozilla.components.browser.state.state.ColorSchemeParams
+import mozilla.components.browser.state.state.ColorSchemes
 import mozilla.components.browser.state.state.CustomTabActionButtonConfig
 import mozilla.components.browser.state.state.CustomTabConfig
 import mozilla.components.browser.state.state.CustomTabMenuItem
@@ -32,12 +46,14 @@ import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.support.ktx.android.view.setNavigationBarTheme
 import mozilla.components.support.ktx.android.view.setStatusBarTheme
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.utils.ColorUtils.getReadableTextColor
+import mozilla.components.support.utils.ext.resizeMaintainingAspectRatio
 import mozilla.components.ui.icons.R as iconsR
 
 /**
@@ -50,14 +66,15 @@ import mozilla.components.ui.icons.R as iconsR
  * @property menuBuilder [BrowserMenuBuilder] reference to pull menu options from.
  * @property menuItemIndex Location to insert any custom menu options into the predefined menu list.
  * @property window Reference to the [Window] so the navigation bar color can be set.
- * @property updateToolbarBackground Whether or not the [toolbar] background should be changed based
- * on [CustomTabConfig.toolbarColor].
+ * @property updateTheme Whether or not the toolbar and system bar colors should be changed.
+ * @property appNightMode The [NightMode] used in the app. Defaults to [MODE_NIGHT_FOLLOW_SYSTEM].
  * @property forceActionButtonTinting When set to true the [toolbar] action button will always be tinted
  * based on the [toolbar] background, ignoring the value of [CustomTabActionButtonConfig.tint].
+ * @property isNavBarEnabled Whether or not the navigation bar is enabled.
  * @property shareListener Invoked when the share button is pressed.
  * @property closeListener Invoked when the close button is pressed.
  */
-@Suppress("LargeClass", "LongParameterList")
+@Suppress("LargeClass")
 class CustomTabsToolbarFeature(
     private val store: BrowserStore,
     private val toolbar: BrowserToolbar,
@@ -66,16 +83,23 @@ class CustomTabsToolbarFeature(
     private val menuBuilder: BrowserMenuBuilder? = null,
     private val menuItemIndex: Int = menuBuilder?.items?.size ?: 0,
     private val window: Window? = null,
-    private val updateToolbarBackground: Boolean = true,
+    private val updateTheme: Boolean = true,
+    @NightMode private val appNightMode: Int = MODE_NIGHT_FOLLOW_SYSTEM,
     private val forceActionButtonTinting: Boolean = false,
+    private val isNavBarEnabled: Boolean = false,
     private val shareListener: (() -> Unit)? = null,
     private val closeListener: () -> Unit,
 ) : LifecycleAwareFeature, UserInteractionHandler {
     private var initialized: Boolean = false
     private val titleObserver = CustomTabSessionTitleObserver(toolbar)
     private val context get() = toolbar.context
-    internal var readableColor = Color.WHITE
     private var scope: CoroutineScope? = null
+
+    /**
+     * Gets the current custom tab session.
+     */
+    private val session: CustomTabSessionState?
+        get() = sessionId?.let { store.state.findCustomTab(it) }
 
     /**
      * Initializes the feature and registers the [CustomTabSessionTitleObserver].
@@ -93,7 +117,7 @@ class CustomTabsToolbarFeature(
 
         if (!initialized) {
             initialized = true
-            init(tab)
+            init(tab.config)
         }
     }
 
@@ -105,46 +129,80 @@ class CustomTabsToolbarFeature(
     }
 
     @VisibleForTesting
-    internal fun init(tab: CustomTabSessionState) {
-        val config = tab.config
-
+    internal fun init(
+        config: CustomTabConfig,
+        setAppNightMode: (Int) -> Unit = AppCompatDelegate::setDefaultNightMode,
+    ) {
         // Don't allow clickable toolbar so a custom tab can't switch to edit mode.
         toolbar.display.onUrlClicked = { false }
+        toolbar.display.hidePageActionSeparator()
 
-        // If it's available, hold on to the readable colour for other assets.
-        if (updateToolbarBackground && config.toolbarColor != null) {
-            readableColor = getReadableTextColor(config.toolbarColor!!)
+        // Use the intent provided color scheme or fallback to the app night mode preference.
+        val nightMode = config.colorScheme?.toNightMode() ?: appNightMode
+
+        if (updateTheme) {
+            setAppNightMode.invoke(nightMode)
         }
 
-        // Change the toolbar colour
-        updateToolbarColor(
-            config.toolbarColor,
-            config.navigationBarColor ?: config.toolbarColor,
+        val colorSchemeParams = config.colorSchemes?.getConfiguredColorSchemeParams(
+            nightMode = nightMode,
+            isDarkMode = context.isDarkMode(),
         )
+
+        val readableColor = if (updateTheme) {
+            colorSchemeParams?.toolbarColor?.let { getReadableTextColor(it) }
+                ?: toolbar.display.colors.menu
+        } else {
+            // It's private mode, the readable color needs match the app.
+            // Note: The main app is configuring the private theme, Custom Tabs is adding the
+            // additional theming for the dynamic UI elements e.g. action & share buttons.
+            val colorResId = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
+            getColor(context, colorResId)
+        }
+
+        if (updateTheme) {
+            colorSchemeParams.let {
+                updateTheme(
+                    toolbarColor = it?.toolbarColor,
+                    navigationBarColor = it?.navigationBarColor ?: it?.toolbarColor,
+                    navigationBarDividerColor = it?.navigationBarDividerColor,
+                    readableColor = readableColor,
+                )
+            }
+        }
 
         // Add navigation close action
         if (config.showCloseButton) {
-            addCloseButton(tab, config.closeButtonIcon)
+            addCloseButton(readableColor, config.closeButtonIcon)
         }
 
         // Add action button
-        addActionButton(tab, config.actionButtonConfig)
+        addActionButton(readableColor, config.actionButtonConfig)
 
         // Show share button
         if (config.showShareMenuItem) {
-            addShareButton(tab)
+            addShareButton(readableColor)
         }
 
         // Add menu items
         if (config.menuItems.isNotEmpty() || menuBuilder?.items?.isNotEmpty() == true) {
-            addMenuItems(tab, config.menuItems, menuItemIndex)
+            addMenuItems(config.menuItems, menuItemIndex)
+        }
+
+        if (isNavBarEnabled) {
+            toolbar.display.hideMenuButton()
         }
     }
 
     @VisibleForTesting
-    internal fun updateToolbarColor(@ColorInt toolbarColor: Int?, @ColorInt navigationBarColor: Int?) {
-        if (updateToolbarBackground && toolbarColor != null) {
-            toolbar.setBackgroundColor(toolbarColor)
+    internal fun updateTheme(
+        @ColorInt toolbarColor: Int? = null,
+        @ColorInt navigationBarColor: Int? = null,
+        @ColorInt navigationBarDividerColor: Int? = null,
+        @ColorInt readableColor: Int,
+    ) {
+        toolbarColor?.let {
+            toolbar.setBackgroundColor(it)
 
             toolbar.display.colors = toolbar.display.colors.copy(
                 text = readableColor,
@@ -155,10 +213,11 @@ class CustomTabsToolbarFeature(
                 menu = readableColor,
             )
 
-            window?.setStatusBarTheme(toolbarColor)
+            window?.setStatusBarTheme(it)
         }
-        navigationBarColor?.let { color ->
-            window?.setNavigationBarTheme(color)
+
+        if (navigationBarColor != null || navigationBarDividerColor != null) {
+            window?.setNavigationBarTheme(navigationBarColor, navigationBarDividerColor)
         }
     }
 
@@ -167,7 +226,7 @@ class CustomTabsToolbarFeature(
      * When clicked, it calls [closeListener].
      */
     @VisibleForTesting
-    internal fun addCloseButton(tab: CustomTabSessionState, bitmap: Bitmap?) {
+    internal fun addCloseButton(@ColorInt readableColor: Int, bitmap: Bitmap?) {
         val drawableIcon = bitmap?.toDrawable(context.resources)
             ?: getDrawable(context, iconsR.drawable.mozac_ic_cross_24)!!.mutate()
 
@@ -178,7 +237,9 @@ class CustomTabsToolbarFeature(
             context.getString(R.string.mozac_feature_customtabs_exit_button),
         ) {
             emitCloseFact()
-            useCases.remove(tab.id)
+            session?.let {
+                useCases.remove(it.id)
+            }
             closeListener.invoke()
         }
         toolbar.addNavigationAction(button)
@@ -189,15 +250,20 @@ class CustomTabsToolbarFeature(
      * When clicked, it activates the corresponding [PendingIntent].
      */
     @VisibleForTesting
-    internal fun addActionButton(tab: CustomTabSessionState, buttonConfig: CustomTabActionButtonConfig?) {
+    internal fun addActionButton(
+        @ColorInt readableColor: Int,
+        buttonConfig: CustomTabActionButtonConfig?,
+    ) {
         buttonConfig?.let { config ->
+            val icon = config.icon
+            val scaledIconSize = icon.resizeMaintainingAspectRatio(ACTION_BUTTON_MAX_DRAWABLE_DP_SIZE)
             val drawableIcon = Bitmap.createScaledBitmap(
-                config.icon,
-                ACTION_BUTTON_DRAWABLE_WIDTH_DP.dpToPx(context.resources.displayMetrics),
-                ACTION_BUTTON_DRAWABLE_HEIGHT_DP.dpToPx(context.resources.displayMetrics),
+                icon,
+                scaledIconSize.width.dpToPx(context.resources.displayMetrics),
+                scaledIconSize.height.dpToPx(context.resources.displayMetrics),
                 true,
-            )
-                .toDrawable(context.resources)
+            ).toDrawable(context.resources)
+
             if (config.tint || forceActionButtonTinting) {
                 drawableIcon.setTint(readableColor)
             }
@@ -207,7 +273,9 @@ class CustomTabsToolbarFeature(
                 config.description,
             ) {
                 emitActionButtonFact()
-                config.pendingIntent.sendWithUrl(context, tab.content.url)
+                session?.let {
+                    config.pendingIntent.sendWithUrl(context, it.content.url)
+                }
             }
 
             toolbar.addBrowserAction(button)
@@ -219,7 +287,7 @@ class CustomTabsToolbarFeature(
      * When clicked, it activates [shareListener] and defaults to the [share] KTX helper.
      */
     @VisibleForTesting
-    internal fun addShareButton(tab: CustomTabSessionState) {
+    internal fun addShareButton(@ColorInt readableColor: Int) {
         val drawableIcon = getDrawable(context, iconsR.drawable.mozac_ic_share_android_24)!!
         drawableIcon.setTint(readableColor)
 
@@ -227,7 +295,11 @@ class CustomTabsToolbarFeature(
             drawableIcon,
             context.getString(R.string.mozac_feature_customtabs_share_link),
         ) {
-            val listener = shareListener ?: { context.share(tab.content.url) }
+            val listener = shareListener ?: {
+                session?.let {
+                    context.share(it.content.url)
+                }
+            }
             emitActionButtonFact()
             listener.invoke()
         }
@@ -240,13 +312,14 @@ class CustomTabsToolbarFeature(
      */
     @VisibleForTesting
     internal fun addMenuItems(
-        tab: CustomTabSessionState,
         menuItems: List<CustomTabMenuItem>,
         index: Int,
     ) {
         menuItems.map { item ->
             SimpleBrowserMenuItem(item.name) {
-                item.pendingIntent.sendWithUrl(context, tab.content.url)
+                session?.let {
+                    item.pendingIntent.sendWithUrl(context, it.content.url)
+                }
             }
         }.also { items ->
             val combinedItems = menuBuilder?.let { builder ->
@@ -286,7 +359,75 @@ class CustomTabsToolbarFeature(
     }
 
     companion object {
-        private const val ACTION_BUTTON_DRAWABLE_WIDTH_DP = 24
-        private const val ACTION_BUTTON_DRAWABLE_HEIGHT_DP = 24
+        private val ACTION_BUTTON_MAX_DRAWABLE_DP_SIZE = Size(48, 24)
     }
 }
+
+@VisibleForTesting
+internal fun ColorSchemes.getConfiguredColorSchemeParams(
+    @NightMode nightMode: Int? = null,
+    isDarkMode: Boolean = false,
+) = when {
+    noColorSchemeParamsSet() -> null
+
+    defaultColorSchemeParamsOnly() -> defaultColorSchemeParams
+
+    // Try to follow specified color scheme.
+    nightMode == MODE_NIGHT_FOLLOW_SYSTEM -> {
+        if (isDarkMode) {
+            darkColorSchemeParams?.withDefault(defaultColorSchemeParams)
+                ?: defaultColorSchemeParams
+        } else {
+            lightColorSchemeParams?.withDefault(defaultColorSchemeParams)
+                ?: defaultColorSchemeParams
+        }
+    }
+
+    nightMode == MODE_NIGHT_NO -> lightColorSchemeParams?.withDefault(
+        defaultColorSchemeParams,
+    ) ?: defaultColorSchemeParams
+
+    nightMode == MODE_NIGHT_YES -> darkColorSchemeParams?.withDefault(
+        defaultColorSchemeParams,
+    ) ?: defaultColorSchemeParams
+
+    // No color scheme set, try to use default.
+    else -> defaultColorSchemeParams
+}
+
+/**
+ * Try to convert the given [ColorScheme] to [NightMode].
+ */
+@VisibleForTesting
+@NightMode
+internal fun Int.toNightMode() = when (this) {
+    COLOR_SCHEME_SYSTEM -> MODE_NIGHT_FOLLOW_SYSTEM
+    COLOR_SCHEME_LIGHT -> MODE_NIGHT_NO
+    COLOR_SCHEME_DARK -> MODE_NIGHT_YES
+    else -> null
+}
+
+private fun ColorSchemes.noColorSchemeParamsSet() =
+    defaultColorSchemeParams == null && lightColorSchemeParams == null && darkColorSchemeParams == null
+
+private fun ColorSchemes.defaultColorSchemeParamsOnly() =
+    defaultColorSchemeParams != null && lightColorSchemeParams == null && darkColorSchemeParams == null
+
+private fun Context.isDarkMode() =
+    resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+/**
+ * Try to create a [ColorSchemeParams] using the given [defaultColorSchemeParam] as a fallback if
+ * there are missing properties.
+ */
+@VisibleForTesting
+internal fun ColorSchemeParams.withDefault(defaultColorSchemeParam: ColorSchemeParams?) = ColorSchemeParams(
+    toolbarColor = toolbarColor
+        ?: defaultColorSchemeParam?.toolbarColor,
+    secondaryToolbarColor = secondaryToolbarColor
+        ?: defaultColorSchemeParam?.secondaryToolbarColor,
+    navigationBarColor = navigationBarColor
+        ?: defaultColorSchemeParam?.navigationBarColor,
+    navigationBarDividerColor = navigationBarDividerColor
+        ?: defaultColorSchemeParam?.navigationBarDividerColor,
+)

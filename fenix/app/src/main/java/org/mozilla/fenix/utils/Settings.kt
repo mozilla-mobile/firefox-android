@@ -516,6 +516,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    /**
+     * Indicates if the user has completed successfully first translation.
+     */
+    var showFirstTimeTranslation: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_time_translation),
+        default = true,
+    )
+
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -614,6 +622,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldUseTrackingProtection by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
         default = true,
+    )
+
+    var shouldEnableGlobalPrivacyControl by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_privacy_enable_global_privacy_control),
+        false,
     )
 
     var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
@@ -754,6 +767,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true,
     )
 
+    val useProductionRemoteSettingsServer by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_remote_server_prod),
+        default = true,
+    )
+
     val enabledTotalCookieProtection: Boolean
         get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
@@ -836,6 +854,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
 
+    private val isTablet: Boolean
+        get() = appContext.resources.getBoolean(R.bool.tablet)
+
+    /**
+     * Indicates if the user has enabled the tab strip feature.
+     */
+    val isTabStripEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_tab_strip),
+        default = false,
+    )
+
+    val isTabletAndTabStripEnabled: Boolean
+        get() = isTablet && isTabStripEnabled
+
     var lastKnownMode: BrowsingMode = BrowsingMode.Normal
         get() {
             val lastKnownModeWasPrivate = preferences.getBoolean(
@@ -904,7 +936,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val toolbarPosition: ToolbarPosition
-        get() = if (shouldUseBottomToolbar) ToolbarPosition.BOTTOM else ToolbarPosition.TOP
+        get() = if (isTabletAndTabStripEnabled) {
+            ToolbarPosition.TOP
+        } else if (shouldUseBottomToolbar) {
+            ToolbarPosition.BOTTOM
+        } else {
+            ToolbarPosition.TOP
+        }
 
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
@@ -1459,7 +1497,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
-        default = Config.channel.isNightlyOrDebug,
+        default = true,
     )
 
     var isDynamicToolbarEnabled by booleanPreference(
@@ -1564,7 +1602,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing the user choice from the "Credit cards" settings for whether save and autofill cards
+     * Storing the user choice from the "Payment methods" settings for whether save and autofill cards
      * should be enabled or not.
      * If set to `true` when the user focuses on credit card fields in the webpage an Android prompt letting her
      * select the card details to be automatically filled will appear.
@@ -1670,30 +1708,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if notification pre permission prompt feature is enabled.
-     */
-    var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
-        default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = true,
-    )
-
-    /**
-     * Indicates if notification permission prompt has been shown to the user.
-     */
-    var isNotificationPrePermissionShown by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_is_notification_pre_permission_prompt_shown),
-        default = false,
-    )
-
-    /**
-     * Returns whether juno onboarding should be shown to the user.
+     * Returns whether onboarding should be shown to the user.
      *
      * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
      * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
      * app icon.
      */
-    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+    fun shouldShowOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
         return if (!hasUserBeenOnboarded && isLauncherIntent) {
             FxNimbus.features.junoOnboarding.recordExposure()
             true
@@ -1702,11 +1723,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
-    val feltPrivateBrowsingEnabled: Boolean
-        get() {
+    val feltPrivateBrowsingEnabled by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_should_enable_felt_privacy),
+        featureFlag = true,
+        default = {
             FxNimbus.features.privateBrowsing.recordExposure()
-            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
-        }
+            FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        },
+    )
 
     /**
      * Indicates if the review quality check feature is enabled by the user.
@@ -1851,14 +1875,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if Firefox translations are enabled.
-     */
-    var enableTranslations by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_enable_translations),
-        default = false,
-    )
-
-    /**
      * Adjust Activated User sent
      */
     var growthUserActivatedSent by booleanPreference(
@@ -1920,6 +1936,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if SuggestStrongPassword feature is enabled.
+     */
+    var enableSuggestStrongPassword by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_suggest_strong_password),
+        default = { FxNimbus.features.fxStrongPassword.value().enabled },
+        featureFlag = FeatureFlags.suggestStrongPassword,
+    )
+
+    /**
      * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
      * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
      */
@@ -1938,5 +1963,68 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
         default = { enableFxSuggest },
         featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates that the user does not want warned of a translations
+     * model download while in data saver mode and using mobile data.
+     */
+    var ignoreTranslationsDataSaverWarning by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_ignore_translations_data_saver_warning),
+        default = false,
+    )
+
+    /**
+     * Indicates if the user is shown new redesigned Toolbar UI.
+     */
+    var enableRedesignToolbar by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign),
+        default = { FeatureFlags.completeToolbarRedesignEnabled },
+        featureFlag = FeatureFlags.completeToolbarRedesignEnabled,
+    )
+
+    /**
+     * Returns the height of the bottom toolbar.
+     *
+     * The bottom toolbar can consist of a navigation bar,
+     * a combination of a navigation and address bar, or be absent.
+     */
+    fun getBottomToolbarHeight(): Int {
+        val isNavBarEnabled = enableIncompleteToolbarRedesign
+        val isToolbarAtBottom = shouldUseBottomToolbar
+        val toolbarHeight = appContext.resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+        val navbarHeight = appContext.resources.getDimensionPixelSize(R.dimen.browser_navbar_height)
+
+        return when {
+            isNavBarEnabled && isToolbarAtBottom -> toolbarHeight + navbarHeight
+            isNavBarEnabled -> navbarHeight
+            isToolbarAtBottom -> toolbarHeight
+            else -> 0
+        }
+    }
+
+    /**
+     * Returns the height of the top toolbar.
+     */
+    fun getTopToolbarHeight(): Int {
+        val isToolbarAtTop = !shouldUseBottomToolbar
+        val toolbarHeight = appContext.resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+
+        return if (isToolbarAtTop) {
+            toolbarHeight
+        } else {
+            0
+        }
+    }
+
+    /**
+     * Indicates if the user is shown incomplete new redesigned Toolbar UI components and behaviors.
+     *
+     * DEV ONLY
+     */
+    var enableIncompleteToolbarRedesign by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign_incomplete),
+        default = { false },
+        featureFlag = FeatureFlags.incompleteToolbarRedesignEnabled,
     )
 }

@@ -6,9 +6,10 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithLauncherIntent
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.homeScreen
 
-class OnboardingTest {
+class OnboardingTest : TestSetup() {
 
     @get:Rule
     val activityTestRule =
@@ -32,7 +33,7 @@ class OnboardingTest {
     fun verifyFirstOnboardingCardItemsFunctionalityTest() {
         runWithLauncherIntent(activityTestRule) {
             homeScreen {
-                clickNotNowOnboardingButton(activityTestRule)
+                clickDefaultCardNotNowOnboardingButton(activityTestRule)
                 verifySecondOnboardingCard(activityTestRule)
                 swipeSecondOnboardingCardToRight()
             }.clickSetAsDefaultBrowserOnboardingButton(activityTestRule) {
@@ -48,7 +49,7 @@ class OnboardingTest {
     fun verifySecondOnboardingCardItemsTest() {
         runWithLauncherIntent(activityTestRule) {
             homeScreen {
-                clickNotNowOnboardingButton(activityTestRule)
+                clickDefaultCardNotNowOnboardingButton(activityTestRule)
                 verifySecondOnboardingCard(activityTestRule)
             }
         }
@@ -57,11 +58,13 @@ class OnboardingTest {
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2122344
     @SmokeTest
     @Test
-    fun verifySecondOnboardingCardSignInFunctionalityTest() {
+    fun verifyThirdOnboardingCardSignInFunctionalityTest() {
         runWithLauncherIntent(activityTestRule) {
             homeScreen {
-                clickNotNowOnboardingButton(activityTestRule)
+                clickDefaultCardNotNowOnboardingButton(activityTestRule)
                 verifySecondOnboardingCard(activityTestRule)
+                clickAddSearchWidgetNotNowOnboardingButton(activityTestRule)
+                verifyThirdOnboardingCard(activityTestRule)
             }.clickSignInOnboardingButton(activityTestRule) {
                 verifyTurnOnSyncMenu()
             }

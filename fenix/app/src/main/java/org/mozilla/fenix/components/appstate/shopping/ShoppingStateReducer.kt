@@ -24,18 +24,6 @@ internal object ShoppingStateReducer {
                 ),
             )
 
-            is ShoppingAction.AddToProductAnalysed -> state.copy(
-                shoppingState = state.shoppingState.copy(
-                    productsInAnalysis = state.shoppingState.productsInAnalysis + action.productPageUrl,
-                ),
-            )
-
-            is ShoppingAction.RemoveFromProductAnalysed -> state.copy(
-                shoppingState = state.shoppingState.copy(
-                    productsInAnalysis = state.shoppingState.productsInAnalysis - action.productPageUrl,
-                ),
-            )
-
             is ShoppingAction.HighlightsCardExpanded -> {
                 val updatedValue =
                     state.shoppingState.productCardState[action.productPageUrl]?.copy(
@@ -76,6 +64,13 @@ internal object ShoppingStateReducer {
                     ),
                 )
             }
+
+            is ShoppingAction.ProductRecommendationImpression -> state.copy(
+                shoppingState = state.shoppingState.copy(
+                    recordedProductRecommendationImpressions =
+                    state.shoppingState.recordedProductRecommendationImpressions + action.key,
+                ),
+            )
         }
 
     private fun ShoppingState.updateProductCardState(key: String, value: CardState): ShoppingState =

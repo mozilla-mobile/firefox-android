@@ -24,6 +24,7 @@ import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.library.history.PendingDeletionHistory
 import org.mozilla.fenix.messaging.MessagingState
+import org.mozilla.fenix.search.SearchDialogFragment
 import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
@@ -33,11 +34,13 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  * @property inactiveTabsExpanded A flag to know if the Inactive Tabs section of the Tabs Tray
  * should be expanded when the tray is opened.
  * @property firstFrameDrawn Flag indicating whether the first frame of the homescreen has been drawn.
+ * @property isSearchDialogVisible Flag indicating whether the user is interacting with the [SearchDialogFragment].
  * @property nonFatalCrashes List of non-fatal crashes that allow the app to continue being used.
  * @property collections The list of [TabCollection] to display in the [HomeFragment].
  * @property expandedCollections A set containing the ids of the [TabCollection] that are expanded
  * in the [HomeFragment].
  * @property mode Whether the app is in private browsing mode.
+ * @property selectedTabId The currently selected tab ID. This should be bound to [BrowserStore].
  * @property topSites The list of [TopSite] in the [HomeFragment].
  * @property showCollectionPlaceholder If true, shows a placeholder when there are no collections.
  * @property recentTabs The list of recent [RecentTab] in the [HomeFragment].
@@ -55,15 +58,19 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  * @property wallpaperState The [WallpaperState] to display in the [HomeFragment].
  * @property standardSnackbarError A snackbar error message to display.
  * @property shoppingState Holds state for shopping feature that's required to live the lifetime of a session.
+ * @property wasLastTabClosedPrivate Whether the last remaining tab that was closed in private mode. This is used to
+ * display an undo snackbar message relevant to the browsing mode. If null, no snackbar is shown.
  */
 data class AppState(
     val isForeground: Boolean = true,
     val inactiveTabsExpanded: Boolean = false,
     val firstFrameDrawn: Boolean = false,
+    val isSearchDialogVisible: Boolean = false,
     val nonFatalCrashes: List<NativeCodeCrash> = emptyList(),
     val collections: List<TabCollection> = emptyList(),
     val expandedCollections: Set<Long> = emptySet(),
     val mode: BrowsingMode = BrowsingMode.Normal,
+    val selectedTabId: String? = null,
     val topSites: List<TopSite> = emptyList(),
     val showCollectionPlaceholder: Boolean = false,
     val recentTabs: List<RecentTab> = emptyList(),
@@ -79,4 +86,5 @@ data class AppState(
     val wallpaperState: WallpaperState = WallpaperState.default,
     val standardSnackbarError: StandardSnackbarError? = null,
     val shoppingState: ShoppingState = ShoppingState(),
+    val wasLastTabClosedPrivate: Boolean? = null,
 ) : State

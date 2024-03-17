@@ -64,18 +64,27 @@ object FeatureFlags {
     const val unifiedSearchSettings = true
 
     /**
-     * Allows users to enable translations.
-     * Preference to fully enable translations is pref_key_enable_translations.
-     */
-    val translations = Config.channel.isDebug
-
-    /**
      * Allows users to enable Firefox Suggest.
      */
     const val fxSuggest = true
 
     /**
+     * Allows users to enable SuggestStrongPassword feature.
+     */
+    const val suggestStrongPassword = true
+
+    /**
      * Enable Meta attribution.
      */
-    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
+    const val metaAttributionEnabled = true
+
+    /**
+     * Enable Toolbar Redesign components and behaviors ready for Nightly.
+     */
+    val completeToolbarRedesignEnabled = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enable Toolbar Redesign partial components and behaviors.
+     */
+    val incompleteToolbarRedesignEnabled = Config.channel.isDebug
 }

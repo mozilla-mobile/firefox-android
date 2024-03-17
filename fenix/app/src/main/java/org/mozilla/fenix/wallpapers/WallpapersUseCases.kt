@@ -61,8 +61,7 @@ class WallpapersUseCases(
     // Use case for loading specific wallpaper bitmaps.
     val loadBitmap: LoadBitmapUseCase by lazy {
         DefaultLoadBitmapUseCase(
-            filesDir = context.filesDir,
-            getOrientation = { context.resources.configuration.orientation },
+            getFilesDir = { context.filesDir },
         )
     }
 
@@ -161,24 +160,26 @@ class WallpapersUseCases(
          * Load the bitmap for a [wallpaper], if available.
          *
          * @param wallpaper The wallpaper to load a bitmap for.
+         * @param orientation The orientation of wallpaper.
          */
-        suspend operator fun invoke(wallpaper: Wallpaper): Bitmap?
+        suspend operator fun invoke(wallpaper: Wallpaper, orientation: Int): Bitmap?
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal class DefaultLoadBitmapUseCase(
-        private val filesDir: File,
-        private val getOrientation: () -> Int,
+        private val getFilesDir: suspend () -> File,
     ) : LoadBitmapUseCase {
-        override suspend fun invoke(wallpaper: Wallpaper): Bitmap? =
-            loadWallpaperFromDisk(wallpaper)
+        override suspend fun invoke(wallpaper: Wallpaper, orientation: Int): Bitmap? =
+            loadWallpaperFromDisk(wallpaper, orientation)
 
-        private suspend fun loadWallpaperFromDisk(
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal suspend fun loadWallpaperFromDisk(
             wallpaper: Wallpaper,
+            orientation: Int,
         ): Bitmap? = Result.runCatching {
-            val path = wallpaper.getLocalPathFromContext()
+            val path = wallpaper.getLocalPathFromContext(orientation)
             withContext(Dispatchers.IO) {
-                val file = File(filesDir, path)
+                val file = File(getFilesDir(), path)
                 BitmapFactory.decodeStream(file.inputStream())
             }
         }.getOrNull()
@@ -187,17 +188,13 @@ class WallpapersUseCases(
          * Get the expected local path on disk for a wallpaper. This will differ depending
          * on orientation and app theme.
          */
-        private fun Wallpaper.getLocalPathFromContext(): String {
-            val orientation = if (isLandscape()) {
+        private fun Wallpaper.getLocalPathFromContext(orientation: Int): String {
+            val orientationWallpaper = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 Wallpaper.ImageType.Landscape
             } else {
                 Wallpaper.ImageType.Portrait
             }
-            return Wallpaper.getLocalPath(name, orientation)
-        }
-
-        private fun isLandscape(): Boolean {
-            return getOrientation() == Configuration.ORIENTATION_LANDSCAPE
+            return Wallpaper.getLocalPath(name, orientationWallpaper)
         }
     }
 

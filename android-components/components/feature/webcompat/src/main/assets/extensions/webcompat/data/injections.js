@@ -113,20 +113,6 @@ const AVAILABLE_INJECTIONS = [
     customFunc: "noSniffFix",
   },
   {
-    id: "bug1570328",
-    platform: "android",
-    domain: "developer.apple.com",
-    bug: "1570328",
-    contentScripts: {
-      matches: ["*://developer.apple.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1570328-developer-apple.com-transform-scale.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1575000",
     platform: "all",
     domain: "apply.lloydsbank.co.uk",
@@ -200,20 +186,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1654877",
-    platform: "android",
-    domain: "preev.com",
-    bug: "1654877",
-    contentScripts: {
-      matches: ["*://preev.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1654877-preev.com-moz-appearance-fix.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1654907",
     platform: "android",
     domain: "reactine.ca",
@@ -225,24 +197,6 @@ const AVAILABLE_INJECTIONS = [
           file: "injections/css/bug1654907-reactine.ca-hide-unsupported.css",
         },
       ],
-    },
-  },
-  {
-    id: "bug1631811",
-    platform: "all",
-    domain: "datastudio.google.com",
-    bug: "1631811",
-    contentScripts: {
-      matches: [
-        "https://datastudio.google.com/embed/reporting/*",
-        "https://lookerstudio.google.com/embed/reporting/*",
-      ],
-      js: [
-        {
-          file: "injections/js/bug1631811-datastudio.google.com-indexedDB.js",
-        },
-      ],
-      allFrames: true,
     },
   },
   {
@@ -554,11 +508,12 @@ const AVAILABLE_INJECTIONS = [
         "*://*.avanabayview.com/*", // #118617
         "*://*.breakpointeandcoronado.com/*", // #117735
         "*://*.courtsatspringmill.com/*", // #128404
+        "*://*.fieldstoneamherst.com/*", // #132974
         "*://*.gslbriarcreek.com/*", // #126401
+        "*://*.hpixeniatrails.com/*", // #131703
         "*://*.liveatlasathens.com/*", // #111189
         "*://*.liveobserverpark.com/*", // #105244
         "*://*.liveupark.com/*", // #121083
-        "*://*.metropolisapt.com/*", // #129105
         "*://*.midwayurban.com/*", // #116523
         "*://*.nhcalaska.com/*",
         "*://*.prospectportal.com/*", // #115206
@@ -566,7 +521,6 @@ const AVAILABLE_INJECTIONS = [
         "*://*.thefoundryat41st.com/*", // #128994
         "*://*.theloftsorlando.com/*",
         "*://*.vanallenapartments.com/*", // #120056
-        "*://*.waterfordapartmentstulsa.com/*", // #125870
       ],
       css: [
         {
@@ -600,20 +554,6 @@ const AVAILABLE_INJECTIONS = [
       js: [
         {
           file: "injections/js/bug1799980-healow.com-infinite-loop-fix.js",
-        },
-      ],
-    },
-  },
-  {
-    id: "bug1800000",
-    platform: "desktop",
-    domain: "www.honda.co.uk",
-    bug: "1800000",
-    contentScripts: {
-      matches: ["*://www.honda.co.uk/cars/book-a-service.html*"],
-      css: [
-        {
-          file: "injections/css/bug1800000-www.honda.co.uk-choose-dealer-button-fix.css",
         },
       ],
     },
@@ -969,20 +909,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1848716",
-    platform: "desktop",
-    domain: "elal.com",
-    bug: "1848716",
-    contentScripts: {
-      matches: ["*://*.elal.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1848716-elal.com-unsupported-banner.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1848849",
     platform: "all",
     domain: "theaa.com",
@@ -1083,6 +1009,51 @@ const AVAILABLE_INJECTIONS = [
         },
       ],
       allFrames: true,
+    },
+  },
+  {
+    id: "bug1868345",
+    platform: "desktop",
+    domain: "tvmovie.de",
+    bug: "1868345",
+    contentScripts: {
+      matches: [
+        "*://www.tvmovie.de/tv/fernsehprogramm",
+        "*://www.tvmovie.de/tv/fernsehprogramm*",
+      ],
+      css: [
+        {
+          file: "injections/css/bug1868345-tvmovie.de-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1877346",
+    platform: "android",
+    domain: "offerup.com",
+    bug: "1877346",
+    contentScripts: {
+      matches: ["*://offerup.com/*"],
+      css: [
+        {
+          file: "injections/css/bug1877346-offerup.com-infinite-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1884842",
+    platform: "android",
+    domain: "foodora.cz",
+    bug: "1884842",
+    contentScripts: {
+      matches: ["*://*.foodora.cz/*"],
+      css: [
+        {
+          file: "injections/css/bug1884842-foodora.cz-height-fix.css",
+        },
+      ],
     },
   },
 ];

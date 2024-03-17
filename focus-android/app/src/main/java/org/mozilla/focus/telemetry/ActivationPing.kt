@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.focus.GleanMetrics.Activation
 import org.mozilla.focus.GleanMetrics.Pings
-import java.util.UUID
 
 /**
  * Ensures that only one activation ping is ever sent.
@@ -61,7 +60,7 @@ class ActivationPing(private val context: Context) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun triggerPing() {
         // Generate the activation_id.
-        Activation.activationId.set(UUID.fromString(TelemetryWrapper.clientId))
+        Activation.activationId.generateAndSet()
 
         CoroutineScope(Dispatchers.IO).launch {
             Pings.activation.submit()

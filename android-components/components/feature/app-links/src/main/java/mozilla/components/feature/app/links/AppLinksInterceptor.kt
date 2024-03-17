@@ -49,7 +49,6 @@ private const val MAPS = "maps."
  * have registered to open.
  * @param launchFromInterceptor If {true} then the interceptor will launch the link in third-party apps if available.
  */
-@Suppress("LongParameterList")
 class AppLinksInterceptor(
     private val context: Context,
     private val interceptLinkClicks: Boolean = false,
@@ -111,10 +110,19 @@ class AppLinksInterceptor(
         }
 
         val redirect = useCases.interceptedAppLinkRedirect(uri)
-        val result = handleRedirect(redirect, uri)
+        val result = handleRedirect(redirect, uri, engineSupportedSchemes.contains(uriScheme))
 
-        if (inUserDoNotIntercept(uri, redirect.appIntent)) {
-            return null
+        if (redirect.hasExternalApp()) {
+            val packageName = redirect.appIntent?.component?.packageName
+
+            if (
+                lastApplinksPackageWithTimestamp.first == packageName && lastApplinksPackageWithTimestamp.second +
+                APP_LINKS_DO_NOT_INTERCEPT_INTERVAL > SystemClock.elapsedRealtime()
+            ) {
+                return null
+            }
+
+            lastApplinksPackageWithTimestamp = Pair(packageName, SystemClock.elapsedRealtime())
         }
 
         if (redirect.isRedirect()) {
@@ -135,11 +143,16 @@ class AppLinksInterceptor(
     internal fun handleRedirect(
         redirect: AppLinkRedirect,
         uri: String,
+        schemeSupported: Boolean,
     ): RequestInterceptor.InterceptionResponse? {
-        if (!launchInApp()) {
+        if (!launchInApp() || inUserDoNotIntercept(uri, redirect.appIntent)) {
             redirect.fallbackUrl?.let {
                 return RequestInterceptor.InterceptionResponse.Url(it)
             }
+        }
+
+        if (schemeSupported && inUserDoNotIntercept(uri, redirect.appIntent)) {
+            return null
         }
 
         if (!redirect.hasExternalApp()) {
@@ -184,6 +197,9 @@ class AppLinksInterceptor(
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         internal var userDoNotInterceptCache: MutableMap<Int, Long> = mutableMapOf()
 
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal var lastApplinksPackageWithTimestamp: Pair<String?, Long> = Pair(null, 0L)
+
         @VisibleForTesting
         internal fun getCacheKey(url: String, appIntent: Intent?): Int? {
             return Uri.parse(url)?.let { uri ->
@@ -214,5 +230,8 @@ class AppLinksInterceptor(
 
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         internal const val APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL = 60 * 60 * 1000L // 1 hour
+
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal const val APP_LINKS_DO_NOT_INTERCEPT_INTERVAL = 2000L // 2 second
     }
 }

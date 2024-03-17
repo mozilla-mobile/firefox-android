@@ -43,6 +43,8 @@ import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -62,7 +64,7 @@ import java.util.Locale
  *
  */
 
-class SearchTest {
+class SearchTest : TestSetup() {
     private lateinit var searchMockServer: MockWebServer
     private var queryString = "firefox"
     private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
@@ -82,7 +84,8 @@ class SearchTest {
     ) { it.activity }
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         searchMockServer = MockWebServer().apply {
             dispatcher = SearchDispatcher()
             start()
@@ -90,7 +93,7 @@ class SearchTest {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDown() {
         searchMockServer.shutdown()
     }
 
@@ -485,7 +488,7 @@ class SearchTest {
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
             clickDeleteAllHistoryButton()
             confirmDeleteAllHistory()
-            verifyDeleteSnackbarText("Group deleted")
+            verifySnackBarText("Group deleted")
             verifyHistoryItemExists(shouldExist = false, firstPageUrl.toString())
         }.goBack {}
         homeScreen {

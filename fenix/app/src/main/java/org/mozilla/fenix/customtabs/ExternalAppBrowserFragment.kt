@@ -5,7 +5,6 @@
 package org.mozilla.fenix.customtabs
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
@@ -15,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.manifest.getOrNull
 import mozilla.components.concept.engine.permission.SitePermissions
@@ -26,14 +24,13 @@ import mozilla.components.feature.pwa.feature.WebAppActivityFeature
 import mozilla.components.feature.pwa.feature.WebAppContentFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
-import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
-import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -44,7 +41,7 @@ import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCoo
 /**
  * Fragment used for browsing the web within external apps.
  */
-class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
+class ExternalAppBrowserFragment : BaseBrowserFragment() {
 
     private val args by navArgs<ExternalAppBrowserFragmentArgs>()
 
@@ -59,43 +56,31 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         val customTabSessionId = customTabSessionId ?: return
         val activity = requireActivity()
         val components = activity.components
-        val toolbar = binding.root.findViewById<BrowserToolbar>(R.id.toolbar)
 
         val manifest =
             args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
+
+        val isNavBarEnabled = IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled
 
         customTabsIntegration.set(
             feature = CustomTabsIntegration(
                 store = requireComponents.core.store,
                 useCases = requireComponents.useCases.customTabsUseCases,
-                toolbar = toolbar,
+                toolbar = browserToolbarView.view,
                 sessionId = customTabSessionId,
                 activity = activity,
                 onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
                 isPrivate = tab.content.private,
                 shouldReverseItems = !activity.settings().shouldUseBottomToolbar,
                 isSandboxCustomTab = args.isSandboxCustomTab,
+                isNavBarEnabled = isNavBarEnabled,
             ),
             owner = this,
             view = view,
         )
 
         windowFeature.set(
-            feature = CustomTabWindowFeature(
-                activity,
-                components.core.store,
-                customTabSessionId,
-            ) { uri ->
-                val intent =
-                    Intent.parseUri("${BuildConfig.DEEP_LINK_SCHEME}://open?url=$uri", 0)
-                if (intent.action == Intent.ACTION_VIEW) {
-                    intent.addCategory(Intent.CATEGORY_BROWSABLE)
-                    intent.component = null
-                    intent.selector = null
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                activity.startActivity(intent)
-            },
+            feature = CustomTabWindowFeature(activity, components.core.store, customTabSessionId),
             owner = this,
             view = view,
         )
@@ -117,7 +102,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 }
             },
             owner = this,
-            view = toolbar,
+            view = browserToolbarView.view,
         )
 
         if (manifest != null) {
@@ -212,9 +197,4 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         view,
         FenixSnackbarDelegate(view),
     )
-
-    companion object {
-        // We only care about millisecond precision for telemetry events
-        internal const val MS_PRECISION = 1_000_000L
-    }
 }

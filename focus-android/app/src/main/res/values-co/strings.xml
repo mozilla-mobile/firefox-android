@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Caccià da l’accurtatoghji</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Ciò chì hè novu</string>
     <string name="menu_settings">Preferenze</string>
     <string name="menu_about">Apprupositu</string>
     <string name="menu_help">Aiutu</string>
@@ -84,10 +83,13 @@
          sharing an URL. -->
     <string name="share_dialog_title">Sparte cù</string>
 
-    <!-- While a browsing session is active (in the foreground or background) we will show a notification
-         so that the user doesn't forget about the website still being open. This text is shown in
-         the notification. Clicking the notification will have the same effect as clicking the "erase"
-         button in the application. -->
+    <string name="notification_erase_title_android_14">Squassà a cronolugia di navigazione ?</string>
+    <string name="notification_erase_text_android_14" moz:RemovedIn="124" tools:ignore="UnusedResources">Picchichjate o spazzate sta nutificazione per squassà di manera sicura a vostra cronolugia di navigazione.</string>
+
+    <!-- Text shown in the notification description that pops up to remind the user that a browsing session is active
+    for Android 14+. -->
+    <string name="notification_erase_text_android_14_1">Picchichjate sta nutificazione o fatela sguillà per squassà di manera sicura a vostra cronolugia di navigazione.</string>
+
     <string name="notification_erase_text">Squassà a cronolugia di navigazione</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->
@@ -184,7 +186,7 @@
     <string name="preference_category_search">Ricerca</string>
 
     <!-- Title of "switch" preference that enables/disables search suggestions -->
-    <string name="preference_show_search_suggestions">Ottene sugestioni di ricerca</string>
+    <string name="preference_show_search_suggestions">Ottene suggestioni di ricerca</string>
     <!-- Description of the preference that enables/disables search suggestions
         %1$s will be replaced by the app name (e.g. Firefox Focus) -->
     <string name="preference_show_search_suggestions_summary">%1$s manderà à u vostru mutore di ricerca ciò chì voi stampittate in a barra d’indirizzu</string>
@@ -873,11 +875,11 @@
     <string name="biometric_auth_moved_too_quickly">U ditu hà mossu troppu prestu. Pruvà torna.</string>
 
     <!-- Title for the prompt to enable search suggestions -->
-    <string name="enable_search_suggestion_title2">Affissà e sugestioni di ricerca ?</string>
+    <string name="enable_search_suggestion_title2">Affissà e suggestioni di ricerca ?</string>
 
     <!-- Description for the prompt to enable search suggestions
         %1$s will be replaced by the app name (e.g. Firefox Focus) -->
-    <string name="enable_search_suggestion_description">Per ottene sugestioni di ricerca, %1$s hà bisognu di mandà à u mutore di ricerca ciò chì vo stampittate in a barra d’indirizzu.</string>
+    <string name="enable_search_suggestion_description">Per ottene suggestioni di ricerca, %1$s hà bisognu di mandà à u mutore di ricerca ciò chì vo stampittate in a barra d’indirizzu.</string>
 
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Nò</string>
@@ -886,7 +888,7 @@
     <string name="enable_search_suggestions_yes">Sì</string>
 
     <!-- Message displayed when using a search engine that doesn't provide suggestions -->
-    <string name="no_suggestions_message">Certi mutori di ricerca ùn ponu affissà sugestioni.</string>
+    <string name="no_suggestions_message">Certi mutori di ricerca ùn ponu affissà suggestioni.</string>
 
     <!-- Button to dismiss the message displayed  when using a search engine that doesn't provide suggestions-->
     <string name="dismiss_no_suggestions_prompt_button">Ignurà</string>
@@ -1078,7 +1080,7 @@
     <string name="tool_tip_dismiss_button_content_description">Righjittà</string>
 
     <!-- CFR for Toolbar Delete Icon (Banner Info Message) -->
-    <string name="cfr_for_toolbar_delete_icon2">Picchicciate quì per squassà tuttu - cronolugia, canistrelli, ecc. - è principiate à zeru in un’unghjetta nova.</string>
+    <string name="cfr_for_toolbar_delete_icon2">Picchichjate quì per squassà tuttu - cronolugia, canistrelli, ecc. - è principiate à zeru in un’unghjetta nova.</string>
 
     <!-- Promote SearchWidget Dialog -->
 

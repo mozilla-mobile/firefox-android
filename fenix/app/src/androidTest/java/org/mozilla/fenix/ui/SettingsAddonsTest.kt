@@ -4,15 +4,11 @@
 
 package org.mozilla.fenix.ui
 
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -20,6 +16,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.getEnhancedTrackingProtectionAs
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.addonsMenu
 import org.mozilla.fenix.ui.robots.homeScreen
 
@@ -27,24 +24,9 @@ import org.mozilla.fenix.ui.robots.homeScreen
  *  Tests for verifying the functionality of installing or removing addons
  *
  */
-class SettingsAddonsTest {
-    private lateinit var mockWebServer: MockWebServer
-
+class SettingsAddonsTest : TestSetup() {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
-
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/875780
     // Walks through settings add-ons menu to ensure all items are present
@@ -81,6 +63,7 @@ class SettingsAddonsTest {
                 ) {
                     clickInstallAddon(addonName)
                 }
+                verifyAddonDownloadOverlay()
                 verifyAddonPermissionPrompt(addonName)
                 cancelInstallAddon()
                 clickInstallAddon(addonName)
@@ -113,8 +96,10 @@ class SettingsAddonsTest {
         }
     }
 
+    // TODO: Harden to dynamically install addons from position
+    //   in list of detected addons on screen instead of hard-coded values.
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/561600
-    // Installs 3 add-on and checks that the app doesn't crash while navigating the app
+    // Installs 2 add-on and checks that the app doesn't crash while navigating the app
     @SmokeTest
     @Test
     fun noCrashWithAddonInstalledTest() {
@@ -122,14 +107,11 @@ class SettingsAddonsTest {
         activityTestRule.activity.settings().setStrictETP()
 
         val uBlockAddon = "uBlock Origin"
-        val tampermonkeyAddon = "Tampermonkey"
         val darkReaderAddon = "Dark Reader"
         val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
 
         addonsMenu {
             installAddon(uBlockAddon, activityTestRule)
-            closeAddonInstallCompletePrompt()
-            installAddon(tampermonkeyAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
             installAddon(darkReaderAddon, activityTestRule)
             closeAddonInstallCompletePrompt()

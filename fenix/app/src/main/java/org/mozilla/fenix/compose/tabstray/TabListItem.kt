@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -43,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
-import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
@@ -60,7 +58,6 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * long clicks, multiselection, and media controls.
  *
  * @param tab The given tab to be render as view a grid item.
- * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
  * @param thumbnailSize Size of tab's thumbnail.
  * @param isSelected Indicates if the item should be render as selected.
  * @param multiSelectionEnabled Indicates if the item should be render with multi selection options,
@@ -75,10 +72,9 @@ import org.mozilla.fenix.theme.FirefoxTheme
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
-@Suppress("MagicNumber", "LongMethod", "LongParameterList")
+@Suppress("MagicNumber", "LongMethod")
 fun TabListItem(
     tab: TabSessionState,
-    storage: ThumbnailStorage,
     thumbnailSize: Int,
     isSelected: Boolean = false,
     multiSelectionEnabled: Boolean = false,
@@ -150,7 +146,6 @@ fun TabListItem(
             Thumbnail(
                 tab = tab,
                 size = thumbnailSize,
-                storage = storage,
                 multiSelectionEnabled = multiSelectionEnabled,
                 isSelected = multiSelectionSelected,
                 onMediaIconClicked = { onMediaClick(it) },
@@ -209,11 +204,9 @@ private fun clickableColor() = when (isSystemInDarkTheme()) {
 }
 
 @Composable
-@Suppress("LongParameterList")
 private fun Thumbnail(
     tab: TabSessionState,
     size: Int,
-    storage: ThumbnailStorage,
     multiSelectionEnabled: Boolean,
     isSelected: Boolean,
     onMediaIconClicked: ((TabSessionState) -> Unit),
@@ -223,7 +216,6 @@ private fun Thumbnail(
         TabThumbnail(
             tab = tab,
             size = size,
-            storage = storage,
             modifier = Modifier
                 .size(width = 92.dp, height = 72.dp)
                 .semantics(mergeDescendants = true) {
@@ -276,7 +268,6 @@ private fun TabListItemPreview() {
         TabListItem(
             tab = createTab(url = "www.mozilla.com", title = "Mozilla"),
             thumbnailSize = 108,
-            storage = ThumbnailStorage(LocalContext.current),
             onCloseClick = {},
             onMediaClick = {},
             onClick = {},
@@ -291,7 +282,6 @@ private fun SelectedTabListItemPreview() {
         TabListItem(
             tab = createTab(url = "www.mozilla.com", title = "Mozilla"),
             thumbnailSize = 108,
-            storage = ThumbnailStorage(LocalContext.current),
             onCloseClick = {},
             onMediaClick = {},
             onClick = {},
