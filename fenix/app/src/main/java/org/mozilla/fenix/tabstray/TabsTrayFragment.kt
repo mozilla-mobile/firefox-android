@@ -98,7 +98,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     private val tabsTrayCtaBinding = ViewBoundFeatureWrapper<TabsTrayInfoBannerBinding>()
     private val secureTabsTrayBinding = ViewBoundFeatureWrapper<SecureTabsTrayBinding>()
     private val tabsFeature = ViewBoundFeatureWrapper<TabsFeature>()
-    private val tabsTrayInactiveTabsOnboardingBinding = ViewBoundFeatureWrapper<TabsTrayInactiveTabsOnboardingBinding>()
     private val syncedTabsIntegration = ViewBoundFeatureWrapper<SyncedTabsIntegration>()
     private val bookmarksSharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
@@ -422,6 +421,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 lifecycleOwner = viewLifecycleOwner,
                 store = tabsTrayStore,
                 trayInteractor = tabsTrayInteractor,
+                navigationInteractor = navigationInteractor,
             )
 
             tabsTrayCtaBinding.set(
@@ -505,18 +505,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     store = tabsTrayStore,
                     handle = tabsTrayBinding.handle,
                     containerLayout = tabsTrayBinding.tabWrapper,
-                ),
-                owner = this,
-                view = view,
-            )
-
-            tabsTrayInactiveTabsOnboardingBinding.set(
-                feature = TabsTrayInactiveTabsOnboardingBinding(
-                    context = requireContext(),
-                    store = requireComponents.core.store,
-                    tabsTrayBinding = tabsTrayBinding,
-                    settings = requireComponents.settings,
-                    navigationInteractor = navigationInteractor,
                 ),
                 owner = this,
                 view = view,
@@ -646,6 +634,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         lifecycleOwner: LifecycleOwner,
         store: TabsTrayStore,
         trayInteractor: TabsTrayInteractor,
+        navigationInteractor: NavigationInteractor,
     ) {
         tabsTrayBinding.tabsTray.apply {
             adapter = TrayPagerAdapter(
@@ -653,6 +642,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 lifecycleOwner = lifecycleOwner,
                 tabsTrayStore = store,
                 interactor = trayInteractor,
+                navigationInteractor = navigationInteractor,
                 browserStore = requireComponents.core.store,
                 appStore = requireComponents.appStore,
             )
