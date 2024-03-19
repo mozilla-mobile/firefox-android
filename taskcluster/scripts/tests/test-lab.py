@@ -85,6 +85,9 @@ def setup_environment():
     run_command(
         ["gcloud", "auth", "activate-service-account", "--key-file", credentials_file]
     )
+    for k in os.environ:
+        print(f"ENV {k}: {os.environ[k]}")
+
 
 
 def execute_tests(
