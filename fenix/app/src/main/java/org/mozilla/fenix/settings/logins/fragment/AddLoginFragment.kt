@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.logins.fragment
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -39,6 +40,7 @@ import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 import org.mozilla.fenix.settings.logins.interactor.AddLoginInteractor
+import org.mozilla.fenix.settings.logins.togglePasswordReveal
 
 /**
  * Displays the editable new login information for a single website
@@ -102,13 +104,17 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         binding.hostnameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         binding.usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 
-        // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         binding.passwordText.compoundDrawablePadding =
             requireContext().resources
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
+        binding.passwordText.typeface = Typeface.MONOSPACE
+
+        // disabling the clear and reveal text buttons until text is entered
+        binding.clearPasswordTextButton.isVisible = false
+        binding.revealPasswordButton.isVisible = false
     }
 
     private fun setUpClickListeners() {
@@ -137,6 +143,10 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             binding.passwordText.hasFocus()
             binding.inputLayoutPassword.hasFocus()
             it.isEnabled = false
+        }
+
+        binding.revealPasswordButton.setOnClickListener {
+            togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
         }
     }
 
@@ -230,12 +240,14 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                     when {
                         p.toString().isEmpty() -> {
                             binding.clearPasswordTextButton.isVisible = false
+                            binding.revealPasswordButton.isVisible = false
                             setPasswordError()
                         }
                         else -> {
                             validPassword = true
                             binding.inputLayoutPassword.error = null
                             binding.inputLayoutPassword.errorIconDrawable = null
+                            binding.revealPasswordButton.isVisible = true
                             binding.clearPasswordTextButton.isVisible = true
                             binding.clearPasswordTextButton.isEnabled = true
                         }
