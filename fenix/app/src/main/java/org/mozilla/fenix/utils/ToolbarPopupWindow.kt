@@ -6,6 +6,7 @@ package org.mozilla.fenix.utils
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -119,12 +120,13 @@ object ToolbarPopupWindow {
         store: BrowserStore,
         customTabId: String? = null,
     ): String? {
-        return if (customTabId != null) {
+        var url = if (customTabId != null) {
             val customTab = store.state.findCustomTab(customTabId)
             customTab?.content?.url
         } else {
             val selectedTab = store.state.selectedTab
             selectedTab?.readerState?.activeUrl ?: selectedTab?.content?.url
         }
+        return Uri.decode(url)
     }
 }
