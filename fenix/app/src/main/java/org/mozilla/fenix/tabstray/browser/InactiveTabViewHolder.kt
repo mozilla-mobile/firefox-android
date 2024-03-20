@@ -18,6 +18,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
+import org.mozilla.fenix.tabstray.NavigationInteractor
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -33,12 +34,14 @@ import org.mozilla.fenix.GleanMetrics.TabsTray as TabsTrayMetrics
  * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState.inactiveTabs].
  * @param interactor [InactiveTabsInteractor] used to respond to interactions with the inactive tabs header
  * and the auto close dialog.
+ * @property navigationInteractor [NavigationInteractor] used to perform navigation actions with side effects.
  */
 class InactiveTabViewHolder(
     composeView: ComposeView,
     lifecycleOwner: LifecycleOwner,
     private val tabsTrayStore: TabsTrayStore,
     private val interactor: InactiveTabsInteractor,
+    private val navigationInteractor: NavigationInteractor,
 ) : ComposeViewHolder(composeView, lifecycleOwner) {
 
     @Composable
@@ -56,10 +59,14 @@ class InactiveTabViewHolder(
         }
 
         if (inactiveTabs.isNotEmpty()) {
+            val settings = components.settings
             InactiveTabsList(
                 inactiveTabs = inactiveTabs,
                 expanded = expanded,
                 showAutoCloseDialog = showAutoClosePrompt,
+                showInactiveTabsCFR = true ||
+                    (settings.shouldShowInactiveTabsOnboardingPopup &&
+                    settings.canShowCfr),
                 onHeaderClick = { interactor.onInactiveTabsHeaderClicked(!expanded) },
                 onDeleteAllButtonClick = interactor::onDeleteAllInactiveTabsClicked,
                 onAutoCloseDismissClick = {
@@ -73,6 +80,19 @@ class InactiveTabViewHolder(
                 },
                 onTabClick = interactor::onInactiveTabClicked,
                 onTabCloseClick = interactor::onInactiveTabClosed,
+                onDismissInactiveTabsCFR = {
+                    settings.shouldShowInactiveTabsOnboardingPopup = false
+                    TabsTrayMetrics.inactiveTabsCfrDismissed.record(
+                        NoExtras(),
+                    )
+                },
+                onActionInactiveTabsCFR = {
+                    settings.shouldShowInactiveTabsOnboardingPopup = false
+                    navigationInteractor.onTabSettingsClicked()
+                    TabsTrayMetrics.inactiveTabsCfrSettings.record(
+                        NoExtras(),
+                    )
+                },
             )
         }
     }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.tabstray.NavigationInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
 
@@ -18,12 +19,14 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
  * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState.inactiveTabs].
  * @param interactor [InactiveTabsInteractor] used to respond to interactions with the inactive tabs header
  * and the auto close dialog.
+ * @property navigationInteractor [NavigationInteractor] used to perform navigation actions with side effects.
  * @property featureName [String] representing the name of the inactive tabs feature for telemetry reporting.
  */
 class InactiveTabsAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val tabsTrayStore: TabsTrayStore,
     private val interactor: InactiveTabsInteractor,
+    private val navigationInteractor: NavigationInteractor,
     override val featureName: String,
 ) : RecyclerView.Adapter<InactiveTabViewHolder>(), FeatureNameHolder {
 
@@ -35,6 +38,7 @@ class InactiveTabsAdapter(
             lifecycleOwner = lifecycleOwner,
             tabsTrayStore = tabsTrayStore,
             interactor = interactor,
+            navigationInteractor = navigationInteractor,
         )
     }
 

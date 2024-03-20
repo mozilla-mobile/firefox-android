@@ -26,6 +26,8 @@ import java.lang.ref.WeakReference
  * If more colors are provided they will be used in a gradient.
  * @property popupVerticalOffset Vertical distance between the indicator arrow and the anchor.
  * This only applies if [overlapAnchor] is `false`.
+ * @property focusable Whether the popup is focusable. When true, the popup will receive IME events and key presses,
+ * such as when the back button is pressed.
  * @property dismissButtonColor The tint color that should be applied to the dismiss button.
  * @property dismissOnBackPress Whether the popup can be dismissed by pressing the back button.
  * If true, pressing the back button will also call onDismiss().
@@ -45,6 +47,7 @@ data class CFRPopupProperties(
     val popupBodyColors: List<Int> = listOf(Color.Blue.toArgb()),
     val popupVerticalOffset: Dp = CFRPopup.DEFAULT_VERTICAL_OFFSET.dp,
     val showDismissButton: Boolean = true,
+    val focusable: Boolean = true,
     val dismissButtonColor: Int = Color.Black.toArgb(),
     val dismissOnBackPress: Boolean = false,
     val dismissOnClickOutside: Boolean = false,

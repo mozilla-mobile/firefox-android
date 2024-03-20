@@ -25,6 +25,7 @@ class TrayPagerAdapter(
     internal val lifecycleOwner: LifecycleOwner,
     internal val tabsTrayStore: TabsTrayStore,
     internal val interactor: TabsTrayInteractor,
+    internal val navigationInteractor: NavigationInteractor,
     internal val browserStore: BrowserStore,
     internal val appStore: AppStore,
 ) : RecyclerView.Adapter<AbstractPageViewHolder>() {
@@ -40,6 +41,7 @@ class TrayPagerAdapter(
                 lifecycleOwner = lifecycleOwner,
                 tabsTrayStore = tabsTrayStore,
                 interactor = interactor,
+                navigationInteractor = navigationInteractor,
                 featureName = INACTIVE_TABS_FEATURE_NAME,
             ),
             BrowserTabsAdapter(context, interactor, tabsTrayStore, TABS_TRAY_FEATURE_NAME, lifecycleOwner),
