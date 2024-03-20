@@ -7,6 +7,7 @@ package mozilla.components.feature.privatemode.notification
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
+import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
@@ -21,6 +22,8 @@ import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService.Companion.ACTION_ERASE
+import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService.Companion.ignoreTaskActions
+import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService.Companion.ignoreTaskComponentClasses
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.ext.joinBlocking
@@ -39,6 +42,7 @@ import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
+import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import java.util.Locale
@@ -103,6 +107,27 @@ class AbstractPrivateNotificationServiceTest {
         verify(service.store).dispatch(TabListAction.RemoveAllPrivateTabsAction)
         verify(service).stopForegroundCompat(true)
         verify(service).stopSelf()
+    }
+
+    @Test
+    fun `WHEN task is removed with ignored intents THEN do nothing`() {
+        ignoreTaskActions.forEach { it ->
+            val service = spy(MockService())
+            service.onTaskRemoved(Intent(it))
+
+            verify(service.store, never()).dispatch(TabListAction.RemoveAllPrivateTabsAction)
+            verify(service, never()).stopForegroundCompat(true)
+            verify(service, never()).stopSelf()
+        }
+
+        ignoreTaskComponentClasses.forEach {
+            val service = spy(MockService())
+            service.onTaskRemoved(Intent().setComponent(ComponentName("", it)))
+
+            verify(service.store, never()).dispatch(TabListAction.RemoveAllPrivateTabsAction)
+            verify(service, never()).stopForegroundCompat(true)
+            verify(service, never()).stopSelf()
+        }
     }
 
     @Test
