@@ -5,6 +5,7 @@
 package mozilla.components.feature.prompts.creditcard
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -137,6 +138,11 @@ internal class CreditCardSaveDialogFragment : PromptDialogFragment() {
         confirmResult = validationDelegate.shouldCreateOrUpdate(creditCard)
 
         withContext(Main) {
+            setConfirmResultText(view)
+        }
+    }
+    private fun setConfirmResultText(view: View) {
+        checkIfFragmentAttached {
             when (confirmResult) {
                 is Result.CanBeCreated -> setViewText(
                     view = view,
@@ -144,6 +150,7 @@ internal class CreditCardSaveDialogFragment : PromptDialogFragment() {
                     cancelButtonText = requireContext().getString(R.string.mozac_feature_prompt_not_now),
                     confirmButtonText = requireContext().getString(R.string.mozac_feature_prompt_save_confirmation),
                 )
+
                 is Result.CanBeUpdated -> setViewText(
                     view = view,
                     header = requireContext().getString(R.string.mozac_feature_prompts_update_credit_card_prompt_title),
@@ -152,6 +159,12 @@ internal class CreditCardSaveDialogFragment : PromptDialogFragment() {
                     showMessageBody = false,
                 )
             }
+        }
+    }
+
+    private fun checkIfFragmentAttached(operation: Context.() -> Unit) {
+        if (isAdded && context != null) {
+            operation(requireContext())
         }
     }
 
