@@ -4,8 +4,10 @@
 
 package org.mozilla.fenix.helpers
 
+import android.util.Log
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.ETPPolicy.CUSTOM
 import org.mozilla.fenix.helpers.ETPPolicy.STANDARD
 import org.mozilla.fenix.helpers.ETPPolicy.STRICT
@@ -37,7 +39,6 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         etpPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled = settings.enableTabsTrayToCompose,
         composeTopSitesEnabled = settings.enableComposeTopSites,
-        translationsEnabled = settings.enableTranslations,
     )
 
     /**
@@ -67,14 +68,17 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
     override var etpPolicy: ETPPolicy by updatedFeatureFlags::etpPolicy
     override var tabsTrayRewriteEnabled: Boolean by updatedFeatureFlags::tabsTrayRewriteEnabled
     override var composeTopSitesEnabled: Boolean by updatedFeatureFlags::composeTopSitesEnabled
-    override var isTranslationsEnabled: Boolean by updatedFeatureFlags::translationsEnabled
 
     override fun applyFlagUpdates() {
+        Log.i(TAG, "applyFlagUpdates: Trying to apply the updated feature flags: $updatedFeatureFlags")
         applyFeatureFlags(updatedFeatureFlags)
+        Log.i(TAG, "applyFlagUpdates: Applied the updated feature flags: $updatedFeatureFlags")
     }
 
     override fun resetAllFeatureFlags() {
+        Log.i(TAG, "resetAllFeatureFlags: Trying to reset the feature flags to: $initialFeatureFlags")
         applyFeatureFlags(initialFeatureFlags)
+        Log.i(TAG, "resetAllFeatureFlags: Performed feature flags reset to: $initialFeatureFlags")
     }
 
     override var isDeleteSitePermissionsEnabled: Boolean by updatedFeatureFlags::isDeleteSitePermissionsEnabled
@@ -93,7 +97,6 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
         settings.enableTabsTrayToCompose = featureFlags.tabsTrayRewriteEnabled
         settings.enableComposeTopSites = featureFlags.composeTopSitesEnabled
-        settings.enableTranslations = featureFlags.translationsEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -113,7 +116,6 @@ private data class FeatureFlags(
     var etpPolicy: ETPPolicy,
     var tabsTrayRewriteEnabled: Boolean,
     var composeTopSitesEnabled: Boolean,
-    var translationsEnabled: Boolean,
 )
 
 internal fun getETPPolicy(settings: Settings): ETPPolicy {
@@ -126,9 +128,14 @@ internal fun getETPPolicy(settings: Settings): ETPPolicy {
 
 private fun setETPPolicy(policy: ETPPolicy) {
     when (policy) {
-        STRICT -> settings.setStrictETP()
+        STRICT -> {
+            Log.i(TAG, "setETPPolicy: Trying to set ETP policy to: \"Strict\"")
+            settings.setStrictETP()
+            Log.i(TAG, "setETPPolicy: ETP policy was set to: \"Strict\"")
+        }
         // The following two cases update ETP in the same way "setStrictETP" does.
         STANDARD -> {
+            Log.i(TAG, "setETPPolicy: Trying to set ETP policy to: \"Standard\"")
             settings.preferences.edit()
                 .putBoolean(
                     appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
@@ -143,8 +150,10 @@ private fun setETPPolicy(policy: ETPPolicy) {
                     true,
                 )
                 .commit()
+            Log.i(TAG, "setETPPolicy: ETP policy was set to: \"Standard\"")
         }
         CUSTOM -> {
+            Log.i(TAG, "setETPPolicy: Trying to set ETP policy to: \"Custom\"")
             settings.preferences.edit()
                 .putBoolean(
                     appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
@@ -159,19 +168,23 @@ private fun setETPPolicy(policy: ETPPolicy) {
                     true,
                 )
                 .commit()
+            Log.i(TAG, "setETPPolicy: ETP policy was set to: \"Custom\"")
         }
     }
 }
 
 private fun getHomeOnboardingVersion(): Int {
+    Log.i(TAG, "getHomeOnboardingVersion: Trying to get the onboarding version")
     return FenixOnboarding(appContext)
         .preferences
         .getInt(FenixOnboarding.LAST_VERSION_ONBOARDING_KEY, 0)
 }
 
 private fun setHomeOnboardingVersion(version: Int) {
+    Log.i(TAG, "setHomeOnboardingVersion: Trying to set the onboarding version to: $version")
     FenixOnboarding(appContext)
         .preferences.edit()
         .putInt(FenixOnboarding.LAST_VERSION_ONBOARDING_KEY, version)
         .commit()
+    Log.i(TAG, "setHomeOnboardingVersion: Onboarding version was set to: $version")
 }

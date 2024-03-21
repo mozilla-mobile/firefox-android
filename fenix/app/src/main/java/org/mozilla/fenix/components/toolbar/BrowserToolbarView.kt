@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -28,6 +29,7 @@ import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -57,6 +59,7 @@ class BrowserToolbarView(
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
+    val menuToolbar: ToolbarMenu
 
     @VisibleForTesting
     internal val isPwaTabOrTwaTab: Boolean
@@ -78,13 +81,23 @@ class BrowserToolbarView(
 
         with(context) {
             val isPinningSupported = components.useCases.webAppUseCases.isPinningSupported()
+            val searchUrlBackground = if (IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+                R.drawable.search_url_background
+            } else {
+                R.drawable.search_old_url_background
+            }
 
             view.apply {
                 setToolbarBehavior()
 
                 elevation = resources.getDimension(R.dimen.browser_fragment_toolbar_elevation)
                 if (!isCustomTabSession) {
-                    display.setUrlBackground(getDrawable(R.drawable.search_url_background))
+                    display.setUrlBackground(
+                        AppCompatResources.getDrawable(
+                            context,
+                            searchUrlBackground,
+                        ),
+                    )
                 }
 
                 display.onUrlClicked = {
@@ -109,6 +122,10 @@ class BrowserToolbarView(
                     context,
                     ThemeManager.resolveAttribute(R.attr.borderPrimary, context),
                 )
+                val pageActionSeparatorColor = ContextCompat.getColor(
+                    context,
+                    ThemeManager.resolveAttribute(R.attr.borderToolbarDivider, context),
+                )
 
                 display.urlFormatter = { url -> URLStringUtils.toDisplayUrl(url) }
 
@@ -124,12 +141,12 @@ class BrowserToolbarView(
                         context,
                         R.color.fx_mobile_icon_color_information,
                     ),
+                    pageActionSeparator = pageActionSeparatorColor,
                 )
 
                 display.hint = context.getString(R.string.search_hint)
             }
 
-            val menuToolbar: ToolbarMenu
             if (isCustomTabSession) {
                 menuToolbar = CustomTabToolbarMenu(
                     context = this,
@@ -170,6 +187,8 @@ class BrowserToolbarView(
                     isPrivate = customTabSession.content.private,
                 )
             } else {
+                val isNavBarEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+
                 DefaultToolbarIntegration(
                     this,
                     view,
@@ -177,6 +196,7 @@ class BrowserToolbarView(
                     lifecycleOwner,
                     sessionId = null,
                     isPrivate = components.core.store.state.selectedTab?.content?.private ?: false,
+                    isNavBarEnabled = isNavBarEnabled,
                     interactor = interactor,
                 )
             }

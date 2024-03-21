@@ -78,6 +78,7 @@
     <string name="pref_key_enable_suggest_strong_password" translatable="false">pref_key_suggest_strong_password_enabled</string>
     <string name="pref_key_enable_debug_drawer" translatable="false">pref_key_enable_debug_drawer</string>
     <string name="pref_key_show_first_time_translation" translatable="false">pref_key_show_first_time_translation</string>
+    <string name="pref_key_enable_tab_strip" translatable="false">pref_key_enable_tab_strip</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -155,12 +156,14 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Customization Settings -->
+    <string name="pref_key_customization_preference_screen" translatable="false">pref_key_customization_preference_screen</string>
     <string name="pref_key_website_pull_to_refresh" translatable="false">pref_key_website_pull_to_refresh</string>
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
     <string name="pref_key_recent_tabs" translatable="false">pref_key_recent_tabs</string>
     <string name="pref_key_recent_bookmarks" translatable="false">pref_key_recent_bookmarks</string>
+    <string name="pref_key_customization_category_toolbar" translatable="false">pref_key_customization_category_toolbar</string>
 
     <!-- HTTPS Only Settings -->
     <string name="pref_key_https_only_settings" translatable="false">pref_key_https_only_settings</string>
@@ -204,7 +207,7 @@
     <string name="pref_key_credit_cards_save_and_autofill_cards" translatable="false">pref_key_credit_cards_save_and_autofill_cards</string>
     <!-- Key for the "Sync cards across devices" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
-    <!-- Key for the "Manage saved cards" preference in the "Autofill" fragment -->
+    <!-- Key for the "Manage cards" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
     <!-- Key for the "Manage addresses" preference in the "Autofill" fragment -->
     <string name="pref_key_addresses_manage_addresses" translatable="false">pref_key_addresses_manage_addresses</string>
@@ -365,7 +368,6 @@
     <string name="pref_key_custom_sponsored_stories_country" translatable="false">pref_key_custom_sponsored_stories_country</string>
     <string name="pref_key_custom_sponsored_stories_city" translatable="false">pref_key_custom_sponsored_stories_city</string>
     <string name="pref_key_enable_compose_top_sites" translatable="false">pref_key_enable_compose_top_sites</string>
-    <string name="pref_key_enable_translations" translatable="false">pref_key_enable_translations</string>
 
     <!-- Growth Data -->
     <string name="pref_key_growth_set_as_default" translatable="false">pref_key_growth_set_as_default</string>

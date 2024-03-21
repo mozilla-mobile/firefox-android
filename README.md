@@ -1,6 +1,12 @@
 
 This repository hosts the Firefox for Android (Fenix), Focus on Android, and Mozilla Android Components projects.
 
+## ⚠️ Repository Migration (March 2024)
+
+~This repository will soon be migrated to Mozilla Central. See the [announcement here](https://github.com/mozilla-mobile/firefox-android/wiki#upcoming-migration-to-mozilla-central).~
+
+**Update: As of Monday, March 18, this repository has been migrated to Mozilla Central. See the [announcement here](https://github.com/mozilla-mobile/firefox-android/wiki#upcoming-migration-to-mozilla-central).**
+
 # Firefox for Android
 
 [![Task Status](https://firefox-ci-tc.services.mozilla.com/api/github/v1/repository/mozilla-mobile/firefox-android/main/badge.svg)](https://firefox-ci-tc.services.mozilla.com/api/github/v1/repository/mozilla-mobile/firefox-android/main/latest)

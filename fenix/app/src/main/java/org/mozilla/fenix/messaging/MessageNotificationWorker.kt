@@ -45,36 +45,27 @@ class MessageNotificationWorker(
     override suspend fun doWork(): Result {
         val context = applicationContext
 
-        val messagingStorage = context.components.analytics.messagingStorage
-        val messages = messagingStorage.getMessages()
+        val messaging = context.components.nimbus.messaging
+
         val nextMessage =
-            messagingStorage.getNextMessage(FenixMessageSurfaceId.NOTIFICATION, messages)
+            messaging.getNextMessage(FenixMessageSurfaceId.NOTIFICATION)
                 ?: return Result.success()
 
         val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
-        val messageMetadata = nextMessage.metadata
         //  Device has NOT been power cycled.
-        if (messageMetadata.latestBootIdentifier == currentBootUniqueIdentifier) {
+        if (nextMessage.hasShownThisCycle(currentBootUniqueIdentifier)) {
             return Result.success()
         }
 
-        val nimbusMessagingController = FenixNimbusMessagingController(messagingStorage)
-
         // Update message as displayed.
-        val updatedMessage =
-            nimbusMessagingController.updateMessageAsDisplayed(
-                nextMessage,
-                currentBootUniqueIdentifier,
-            )
-
-        nimbusMessagingController.onMessageDisplayed(updatedMessage)
+        messaging.onMessageDisplayed(nextMessage, currentBootUniqueIdentifier)
 
         context.components.notificationsDelegate.notify(
             MESSAGE_TAG,
-            SharedIdsHelper.getIdForTag(context, updatedMessage.id),
+            SharedIdsHelper.getIdForTag(context, nextMessage.id),
             buildNotification(
                 context,
-                updatedMessage,
+                nextMessage,
             ),
         )
 
@@ -91,8 +82,8 @@ class MessageNotificationWorker(
         return createBaseNotification(
             context,
             ensureMarketingChannelExists(context),
-            message.data.title,
-            message.data.text,
+            message.title,
+            message.text,
             onClickPendingIntent,
             onDismissPendingIntent,
         )
@@ -156,7 +147,7 @@ class MessageNotificationWorker(
                 // We want to keep any existing scheduled work, unless
                 // when we're under test.
                 if (messaging.isUnderTest()) {
-                    ExistingPeriodicWorkPolicy.REPLACE
+                    ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE
                 } else {
                     ExistingPeriodicWorkPolicy.KEEP
                 },
@@ -178,18 +169,17 @@ class NotificationDismissedService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
 
         if (intent != null) {
-            val nimbusMessagingController =
-                FenixNimbusMessagingController(applicationContext.components.analytics.messagingStorage)
+            val messaging = applicationContext.components.nimbus.messaging
 
             lifecycleScope.launch {
                 // Get the relevant message.
                 val message = intent.getStringExtra(DISMISSED_MESSAGE_ID)?.let { messageId ->
-                    nimbusMessagingController.getMessage(messageId)
+                    messaging.getMessage(messageId)
                 }
 
                 if (message != null) {
                     // Update message as 'dismissed'.
-                    nimbusMessagingController.onMessageDismissed(message.metadata)
+                    messaging.onMessageDismissed(message)
                 }
             }
         }
@@ -209,21 +199,20 @@ class NotificationClickedReceiverActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val nimbusMessagingController =
-            FenixNimbusMessagingController(components.analytics.messagingStorage)
+        val messaging = applicationContext.components.nimbus.messaging
 
         lifecycleScope.launch {
             // Get the relevant message.
             val message = intent.getStringExtra(CLICKED_MESSAGE_ID)?.let { messageId ->
-                nimbusMessagingController.getMessage(messageId)
+                messaging.getMessage(messageId)
             }
 
             if (message != null) {
                 // Update message as 'clicked'.
-                nimbusMessagingController.onMessageClicked(message.metadata)
+                messaging.onMessageClicked(message)
 
                 // Create the intent.
-                val intent = nimbusMessagingController.getIntentForMessage(message)
+                val intent = messaging.getIntentForMessage(message)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 

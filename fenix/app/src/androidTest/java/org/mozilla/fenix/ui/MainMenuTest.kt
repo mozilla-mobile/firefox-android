@@ -5,17 +5,12 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import mozilla.components.concept.engine.utils.EngineReleaseChannel
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.AppAndSystemHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithCondition
@@ -25,6 +20,10 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
+import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.nimbus.Translations
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
@@ -32,29 +31,29 @@ import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
-class MainMenuTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
-
+class MainMenuTest : TestSetup() {
     @get:Rule
-    val activityTestRule =
-        HomeActivityIntentTestRule.withDefaultSettingsOverrides(translationsEnabled = true)
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233849
 
     @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
+    override fun setUp() {
+        super.setUp()
+        FxNimbus.features.translations.withInitializer { _, _ ->
+            // These are FML generated objects and enums
+            Translations(
+                mainFlowToolbarEnabled = true,
+                mainFlowBrowserMenuEnabled = true,
+                pageSettingsEnabled = true,
+                globalSettingsEnabled = true,
+                globalLangSettingsEnabled = true,
+                globalSiteSettingsEnabled = true,
+                downloadsEnabled = true,
+            )
         }
     }
 
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
-    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233849
     @Test
     fun verifyTabMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)

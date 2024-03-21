@@ -219,11 +219,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
     bundle {
         // Profiler issues require us to temporarily package native code compressed to
         // match the previous APK packaging.
@@ -523,6 +518,9 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 dependencies {
+    implementation platform(ComponentsDependencies.androidx_compose_bom)
+    androidTestImplementation platform(ComponentsDependencies.androidx_compose_bom)
+
     implementation project(':browser-engine-gecko')
 
     implementation ComponentsDependencies.kotlin_coroutines
@@ -623,6 +621,7 @@ dependencies {
     implementation project(':lib-push-firebase')
     implementation project(':lib-state')
     implementation project(':lib-dataprotect')
+    testImplementation project(':support-test-fakes')
 
     debugImplementation ComponentsDependencies.leakcanary
     debugImplementation ComponentsDependencies.androidx_compose_ui_tooling
@@ -640,8 +639,8 @@ dependencies {
     implementation ComponentsDependencies.androidx_paging
     implementation ComponentsDependencies.androidx_preferences
     implementation ComponentsDependencies.androidx_fragment
-    implementation FenixDependencies.androidx_navigation_fragment
-    implementation FenixDependencies.androidx_navigation_ui
+    implementation ComponentsDependencies.androidx_navigation_fragment
+    implementation ComponentsDependencies.androidx_navigation_ui
     implementation ComponentsDependencies.androidx_compose_navigation
     implementation ComponentsDependencies.androidx_recyclerview
 
@@ -728,6 +727,7 @@ dependencies {
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     lintChecks project(":mozilla-lint-rules")
+    lintChecks project(':tooling-lint')
 }
 
 protobuf {

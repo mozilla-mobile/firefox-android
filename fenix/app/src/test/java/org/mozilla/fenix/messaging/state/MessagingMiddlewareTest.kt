@@ -12,13 +12,13 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.service.nimbus.messaging.MessageData
 import mozilla.components.service.nimbus.messaging.NimbusMessagingController
-import mozilla.components.service.nimbus.messaging.NimbusMessagingStorage
 import mozilla.components.service.nimbus.messaging.StyleData
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -30,20 +30,17 @@ import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageDi
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.Restore
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.messaging.FenixMessageSurfaceId
-import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingState
 
 class MessagingMiddlewareTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val coroutineScope = coroutinesTestRule.scope
-    private lateinit var messagingStorage: NimbusMessagingStorage
     private lateinit var controller: NimbusMessagingController
 
     @Before
     fun setUp() {
-        messagingStorage = mockk(relaxed = true)
-        controller = FenixNimbusMessagingController(messagingStorage) { 0 }
+        controller = mockk(relaxed = true)
     }
 
     @Test
@@ -55,12 +52,12 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
         val message = createMessage()
 
-        coEvery { messagingStorage.getMessages() } returns listOf(message)
+        coEvery { controller.getMessages() } returns listOf(message)
 
         store.dispatch(Restore).joinBlocking()
         store.waitUntilIdle()
@@ -81,12 +78,12 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
         every {
-            messagingStorage.getNextMessage(
+            controller.getNextMessage(
                 FenixMessageSurfaceId.HOMESCREEN,
                 any(),
             )
@@ -111,7 +108,7 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
@@ -121,7 +118,7 @@ class MessagingMiddlewareTest {
         store.waitUntilIdle()
 
         assertTrue(store.state.messaging.messages.isEmpty())
-        coVerify { messagingStorage.updateMetadata(createMetadata(pressed = true)) }
+        coVerify { controller.onMessageClicked(message = message) }
     }
 
     @Test
@@ -135,14 +132,14 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
         store.dispatch(MessageDismissed(message)).joinBlocking()
         store.waitUntilIdle()
 
         assertTrue(store.state.messaging.messages.isEmpty())
-        coVerify { messagingStorage.updateMetadata(metadata.copy(dismissed = true)) }
+        coVerify { controller.onMessageDismissed(message = message) }
     }
 
     @Test
@@ -158,7 +155,7 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
@@ -184,7 +181,7 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
@@ -198,6 +195,7 @@ class MessagingMiddlewareTest {
     @Test
     fun `WHEN updateMessage THEN update available messages`() = runTestOnMain {
         val message = createMessage()
+        val messageDisplayed = message.copy(metadata = createMetadata(displayCount = 1))
         val store = AppStore(
             AppState(
                 messaging = MessagingState(
@@ -207,21 +205,26 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
         every {
-            messagingStorage.getNextMessage(
+            controller.getNextMessage(
                 FenixMessageSurfaceId.HOMESCREEN,
                 any(),
             )
         } returns message
 
-        store.dispatch(Evaluate(FenixMessageSurfaceId.HOMESCREEN))
+        coEvery {
+            controller.onMessageDisplayed(eq(message), any())
+        } returns messageDisplayed
+
+        store.dispatch(Evaluate(FenixMessageSurfaceId.HOMESCREEN)).joinBlocking()
         store.waitUntilIdle()
 
-        assertEquals(1, store.state.messaging.messages.first().metadata.displayCount)
+        assertEquals(1, store.state.messaging.messages.count())
+        assertEquals(1, store.state.messaging.messages.first().displayCount)
     }
 
     @Test
@@ -229,7 +232,7 @@ class MessagingMiddlewareTest {
         val message1 = createMessage()
         val message2 = message1.copy(id = "message2", action = "action2")
         // An updated message1 that has been displayed once.
-        val messageDisplayed1 = message1.copy(metadata = createMetadata(displayCount = 1))
+        val messageDisplayed1 = incrementDisplayCount(message1)
         val store = AppStore(
             AppState(
                 messaging = MessagingState(
@@ -240,16 +243,23 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
         every {
-            messagingStorage.getNextMessage(
+            controller.getNextMessage(
                 FenixMessageSurfaceId.HOMESCREEN,
                 any(),
             )
         } returns message1
+        coEvery {
+            controller.onMessageDisplayed(message1, any())
+        } returns messageDisplayed1
+
+        coEvery {
+            controller.onMessageDisplayed(eq(message1), any())
+        } returns messageDisplayed1
 
         store.dispatch(Evaluate(FenixMessageSurfaceId.HOMESCREEN)).joinBlocking()
         store.waitUntilIdle()
@@ -262,7 +272,7 @@ class MessagingMiddlewareTest {
     fun `GIVEN a message has not surpassed the maxDisplayCount WHEN evaluate THEN update the message displayCount`() = runTestOnMain {
         val message = createMessage()
         // An updated message that has been displayed once.
-        val messageDisplayed = message.copy(metadata = createMetadata(displayCount = 1))
+        val messageDisplayed = incrementDisplayCount(message)
         val store = AppStore(
             AppState(
                 messaging = MessagingState(
@@ -272,26 +282,37 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
         every {
-            messagingStorage.getNextMessage(
+            controller.getNextMessage(
                 FenixMessageSurfaceId.HOMESCREEN,
                 any(),
             )
         } returns message
+        coEvery {
+            controller.onMessageDisplayed(message, any())
+        } returns messageDisplayed
+
+        coEvery {
+            controller.onMessageDisplayed(eq(message), any())
+        } returns messageDisplayed
 
         store.dispatch(Evaluate(FenixMessageSurfaceId.HOMESCREEN)).joinBlocking()
         store.waitUntilIdle()
 
-        assertEquals(messageDisplayed.metadata.displayCount, store.state.messaging.messages[0].metadata.displayCount)
+        assertEquals(messageDisplayed.displayCount, store.state.messaging.messages[0].displayCount)
     }
 
     @Test
     fun `GIVEN a message with that surpassed the maxDisplayCount WHEN onMessagedDisplayed THEN remove the message and consume it`() = runTestOnMain {
-        val message = createMessage(createMetadata(displayCount = 6))
+        val message = createMessage(createMetadata(displayCount = 4))
+        val messageDisplayed = createMessage(createMetadata(displayCount = 5))
+        assertFalse(message.isExpired)
+        assertTrue(messageDisplayed.isExpired)
+
         val store = AppStore(
             AppState(
                 messaging = MessagingState(
@@ -302,16 +323,23 @@ class MessagingMiddlewareTest {
                 ),
             ),
             listOf(
-                MessagingMiddleware(messagingStorage, controller, coroutineScope),
+                MessagingMiddleware(controller, coroutineScope),
             ),
         )
 
         every {
-            messagingStorage.getNextMessage(
+            controller.getNextMessage(
                 FenixMessageSurfaceId.HOMESCREEN,
                 any(),
             )
         } returns message
+        coEvery {
+            controller.onMessageDisplayed(message, any())
+        } returns incrementDisplayCount(message)
+
+        coEvery {
+            controller.onMessageDisplayed(eq(message), any())
+        } returns messageDisplayed
 
         store.dispatch(Evaluate(FenixMessageSurfaceId.HOMESCREEN)).joinBlocking()
         store.waitUntilIdle()
@@ -322,12 +350,13 @@ class MessagingMiddlewareTest {
 }
 private fun createMessage(
     metadata: Message.Metadata = createMetadata(),
-    messageId: String = "control-id",
+    messageId: String = "message-id",
     data: MessageData = mockk(relaxed = true),
     action: String = "action",
     styleData: StyleData = StyleData(),
     triggers: List<String> = listOf("triggers"),
-) = Message(messageId, data, action, styleData, triggers, metadata)
+    except: List<String> = listOf(),
+) = Message(messageId, data, action, styleData, triggers, except, metadata)
 
 private fun createMetadata(
     displayCount: Int = 0,
@@ -344,3 +373,10 @@ private fun createMetadata(
     lastTimeShown,
     latestBootIdentifier,
 )
+
+private fun incrementDisplayCount(message: Message) =
+    message.copy(
+        metadata = createMetadata(
+            displayCount = message.displayCount + 1,
+        ),
+    )

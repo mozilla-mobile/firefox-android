@@ -83,9 +83,11 @@ projects:
     - support-rusthttp
     - support-rustlog
     - support-test
+    - support-test-fakes
     - support-test-libstate
     - support-utils
     - support-webextensions
+    - tooling-lint
     - ui-autocomplete
     - ui-colors
     - ui-icons
