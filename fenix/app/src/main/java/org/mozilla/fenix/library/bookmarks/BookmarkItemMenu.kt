@@ -25,6 +25,7 @@ class BookmarkItemMenu(
         Copy,
         Share,
         OpenInNewTab,
+        OpenInBackground,
         OpenInPrivateTab,
         OpenAllInNewTabs,
         OpenAllInPrivateTabs,
@@ -71,6 +72,15 @@ class BookmarkItemMenu(
                     text = context.getString(R.string.bookmark_menu_open_in_new_tab_button),
                 ) {
                     onItemTapped.invoke(Item.OpenInNewTab)
+                }
+            } else {
+                null
+            },
+            if (itemType == BookmarkNodeType.ITEM) {
+                TextMenuCandidate(
+                    text = context.getString(R.string.bookmark_menu_open_in_background_button),
+                ) {
+                    onItemTapped.invoke(Item.OpenInBackground)
                 }
             } else {
                 null

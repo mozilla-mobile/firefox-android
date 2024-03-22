@@ -164,7 +164,17 @@ class BookmarkFragmentInteractorTest {
     fun `open a bookmark item in a new tab`() {
         interactor.onOpenInNormalTab(item)
 
-        verify { bookmarkController.handleOpeningBookmark(item, BrowsingMode.Normal) }
+        verify { bookmarkController.handleOpeningBookmark(item, BrowsingMode.Normal, false) }
+        assertNotNull(BookmarksManagement.openInNewTab.testGetValue())
+        assertEquals(1, BookmarksManagement.openInNewTab.testGetValue()!!.size)
+        assertNull(BookmarksManagement.openInNewTab.testGetValue()!!.single().extra)
+    }
+
+    @Test
+    fun `open a bookmark item in the background`() {
+        interactor.onOpenInBackground(item)
+
+        verify { bookmarkController.handleOpeningBookmark(item, BrowsingMode.Normal, true) }
         assertNotNull(BookmarksManagement.openInNewTab.testGetValue())
         assertEquals(1, BookmarksManagement.openInNewTab.testGetValue()!!.size)
         assertNull(BookmarksManagement.openInNewTab.testGetValue()!!.single().extra)
@@ -179,7 +189,7 @@ class BookmarkFragmentInteractorTest {
     fun `open a bookmark item in a private tab`() {
         interactor.onOpenInPrivateTab(item)
 
-        verify { bookmarkController.handleOpeningBookmark(item, BrowsingMode.Private) }
+        verify { bookmarkController.handleOpeningBookmark(item, BrowsingMode.Private, false) }
         assertNotNull(BookmarksManagement.openInPrivateTab.testGetValue())
         assertEquals(1, BookmarksManagement.openInPrivateTab.testGetValue()!!.size)
         assertNull(BookmarksManagement.openInPrivateTab.testGetValue()!!.single().extra)

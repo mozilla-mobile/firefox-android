@@ -43,6 +43,7 @@ class BookmarkNodeViewHolder(
                 BookmarkItemMenu.Item.Copy -> interactor.onCopyPressed(item)
                 BookmarkItemMenu.Item.Share -> interactor.onSharePressed(item)
                 BookmarkItemMenu.Item.OpenInNewTab -> interactor.onOpenInNormalTab(item)
+                BookmarkItemMenu.Item.OpenInBackground -> interactor.onOpenInBackground(item)
                 BookmarkItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTab(item)
                 BookmarkItemMenu.Item.OpenAllInNewTabs -> interactor.onOpenAllInNewTabs(item)
                 BookmarkItemMenu.Item.OpenAllInPrivateTabs -> interactor.onOpenAllInPrivateTabs(item)

@@ -69,7 +69,7 @@ class BookmarkFragmentInteractor(
     override fun onOpenInNormalTab(item: BookmarkNode) {
         require(item.type == BookmarkNodeType.ITEM)
         item.url?.let {
-            bookmarksController.handleOpeningBookmark(item, BrowsingMode.Normal)
+            bookmarksController.handleOpeningBookmark(item, BrowsingMode.Normal, false)
             BookmarksManagement.openInNewTab.record(NoExtras())
         }
         MetricsUtils.recordBookmarkMetrics(
@@ -78,10 +78,21 @@ class BookmarkFragmentInteractor(
         )
     }
 
+    override fun onOpenInBackground(item: BookmarkNode) {
+        require(item.type == BookmarkNodeType.ITEM)
+        item.url?.let {
+            bookmarksController.handleOpeningBookmark(item, BrowsingMode.Normal, true)
+            BookmarksManagement.openInNewTab.record(NoExtras())
+        }
+        MetricsUtils.recordBookmarkMetrics(
+            MetricsUtils.BookmarkAction.OPEN,
+            METRIC_SOURCE,
+        )
+    }
     override fun onOpenInPrivateTab(item: BookmarkNode) {
         require(item.type == BookmarkNodeType.ITEM)
         item.url?.let {
-            bookmarksController.handleOpeningBookmark(item, BrowsingMode.Private)
+            bookmarksController.handleOpeningBookmark(item, BrowsingMode.Private, false)
             BookmarksManagement.openInPrivateTab.record(NoExtras())
         }
         MetricsUtils.recordBookmarkMetrics(
