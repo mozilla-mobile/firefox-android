@@ -341,13 +341,14 @@ class BookmarkControllerTest {
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Normal' tab`() {
         var showTabTrayInvoked = false
+        val openInBackGround = false
         var openedToPrivateTabsPage: Boolean? = null
         createController(
             showTabTray = { openToPrivateTabsPage ->
                 openedToPrivateTabsPage = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
-        ).handleOpeningBookmark(item, BrowsingMode.Normal)
+        ).handleOpeningBookmark(item, BrowsingMode.Normal, openInBackGround)
 
         assertTrue(showTabTrayInvoked)
         assertNotNull(openedToPrivateTabsPage)
@@ -361,13 +362,14 @@ class BookmarkControllerTest {
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Private' tab`() {
         var showTabTrayInvoked = false
+        val openInBackGround = false
         var openedToPrivateTabsPage: Boolean? = null
         createController(
             showTabTray = { openToPrivateTabsPage ->
                 openedToPrivateTabsPage = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
-        ).handleOpeningBookmark(item, BrowsingMode.Private)
+        ).handleOpeningBookmark(item, BrowsingMode.Private, openInBackGround)
 
         assertTrue(showTabTrayInvoked)
         assertNotNull(openedToPrivateTabsPage)

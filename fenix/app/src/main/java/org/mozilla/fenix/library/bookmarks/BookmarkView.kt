@@ -75,6 +75,13 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
     fun onOpenInNormalTab(item: BookmarkNode)
 
     /**
+     * Opens a bookmark item in the background.
+     *
+     * @param item the bookmark item to open in the background
+     */
+    fun onOpenInBackground(item: BookmarkNode)
+
+    /**
      * Opens a bookmark item in a private tab.
      *
      * @param item the bookmark item to open in a private tab

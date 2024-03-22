@@ -48,7 +48,13 @@ interface BookmarkController {
     fun handleAllBookmarksDeselected()
     fun handleCopyUrl(item: BookmarkNode)
     fun handleBookmarkSharing(item: BookmarkNode)
-    fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode)
+    /**
+     * Handles opening bookmark
+     * @param item Bookmark node.
+     * @param mode Browsing mode.
+     * @param openInBackground If bookmark should open in background or not
+     */
+    fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode, openInBackground: Boolean)
     fun handleOpeningFolderBookmarks(folder: BookmarkNode, mode: BrowsingMode)
 
     /**
@@ -159,9 +165,16 @@ class DefaultBookmarkController(
         )
     }
 
-    override fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode) {
+    override fun handleOpeningBookmark(
+        item: BookmarkNode,
+        mode: BrowsingMode,
+        openInBackground: Boolean,
+    ) {
         openInNewTab(item.url!!, mode)
-        showTabTray(mode.isPrivate)
+        showSnackbar(resources.getString(R.string.bookmark_opened_in_background))
+        if (!openInBackground) {
+            showTabTray(mode.isPrivate)
+        }
     }
 
     private fun extractURLsFromTree(node: BookmarkNode): MutableList<String> {
