@@ -159,7 +159,11 @@ class DefaultBookmarkController(
         )
     }
 
-    override fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode, openInBackground: Boolean) {
+    override fun handleOpeningBookmark(
+        item: BookmarkNode,
+        mode: BrowsingMode,
+        openInBackground: Boolean,
+    ) {
         openInNewTab(item.url!!, mode)
         showSnackbar(resources.getString(R.string.bookmark_opened_in_background))
         if (!openInBackground)

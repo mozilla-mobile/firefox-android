@@ -89,6 +89,7 @@ class BookmarkFragmentInteractor(
             METRIC_SOURCE,
         )
     }
+
     override fun onOpenInPrivateTab(item: BookmarkNode) {
         require(item.type == BookmarkNodeType.ITEM)
         item.url?.let {
