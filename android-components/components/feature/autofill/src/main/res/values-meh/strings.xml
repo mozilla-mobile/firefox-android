@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Autofill: Text shown in popup in third-party app to autofill the password for an account.
+    %1$s will be replaced with the login/username of the account. -->
+    <string name="mozac_feature_autofill_popup_password">Contraseña nuu %1$s</string>
+
+    <!-- Autofill: Positive button shown in dialog asking the user to confirm before autofilling
+    credentials in a third-part app (Also see string mozac_feature_autofill_confirmation_authenticity). -->
+    <string name="mozac_feature_autofill_confirmation_yes">Kuvi</string>
+
+    <!-- Autofill: Negative button shown in dialog asking the user to confirm before autofilling
+    credentials in a third-part app (Also see string mozac_feature_autofill_confirmation_authenticity). -->
+    <string name="mozac_feature_autofill_confirmation_no">Nkuvi</string>
+
+    <!-- Autofill: When showing a list of logins to autofill in a third-party app, then this is the
+    last item in the list. When clicking it a new screen opens which allows the user to search for
+    a specific login. %1$s will be replaced with the name of the application (e.g. "Firefox") -->
+    <string name="mozac_feature_autofill_search_suggestions">Nánuku %1$s</string>
+
+    <!-- Autofill: Hint shown in the text field used to search specific logins. Shown when the field
+     is empty and the user has not entered any text into it yet. -->
+    <string name="mozac_feature_autofill_search_hint">Nánuku nuu kajie\'e sesión</string>
+</resources>
