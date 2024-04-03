@@ -11,4 +11,10 @@
     <string name="mozac_feature_media_sharing_camera_and_microphone">Ka̱a̱ nátava jii micrófono tɨɨ</string>
 
 
+    <!--This is the title of the "play" action media shown in the media notification while web content is playing media. Clicking it will resume playing paused media. On most modern Android system only an icon is visible. But screen readers may read this title. -->
+    <string name="mozac_feature_media_notification_action_play">Kajie´e</string>
+
+    <!--This is the title of the "pause" action shown in the media notification while web content is playing media. Clicking it will pause currently playing media. On most modern Android system only an icon is visible. But screen readers may read this title. -->
+    <string name="mozac_feature_media_notification_action_pause">Siankuiñɨ</string>
+
     </resources>
