@@ -26,6 +26,8 @@
     <string name="mozac_feature_contextmenu_snackbar_new_tab_opened">Nsíne pestaña jíía</string>
     <!-- Text for confirmation "snackbar" shown after opening a link in a new private tab.  -->
     <string name="mozac_feature_contextmenu_snackbar_new_private_tab_opened">Nsíne iin pestaña yu´u</string>
+    <!-- Text for confirmation "snackbar" shown after copying a link or image URL to the clipboard. -->
+    <string name="mozac_feature_contextmenu_snackbar_link_copied">Enlace copiado al portapapeles</string>
     <!-- Action shown in a "snacbkar" after opening a new/private tab. Clicking this action will switch to the newly opened tab. -->
     <string name="mozac_feature_contextmenu_snackbar_action_switch">Sama</string>
     <!-- Text for context menu item to open the link in an external app. -->
@@ -34,6 +36,8 @@
     <string name="mozac_feature_contextmenu_share_email_address">Kua´a correo electrónico</string>
     <!-- Text for context menu item to copy the email address to the clipboard. -->
     <string name="mozac_feature_contextmenu_copy_email_address">Tɨɨn correo electrónico</string>
+    <!-- Text for confirmation "snackbar" shown after copying a email address to the clipboard. -->
+    <string name="mozac_feature_contextmenu_snackbar_email_address_copied">Nuu correo copiada al portapeles</string>
     <!-- Text for context menu item to add to a contact. -->
     <string name="mozac_feature_contextmenu_add_to_contact">Chisó nuu tuni ñivɨ</string>
     <!-- Action shown in a text selection context menu. This will prompt a search using the selected text.-->

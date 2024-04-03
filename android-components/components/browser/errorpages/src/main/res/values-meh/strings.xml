@@ -3,8 +3,17 @@
     <!-- The button that appears at the bottom of an error page. -->
     <string name="mozac_browser_errorpages_page_refresh">Nakivɨ tuku</string>
 
+    <!-- The document title and heading of an error page shown when a website cannot be loaded for an unknown reason. -->
+    <string name="mozac_browser_errorpages_generic_title">Ntu nkuvi sá´á ya´a</string>
+
     <!-- The document title and heading of the error page shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
     <string name="mozac_browser_errorpages_security_ssl_title">Ntu nkuvi sá´á conexión vatu</string>
+
+    <!-- The error message shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_ssl_message"><![CDATA[<ul>
+        <li>Nuu kuvinu kivɨnu ntu kuvi síne jíe daa datos nkanta ntu kuvi túvi dee íyo vatu.</li>
+        <li>Nei koo ininu ka´an jii ñivɨ ke´í sitio web ya´a.</li>
+      </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website sends has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_title">Conexión va\'a ntu nkuvi sá´á</string>
@@ -43,14 +52,29 @@
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">Modo ntu conexión</string>
 
+    <!-- The document title and heading of the error page shown when the browser prevents loading a website on a restricted port. -->
+    <string name="mozac_browser_errorpages_port_blocked_title">Puerto nkuvi kivunu jííe razones de seguridad</string>
+
     <!-- The document title and heading of the error page shown when the Internet connection is disrupted while loading a website. -->
     <string name="mozac_browser_errorpages_net_reset_title">Nnakajie´e tuku conexión</string>
 
     <!-- The document title and heading of the error page shown when the browser refuses to load a type of file that is considered unsafe. -->
     <string name="mozac_browser_errorpages_unsafe_content_type_title">Tipo archivo ntu túvi va´a</string>
 
+    <!-- The error message shown when the browser refuses to load a type of file that is considered unsafe. -->
+    <string name="mozac_browser_errorpages_unsafe_content_type_message"><![CDATA[<ul>
+		<li>Nei koo ininu ka´an jii ñivɨ ke´í sitio web ya´a a ntu kuvi kivɨ-nu saa kuvi nasá´á-da</li>
+	</ul>]]></string>
+
     <!-- The document title and heading of the error page shown when a file cannot be loaded because of a detected data corruption. -->
     <string name="mozac_browser_errorpages_corrupted_content_title">Error jiee contenido ntívɨ</string>
+
+    <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_content_crashed_title">Contenido íyo bloqueado</string>
+
+    <string name="mozac_browser_errorpages_content_crashed_message"><![CDATA[<p>Página kuvi sínenu ntu kuvi túvi jiee iin error nuu transferencia datos.</p><ul><li>Ka´an jii ñivɨ ke´í sitio web ya´a saa kuvi nasá´áda.</p>
+      <ul>
+      </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">Error codificación contenido</string>
@@ -72,17 +96,49 @@
     <string name="mozac_browser_errorpages_malformed_uri_title_alternative">Dirección ntu vatu</string>
 
     <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_unknown_protocol_title">Protocolo desconocido</string>
+
+    <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_file_not_found_title">Ntu nkuvi nani\'i archivo</string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_file_access_denied_title">Ntu kuvi síne archivo</string>
 
+    <string name="mozac_browser_errorpages_file_access_denied_message"><![CDATA[<ul>
+		<li>Sa̱naan nxita ya´a, nkáná, a xiin na íyo permiso archivo jee ntu kuvi kivɨnu.</li>
+	</ul>]]></string>
+
+    <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_proxy_connection_refused_title">Ka̱a̱ servidor proxy ntu nkuvi sá´á conexión.</string>
+
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_unknown_proxy_host_title">Ntu nani´í ka̱a̱ servidor</string>
 
     <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_safe_browsing_malware_uri_title">Tixin jíí sitio malicioso</string>
+
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_browsing_malware_uri_message"><![CDATA[<p>Sitio %1$s nkachi-da a kuvi sa´a xeen jee nchi yu´u danimaja saa kumi-ani maanu.</p>]]></string>
+
+    <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_title">Tixin jíí sitio ntu jiniñu\'oma</string>
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_message"><![CDATA[<p>Nuu %1$s nkachi-da a ntu íyo vatu sa̱naan kuvi iin sitio jii software sa´a xeen jee nchi yu´u danimaja saa kumi-ani noo\'o.</p>]]></string>
+
+    <!-- The document title and heading of an error page. -->
+    <string name="mozac_browser_errorpages_safe_harmful_uri_title">Tixin jíí sitio dañino</string>
+
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_harmful_uri_message"><![CDATA[<p>Sitio %1$s nkachida a kuvi sá´á xeen jee nchi yu´u danimaja saa kumiani noo\'o.</p>]]></string>
+
+    <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_safe_phishing_uri_title">Ntu túvi va´a nuu ya´a</string>
 
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_phishing_uri_message"><![CDATA[<p>Nuu web %1$s nkachi-da a ntu íyo vatu sa̱naan kuvi sá´á xeen jee nchi yu´u danimaja saa kumi-ani noo\'o.</p>]]></string>
+
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
+    <string name="mozac_browser_errorpages_httpsonly_title">Sitio va\'a ntu íyo tiñu</string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">Kaka nuu HTTP</string>
 </resources>
