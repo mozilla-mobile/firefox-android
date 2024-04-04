@@ -4,6 +4,10 @@
     <string name="mozac_feature_sitepermissions_notification_title">¿Kua\'a  %1$s chu\'un íchi notificaciones?</string>
     <!-- Title of a dialog for a camera permission request. -->
     <string name="mozac_feature_sitepermissions_camera_title">¿Kua\'a %1$s ni\'i ka̱a̱ natava?</string>
+    <!-- Title of a dialog for a microphone permission request. -->
+    <string name="mozac_feature_sitepermissions_microfone_title">¿Kua\'a %1$s ni\'i ka̱a̱ micrófono noo\'o?</string>
+    <!-- Title of a dialog for a location permission request. -->
+    <string name="mozac_feature_sitepermissions_location_title">¿Kua\'a %1$s ni\'i nuu iñinu?</string>
     <!-- Title of a dialog for a camera and microphone permission request. -->
     <string name="mozac_feature_sitepermissions_camera_and_microphone">¿Kachi de kuvi %1$s ni´i ka̱a̱ natava ji micrófono?</string>
     <!-- Option in a dialog for requesting a microphone permission, this option will give access to
@@ -27,6 +31,8 @@
     <string name="mozac_feature_sitepermissions_always_allow">Ntaka ichi</string>
     <!-- Text for a negative button in a permission request dialog. This will never allow and remember the decision of the user, this is the special case of the notification permission, that is only ask one time-->
     <string name="mozac_feature_sitepermissions_never_allow">Ni´in íchi</string>
+    <!-- Title of a dialog to require to save data in persistent storage. %1$s will be replaced with the URL of the current page -->
+    <string name="mozac_feature_sitepermissions_persistent_storage_title">¿Kua\'a a %1$s chuva\'a datos almacenamiento persistente?</string>
     <!-- Title of a dialog to use EME. %1$s will be replaced with the URL of the current page -->
     <string name="mozac_feature_sitepermissions_media_key_system_access_title">¿Kua\'a %1$s reproduzca contenido controlado por DRM?</string>
     <!-- Title of a dialog to use cross origin storage permission. %1$s is the name of the site URL (www.site1.example) trying to track the user's activity.

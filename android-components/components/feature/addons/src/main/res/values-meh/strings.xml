@@ -60,6 +60,8 @@
     <string name="mozac_feature_addons_permissions_native_messaging_description">Sama tu´un jíí daa inka ka̱a̱ ntu iyo inu</string>
     <!-- Description for notifications permission. -->
     <string name="mozac_feature_addons_permissions_notifications_description">Xine´e notificaciones</string>
+    <!-- Description for pkcs11 permission. -->
+    <string name="mozac_feature_addons_permissions_pkcs11_description">Kua\'a servicios de autenticación criptográfica</string>
     <!-- Description for proxy permission. -->
     <string name="mozac_feature_addons_permissions_proxy_description">Skaka nuu ke´i proxy ka̱a̱ nánuku</string>
     <!-- Description for sessions permission. -->
@@ -76,6 +78,8 @@
     <string name="mozac_feature_addons_author">Autor</string>
     <!-- The authors of an add-on. -->
     <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">Autores</string>
+    <!-- The last date that the add-on was updated. -->
+    <string name="mozac_feature_addons_last_updated">Nu nɨ´ɨ actualización</string>
     <!-- The developer website (Homepage) of the add-on. -->
     <string name="mozac_feature_addons_home_page">Nuu kajie´e</string>
     <!-- A link where users can find more information about add-ons permissions. -->
@@ -148,6 +152,8 @@
     <string name="mozac_feature_addons_addons_manager">Ke\'i ka̱a̱ chunta´an</string>
     <!-- The title of the "crash" notification in the add-ons manager -->
     <string name="mozac_feature_addons_manager_notification_title_text">Nna\'va daa ka̱a̱ chunta\'an</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">Iin a xíín kue\'e daa ka̱a̱ chunta´an ntu kuvi satiñu va\'a, jee ya\'a sá\'á a ka̱a̱ noo\'o ntu satiñu vatu.</string>
     <!-- Button to re-enable the add-ons in the "crash" notification -->
     <string name="mozac_feature_addons_manager_notification_restart_button">Nakajie\'e ka̱a̱ chunta´an</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
@@ -194,6 +200,8 @@
     <string name="mozac_feature_addons_failed_to_install_not_signed_error">Ka̱a̱ chunta´an ya´a ntu nkuvi chu´un jiee nsa kutunio de íyo vatu.</string>
     <!-- Text shown when attempting to install an add-on and an error occurred because the extension was incompatible. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%1$s ntu nkuvi chu´un jiee ntu kunta´a va´a jii %2$s %3$s.</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted_1">%1$s ntu nkuvi chu´un jiee sa̱naan sa´a xeen a xiin nkunee va´a.</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s nchu\'un vatu</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->
@@ -210,6 +218,8 @@
     <string name="mozac_feature_addons_successfully_removed" tools:ignore="UnusedResources">%1$s nxita vatu</string>
     <!-- Text shown after failed to remove an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_remove" tools:ignore="UnusedResources">Ntu nkuvi xita %1$s</string>
+    <!-- Label shown to indicate that the add-on was migrated from a previous version of the app. %1$s is the app name most of the case it will be Firefox. -->
+    <string name="mozac_feature_addons_migrated_from_a_previous_version_label" tools:ignore="UnusedResources">Ka̱a̱ chunta´an ya\'a vaniji ne iin versión yata %1$s</string>
     <!-- Text shown in not yet supported add-ons section in AddonsManagerAdapter. -->
     <string name="mozac_feature_addons_unsupported_caption">1 Ka̱a̱ chunta´an</string>
     <!-- Text shown in not yet supported add-ons section in AddonsManagerAdapter - plural. %1$s is the number of unsupported add-ons -->
