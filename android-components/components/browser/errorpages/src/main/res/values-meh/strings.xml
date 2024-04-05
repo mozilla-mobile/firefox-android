@@ -82,8 +82,7 @@
     <string name="mozac_browser_errorpages_corrupted_content_title">Error jiee contenido ntívɨ</string>
 
     <!-- The error message shown when shown when a file cannot be loaded because of a detected data corruption. -->
-    <string name="mozac_browser_errorpages_corrupted_content_message"><![CDATA[<p>Página kuvi sínenu ntu kuvi túvi jiee iin error nuu transmisión datos.</p><ul><li>Ka´an jii ñivɨ ke´í sitio web ya´a saa kuvi nasá´áda.</p>
-      <ul>
+    <string name="mozac_browser_errorpages_corrupted_content_message"><![CDATA[<p>Página kuvi sínenu ntu kuvi túvi jiee iin error nuu transmisión datos.</p><ul><li>Ka´an jii ñivɨ ke´í sitio web ya´a saa kuvi nasá´áda.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
@@ -95,12 +94,20 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">Error codificación contenido</string>
 
-    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[<p>Página kuvi sínenu ntu kuvi túvi jiee iin errror comprensión.</p><ul><li>Ka´an jii ñivɨ ke´í sitio web ya´a saa kuvi nasá´áda.</p>
-      <ul>
+    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[<p>Página kuvi sínenu ntu kuvi túvi jiee iin errror comprensión.</p><ul><li>Ka´an jii ñivɨ ke´í sitio web ya´a saa kuvi nasá´áda.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_unknown_host_title">Ntu nnani´i nuu</string>
+
+    <!-- In the example, the two URLs in markup do not need to be translated. -->
+    <string name="mozac_browser_errorpages_unknown_host_message"><![CDATA[<p>Ka̱a̱ nánuku ntu kuvi nani\'i ka̱a̱ servidor jíí nuu ntajinu</p>
+      <ul>
+        <li>Kune\'ya de nuu ntu kumi error, kua:
+          <strong>ww</strong>.ejemplo.com nejika kachi kua
+          <strong>www</strong>.ejemplo.com.</li>
+        <li>De ntu kuvi síne ni\'i página, kune\'ya conexión Wifi a xíín datos ka̱a̱ noo\'o.</li>
+      </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_no_internet_title">Ntu íyo ka̱a̱ nántu´un ne jíka</string>
