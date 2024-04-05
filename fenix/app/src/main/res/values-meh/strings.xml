@@ -56,6 +56,10 @@
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s kuvi iin a sá´á Mozilla.</string>
 
+    <!-- Private Browsing -->
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">%1$s xita a nnánukunu a nsá´ánu saa kenenu nuu ka̱a̱ a xiin nakasɨnu kuaiyo da pestaña jíí ventana nánuku yu´u. Ya´a ntu taji a noo´o nánuku yu´u nuu Web ji nuu ñɨvu tatu Internet, ya´a kumiji noo\'o a nnánukunu nuu inka ñɨvu ni´i ka̱a̱ tee nɨnuu ya´a.</string>
     <string name="private_browsing_common_myths">Tu´un nakani jiee nánuku yu\'u</string>
 
     <!-- True Private Browsing Mode -->
@@ -79,6 +83,9 @@
     <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
     <string name="cfr_neg_button_text">Ntuvi, kuta´vini</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Kuvi ke\'inu %1$s sa síne automaticamente da enlaces nu daa aplicaciones.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Kua´an nuu da ke´i</string>
     <!-- Text for the negative action button -->
@@ -87,6 +94,11 @@
 
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Kue\'eka tu\'un jííe protección cookies</string>
+
+
+    <!-- Private browsing erase action "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the erase private browsing feature. -->
+    <string name="erase_action_cfr_message">Kuaxin ya\'a sa kajie\'e sesión yu\'u. Xita da nnánukunu, cookies — todo.</string>
 
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
@@ -111,6 +123,10 @@
     <string name="tab_tray_inactive_auto_close_body_2">%1$s kuvi nakasɨ pestañas de nña\'a iin yoo jee ntu sinenuma.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Nakasɨ</string>
+
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Tee cierre automático</string>
 
 
     <!-- Home screen icons - Long press shortcuts -->
@@ -242,6 +258,8 @@
     <string name="search_scan_button">Táva nákuaxin</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Ke\'i naka nánuku ka̱a̱</string>
+    <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
+    <string name="awesomebar_clipboard_title">Tee enlace vaji nu portapapeles</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_allow_button">Kuvi</string>
     <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
@@ -260,14 +278,23 @@
     <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
     <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">Ka̱a̱ nánuku %s</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Kuni naja íyo tutu nu kaji\'e. Daa pestañas skuata nsíne, daa a ta´a ini noo´o jíí daa a nnánukunu ya\'a kutuvi.</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string name="onboarding_home_welcome_title_2">Kusɨɨ inidáni nkantanu nu iin internet kua jiniñu\'unuma</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Kue\'eka da teku. Ku\'eka privacidad. Iin compromiso jíí da ñivɨ por encima de los beneficios.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title_3">Sama pantalla kuviji iin ntu viji</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Kajie´e</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
     <string name="onboarding_home_sign_in_button">Kajie´e sesión</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Ignorar</string>
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">¡Tus pestañas se están sincronizando! Kaka nu inkinonu nu inka ka̱a̱ noo\'o</string>
     <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
     <string name="onboarding_home_content_description_close_button">Nakasɨ</string>
 
@@ -280,6 +307,16 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button" moz:removedIn="124" tools:ignore="UnusedResources">Nkuvi ntañu´u</string>
 
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Tu´un xitu Firefox a nejika kumio</string>
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text_2" moz:removedIn="125" tools:ignore="UnusedResources">Kutu\'vaka jíí tutu xitu a nejika kumio</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">Kɨsɨ inidani a kumidani noo\'o</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus_3" tools:ignore="UnusedResources">Kuni navi chi kue\'etuni ñivɨ ta\'an inida Firefox</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_description_nimbus_4" tools:ignore="UnusedResources">Kue\'e tuni ñivɨ kumidaja privacidad mada jee kajida iin ka̱a̱ a sá´á iin vetiñu ntu ntava xu\'un.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
@@ -293,10 +330,16 @@
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Kajie´e sesión</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Nkuvi ntañu´u</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">Daa notificaciones chineí koo va\'anu jíí Firefox</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Tee notificaciones</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Nkuvi ntañu´u</string>
+    <!-- Title for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_title" tools:ignore="UnusedResources">Ni\'i widget a nánuku jíí Firefox</string>
     <!-- Text for the button to add search widget on the device used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_add_search_widget_positive_button" tools:ignore="UnusedResources">Tee widget Firefox</string>
@@ -373,6 +416,8 @@
     <!-- Label for cookie banner section in quick settings panel. -->
     <string name="cookie_banner_blocker">Nakasɨ daa anuncios daa cookies</string>
 
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Bloqueador de anuncios de cookies nu jika yu\'u</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Nna\'va nu sitio ya´a</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -389,6 +434,11 @@
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Solicitud de soporte nchu\'un íchi</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Sitio ntu satiñu vatu ntañu´u</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">¿A kuvinu teenu bloqueo de aviso cookies nu %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">¿Xina\'va bloqueo de aviso cookies nu %1$s?</string>
 
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Xina´va</string>
@@ -426,6 +476,8 @@
     <string name="preferences_sign_in_description_2">Kajie´e sesión saa kuvi saa sincronizar daa pestañas, a ta´a ini noo´o, contraseñas jii kue´eka.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name_2">Cuenta de Mozilla</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">Nakivɨ tuku sa nakajie\'e sincronización</string>
     <!-- Preference for language -->
     <string name="preferences_language">Tu´un</string>
     <!-- Preference for data choices -->
@@ -481,6 +533,9 @@
     <!-- Summary for notification preference indicating notifications are not allowed -->
     <string name="notifications_not_allowed_summary">Nkua\'a</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Colección daa ka̱a̱ chunta´an personalizada</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">Kuvi</string>
     <!-- Button caption to abort the add-on collection configuration -->
@@ -527,6 +582,8 @@
     <string name="wallpaper_learn_more">Ka´vi kue´eka</string>
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Clásico %s</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Serie de artistas</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Kune\'ya naja tuvi iin teku</string>
 
@@ -575,6 +632,8 @@
     <string name="empty_device_name_error">Sivɨ ka̱a̱ nkuvi koo vacío.</string>
     <!-- Label indicating that sync is in progress -->
     <string name="sync_syncing_in_progress">Sincronizando…</string>
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">Ntu kuvi sá\'á sincronización. Nnɨ\'ɨ sincronización: %s</string>
     <!-- Label summary showing never synced -->
     <string name="sync_failed_never_synced_summary">Ntu kuvi sá\'á sincronización. Nnɨ\'ɨ sincronización: ni\'i íchi</string>
     <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
@@ -750,6 +809,9 @@
     <string name="opening_screen_last_tab_summary">Sinema nu nɨ\'ɨ pestaña</string>
     <!-- Summary for homepage preference indicating opening the homepage when re-opening the app after four hours of inactivity -->
     <string name="opening_screen_after_four_hours_of_inactivity_summary">Sinema nu página xinañu\'u de nña\'a kumi hora</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Daa pestañas ntu sínenu uvi semana yata ya\'a kutuvi nu sección inactiva.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -1312,6 +1374,10 @@
     <string name="sign_in_ready_for_scan">Kuvi sa escanear</string>
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Kajie´e sesión jíí ka̱a̱ nátava</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">Ni\'i correo electrónico en su lugar</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[¿Ntu kuminu cuenta? <u>Sá´á iin</u> saa kuvi sa sincronizar Firefox jíí da ka̱a̱.]]></string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">Kene</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -1332,6 +1398,8 @@
     <string name="preference_enhanced_tracking_protection_strict">Estricto</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Personalizado</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Kaji ne\'i daa rastreadores y secuencias de comandos bloquear</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">Cookies</string>
@@ -1364,6 +1432,8 @@
 
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cookies de rastreo entre sitios</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title_2">Cookies ji da sitios cruzados</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Criptomineros</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1447,6 +1517,8 @@
     <string name="preferences_passwords_autofill_description">Chu\'un jee chuva\'a sivɨ jíí contraseñas nu páginas web sa ni\'inu %1$s.</string>
     <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill">Chu\'un nu da inka ka̱a̱</string>
+    <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill_description">Chu\'un sivɨ jíí contraseñas nu daa inka aplicaciones ka̱a̱ nooó.</string>
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Tee nuu kajie\'e sesión</string>
     <!-- Preference option for adding a password -->
@@ -1520,6 +1592,8 @@
     <string name="logins_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Sá´á iin patrón nakasɨ ka̱a̱, PIN a xíín contraseña sa kuvi ko va\'a da nuu kajie\'e sesión jíí da cotraseñas nchuva\'a de sana nsakui\'nadaja ka̱a̱ noo\'o.</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message_2">Sá´á iin patrón nakasɨ ka̱a̱, PIN a xíín contraseña sa kuvi ko va\'a da nuu kajie\'e sesión jíí da cotraseñas nchuva\'a de sana nsakui\'nadaja ka̱a̱ noo\'o.</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_later">Más tarde</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_set_up_now">Ke\'i ntañu\'u</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
@@ -1543,6 +1617,8 @@
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards" moz:RemovedIn="125" tools:ignore="UnusedResources">Chuva\'a jee sa autocompletar tarjetas</string>
 
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2">Chuva\'a jee sa completar naja chuna</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Daa datos íyo cifrados</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
@@ -1618,6 +1694,8 @@
     <string name="credit_cards_warning_dialog_message" moz:RemovedIn="125" tools:ignore="UnusedResources">Sá´á iin patrón nakasɨ ka̱a̱, PIN a xíín contraseña sa kuvi ko va\'a da tuni chuna xu\'un de sana sakui\'nadaja ka̱a̱ noo\'o.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Ke\'i ntañu\'u</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Más tarde</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
     <string name="credit_cards_biometric_prompt_message_pin">Síne ka̱a̱ noo\'o</string>
     <!-- Title of the "Add address" screen -->
@@ -1755,6 +1833,10 @@
     <string name="login_options_menu" moz:RemovedIn="125" tools:ignore="UnusedResources">Kaji daa nuu kajie\'e sesión</string>
     <!--  The saved password options menu description. -->
     <string name="login_options_menu_2">Kaji daa contraseñas</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description" moz:RemovedIn="125" tools:ignore="UnusedResources">El campo de texto editable para sivɨ ñivɨ nu kajie\'e sesión.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description" moz:RemovedIn="125" tools:ignore="UnusedResources">El campo de texto editable para la contraseña nu kajie\'e sesión.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login" moz:RemovedIn="125" tools:ignore="UnusedResources">Chuva\'a daa cambios nuu kaji\'e sesión.</string>
     <!--  The button description to save changes to an edited password. -->
@@ -1807,6 +1889,9 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Ntu nune pestañas</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Sá´á ka\'nu sincronización pestañas.</string>
+
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Kuvi, kuka\'nu inini</string>
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
@@ -1832,6 +1917,8 @@
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Nakasɨ kuaiyo da pestañas</string>
 
+    <!-- Content description for expanding the inactive tabs section. -->
+    <string name="inactive_tabs_expand_content_description">Sá´á ka\'nu daa pestañas inactivas</string>
     <!-- Content description for collapsing the inactive tabs section. -->
     <string name="inactive_tabs_collapse_content_description">Nakasɨ kuaiyo da pestañas ntu satiñu</string>
 
@@ -1896,16 +1983,26 @@
     <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s de Mozilla</string>
     <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
     <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">Kuka´nu inini</string>
+    <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
+    <string name="review_quality_check_no_connection_title">Na íyo ka̱a̱ nántu´un ne jíka</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Ka´vi kue´eka</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy notice. -->
     <string name="review_quality_check_contextual_onboarding_privacy_policy_3">Tu´un xitu a kumiji noo´o</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
     <string name="review_quality_check_contextual_onboarding_terms_use">Tutu kachi naja ni\'io ya\'a</string>
+    <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_primary_button_text">Sí, probarlo</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_secondary_button_text">Nkuvi ntañu´u</string>
+    <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">Síne verificador reseñas</string>
     <!-- Flag showing that the review quality check feature is work in progress. -->
     <string name="review_quality_check_beta_flag">Beta</string>
+    <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_open_handle_content_description">Síne verificador reseñas</string>
+    <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_close_handle_content_description">Nakasɨ verificador reseñas</string>
     <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
     <string name="review_quality_check_star_rating_content_description">%1$s de 5 tiun</string>
     <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
@@ -1937,8 +2034,13 @@
     <string name="a11y_action_label_read_article">ka\'vi articulo</string>
     <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
     <string name="a11y_action_label_pocket_learn_more">Síne enlace sa kuninuka</string>
+    <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
+    <string name="a11y_heading">%s, Xini</string>
     <!-- Title for dialog displayed when trying to access links present in a text. -->
     <string name="a11y_links_title">Enlaces</string>
+
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Enlaces íyo</string>
 
     <!-- Translations feature-->
 
@@ -1965,6 +2067,9 @@
     <!-- Button text for the button that will take the user to the download languages dialog. On the download languages dialog, the user can manage which languages they would like to download for translations. -->
     <string name="translation_settings_download_language">Xinuu daa tu\'un</string>
 
+    <!-- Content description (not visible, for screen readers etc.): For a never-translated site list item that is selected.
+             The first parameter is web site url (for example:"wikipedia.com") -->
+    <string name="never_translate_site_item_list_content_description_preference">Xita %1$s</string>
     <!-- The Delete site dialogue title will appear when the user clicks on a list item.
              The first parameter is web site url (for example:"wikipedia.com") -->
     <string name="never_translate_site_dialog_title_preference">Xita %1$s?</string>
@@ -2017,8 +2122,16 @@
     <string name="debug_drawer_back_button_content_description">Niko yata</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_normal">Activar</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">Inactiva</string>
     <!-- The private tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_private">Yɨ´ɨ yu´u</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">Total</string>
-    </resources>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Ka̱a̱ sá´á pestañas</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Tee daa pestañas íyo activa</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Tee nu pestaña yu´u</string>
+</resources>
