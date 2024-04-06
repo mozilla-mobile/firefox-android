@@ -178,11 +178,13 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Siankuiñi</string>
     <!-- Browser menu button that opens the addon manager -->
-    <string name="browser_menu_add_ons">Ka̱a̱ chunta´an</string>
+    <string name="browser_menu_add_ons" moz:removedIn="126" tools:ignore="UnusedResources">Ka̱a̱ chunta´an</string>
+    <!-- Browser menu button that opens the extensions manager -->
+    <string name="browser_menu_extensions">Extensiones</string>
     <!-- Browser menu button that opens account settings -->
     <string name="browser_menu_account_settings">Información de la cuenta</string>
     <!-- Text displayed when there are no add-ons to be shown -->
-    <string name="no_add_ons">Ya\'a ntu íyo ka̱a̱ chunta\'an</string>
+    <string name="no_add_ons" moz:removedIn="126" tools:ignore="UnusedResources">Ya\'a ntu íyo ka̱a̱ chunta\'an</string>
     <!-- Browser menu button that sends a user to help articles -->
     <string name="browser_menu_help">Chinei</string>
     <!-- Browser menu button that sends a to a the what's new article -->
@@ -234,6 +236,13 @@
 
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Sá´á vii nuu kajie´e</string>
+
+    <!-- Browser menu label to sign in to sync on the device using Mozilla accounts -->
+    <string name="browser_menu_sign_in" tools:ignore="UnusedResources">Kajie´e sesión</string>
+
+    <!-- Extensions management fragment -->
+    <!-- Text displayed when there are no extensions to be shown -->
+    <string name="extensions_management_no_extensions">Na íyo extensiones ya\'a</string>
 
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
@@ -440,6 +449,8 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">¿Xina\'va bloqueo de aviso cookies nu %1$s?</string>
 
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Intentar conectarse automáticamente a sitios que utilizan el protocolo de encriptación HTTPS para mayor seguridad.</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Xina´va</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -458,6 +469,8 @@
     <string name="errorpage_httpsonly_message_title">Sana nuu web ntu satiñu va\'a jíí HTTPs.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Accesibilidad</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Servidor personalizado de cuenta de Mozilla</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Servidor personalizado de Sync</string>
     <!-- Preference category for account information -->
@@ -504,6 +517,8 @@
     <string name="preferences_account_settings">Nuu ke\'i cuenta</string>
     <!-- Preference for enabling url autocomplete-->
     <string name="preferences_enable_autocomplete_urls">Tee URLs</string>
+    <!-- Preference title for switch preference to show sponsored Firefox Suggest search suggestions -->
+    <string name="preferences_show_sponsored_suggestions">Sugerencias de patrocinadores</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Síne enlaces jíí aplicaciones</string>
     <!-- Preference for open links in third party apps always open in apps option -->
@@ -523,9 +538,13 @@
     <string name="quit_application">Nakasɨ ka̱a̱ sa kutuvi a jíia…</string>
 
     <!-- Preference for add_ons -->
-    <string name="preferences_addons">Ka̱a̱ chunta´an</string>
+    <string name="preferences_addons" moz:removedIn="126" tools:ignore="UnusedResources">Ka̱a̱ chunta´an</string>
+    <!-- Preference for extensions -->
+    <string name="preferences_extensions">Extensiones</string>
     <!-- Preference for installing a local add-on -->
-    <string name="preferences_install_local_addon">Chu\'un ka̱a̱ chunta´an jíí iin archivo</string>
+    <string name="preferences_install_local_addon" moz:removedIn="126" tools:ignore="UnusedResources">Chu\'un ka̱a̱ chunta´an jíí iin archivo</string>
+    <!-- Preference for installing a local extension -->
+    <string name="preferences_install_local_extension">Chu\'un extensión jíí iin archivo</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notificaciones</string>
     <!-- Summary for notification preference indicating notifications are allowed -->
@@ -535,7 +554,9 @@
 
     <!-- Add-on Preferences -->
     <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
-    <string name="preferences_customize_amo_collection">Colección daa ka̱a̱ chunta´an personalizada</string>
+    <string name="preferences_customize_amo_collection" moz:removedIn="126" tools:ignore="UnusedResources">Colección daa ka̱a̱ chunta´an personalizada</string>
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_extension_collection">Colección personalizada de extensiones</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">Kuvi</string>
     <!-- Button caption to abort the add-on collection configuration -->
@@ -545,6 +566,12 @@
 
     <!-- Hint displayed on input field for custom collection user ID-->
     <string name="customize_addon_collection_user_hint">Dueño de la colección (ID de usuario)</string>
+
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done" moz:removedIn="126" tools:ignore="UnusedResources">Colección daa ka̱a̱ chunta´an nsama. Nakasɨdani ka̱a̱ sa kuvi kene daa a nsama…</string>
+
+    <!-- Toast shown after confirming the custom extension collection configuration -->
+    <string name="toast_customize_extension_collection_done">Colección daa colección. Nakasɨdani ka̱a̱ sa kuvi kene daa a nsama…</string>
 
     <!-- Customize Home -->
     <!-- Header text for jumping back into the recent tab in customize the home screen -->
@@ -594,22 +621,36 @@
 
     <!-- Add-ons general availability nimbus message-->
     <!-- Title of the Nimbus message for add-ons general availability-->
-    <string name="addon_ga_message_title" tools:ignore="UnusedResources">Iyo daa ka̱a̱ chunta\'an jíía</string>
+    <string name="addon_ga_message_title" moz:removedIn="126" tools:ignore="UnusedResources">Iyo daa ka̱a̱ chunta\'an jíía</string>
+    <!-- Title of the Nimbus message for extension general availability-->
+    <string name="addon_ga_message_title_2" tools:ignore="UnusedResources">Daa extensiones jíía íyo ntañu\'u</string>
     <!-- Button text of the Nimbus message for add-ons general availability. -->
-    <string name="addon_ga_message_button" tools:ignore="UnusedResources">Kune\'ya daa ka̱a̱ chunta\'an</string>
+    <string name="addon_ga_message_button" moz:removedIn="126" tools:ignore="UnusedResources">Kune\'ya daa ka̱a̱ chunta\'an</string>
 
-    <!-- Add-on process crash dialog to user -->
+    <!-- Button text of the Nimbus message for extensions general availability. -->
+    <string name="addon_ga_message_button_2" tools:ignore="UnusedResources">Kune\'ya daa extension</string>
+
+    <!-- Extension process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
-    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Nna\'va daa ka̱a̱ chunta\'an</string>
+    <string name="addon_process_crash_dialog_title" moz:removedIn="126" tools:ignore="UnusedResources">Nna\'va daa ka̱a̱ chunta\'an</string>
 
+    <!-- Title of the extension crash dialog shown to the user when enough errors have occurred with extensions and they need to be temporarily disabled -->
+    <string name="extension_process_crash_dialog_title">Nna\'va iin nunu daa extensiones</string>
     <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
-    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Nakajie\'e tuku ka̱a̱ chunta´an</string>
+    <string name="addon_process_crash_dialog_retry_button_text" moz:removedIn="126" tools:ignore="UnusedResources">Nakajie\'e tuku ka̱a̱ chunta´an</string>
+    <!-- Button text on the extension crash dialog to prompt the user to try restarting the extensions but the dialog will reappear if it is unsuccessful again -->
+    <string name="extension_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Nakajie\'e daa extension</string>
     <!-- The user will continue with all add-ons disabled -->
-    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Kaka jíí ka̱a̱ chunta´an nna\'va</string>
+    <string name="addon_process_crash_dialog_disable_addons_button_text" moz:removedIn="126" tools:ignore="UnusedResources">Kaka jíí ka̱a̱ chunta´an nna\'va</string>
+
+    <!-- Button text on the extension crash dialog to prompt the user to continue with all extensions disabled. -->
+    <string name="extension_process_crash_dialog_disable_extensions_button_text">Kaka jíí extensión nna\'va</string>
 
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">Ke\'i cuenta</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">Sama contraseña, ke\'i recopilación daa datos a xíín xina cuenta</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincronizar ntañu´u</string>
     <!-- Preference category for sync -->
@@ -654,6 +695,8 @@
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Pestañas recibidas</string>
+    <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_description">Da notificaciones da pestañas nkata jee vajida nu inka ka̱a̱ Firefox.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Pestaña recibida</string>
     <!-- %s is the device name -->
@@ -669,6 +712,8 @@
 
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">A ni\'i jíí datos técnicos</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">Kua\'a datos rendimiento, naja ni\'i ka̱a̱, hardware jee sá´á daa personalizaciones nu ka̱a̱ nánuku jíí Mozilla sa chineinu koo va\'a %1$s</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Datos de marketing</string>
     <!-- Preference description for marketing data collection -->
@@ -741,6 +786,9 @@
     <!-- Title to show in alert when a lot of tabs are to be opened
     %d is a placeholder for the number of tabs that will be opened -->
     <string name="open_all_warning_title">¿Síne %d pestañas?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">De sínenu kue\'e daa pestañas sanan kuvi nsatiñu ñama %s síne daa nuu. ¿A mana kuvinu kakanu?</string>
     <!-- Dialog button text for confirming open all tabs -->
     <string name="open_all_warning_confirm">Síne pestañas</string>
     <!-- Dialog button text for canceling open all tabs -->
@@ -795,6 +843,8 @@
     <string name="opening_screen_homepage">Tutu nu kajie´e</string>
     <!-- Option for always opening the user's last-open tab when re-opening the app -->
     <string name="opening_screen_last_tab">Nu nɨ\'ɨ pestaña</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Nnakasɨ nuu ya\'a chi a nña\'a kumi hora</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Nakasɨ manualmente</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -810,6 +860,9 @@
     <!-- Summary for homepage preference indicating opening the homepage when re-opening the app after four hours of inactivity -->
     <string name="opening_screen_after_four_hours_of_inactivity_summary">Sinema nu página xinañu\'u de nña\'a kumi hora</string>
 
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Skana pestañas antiguas a inactivas</string>
     <!-- Title of inactive tabs preference -->
     <string name="preferences_inactive_tabs_title">Daa pestañas ntu sínenu uvi semana yata ya\'a kutuvi nu sección inactiva.</string>
 
@@ -1082,6 +1135,10 @@
     <string name="preference_option_autoplay_allowed2">Kuvi koo nasun ji tutu kana</string>
     <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
     <string name="quick_setting_option_autoplay_allowed">Kuvi koo nasun ji tutu kana</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Nakasɨ nasun jíí tutu kana jíí datos móviles</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Nasun jíí tutu kana kajie\'e jíí Wi-Fi</string>
     <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Kasɨ ntuxini nasun</string>
     <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
@@ -1104,6 +1161,8 @@
     <string name="collections_header">Colecciones</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Menú de la colección</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Nake\'e daa natiñu jitu ininu. \n Stutu daa nnanuku, daa nuu jíi daa pestañas inu saa kuvi kuvɨnu ñama.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Kaji daa pestañas</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -1275,6 +1334,8 @@
     <string name="qr_scanner_dialog_invalid_ok">Kuvi</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">¿A mana kuvinu xitanu %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">De xinanu pestaña ya\'a naa kuaiyo colección. Kuvi sá´ánu daa colección ntaka íchi.</string>
     <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
     <string name="delete_tab_and_collection_dialog_title">¿Xita %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
@@ -1292,6 +1353,9 @@
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_2">Tamaño automático de fuente</string>
+
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">El tamaño de la fuente será el mismo que el de Android. Sna\'va opción ya\'a sa kuvi ke\'inuma ya\'a.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Xina daa datos nnánuku</string>
@@ -1322,11 +1386,17 @@
     <string name="preferences_delete_browsing_data_button">Xina daa datos nnánuku</string>
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">Xina daa datos nnánuku de nkenenu</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Xita automáticamente daa datos nkakanu sa kajinu  \&quot;Kene\&quot; nu menú principal</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Kene</string>
 
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Rango de tiempo a eliminar</string>
     <!-- Body text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Nna a nnánukunu(daa nnánuku sincronizado jíí da inka ka̱a̱), cookies jíí inka datos sa jikanu.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Xita a nsá´ánu (jíí da nsá\'ánu sincronizado jíí da inka ka̱a̱)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Nuu nɨ´ɨ hora</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1334,6 +1404,8 @@
     <!-- Radio button in the delete browsing data dialog to delete all history. -->
     <string name="delete_history_prompt_button_everything">Kuaiyo</string>
 
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">%s xita da datos nkajinu da a nnánukunu.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">Nkuvi-ka</string>
     <!-- Text for the allow button for the data deletion dialog -->
@@ -1394,12 +1466,18 @@
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Ka´vi kue´eka</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Estándar (predeterminado)</string>
+    <!--  Accessibility text for the Standard protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_standard_info_button">Qué es lo que está bloqueado por la protección estándar contra el rastreo</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Estricto</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_strict_info_button">Naku vi a nasɨ protección estricta contra el rastreo</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Personalizado</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_description_2">Kaji ne\'i daa rastreadores y secuencias de comandos bloquear</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_custom_info_button">Ya\'a vi a nakasɨ protección jíí rastreo estándar</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">Cookies</string>
@@ -1413,6 +1491,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Kuaiyo da cookies (kuvi tava errores nuu da web)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_5">Kasɨ cookies jíí daa sitios</string>
+    <!-- Preference for Global Privacy Control for the custom privacy settings for Global Privacy Control. '&amp;' is replaced with the ampersand symbol: &-->
+    <string name="preference_enhanced_tracking_protection_custom_global_privacy_control">Kachi nu da nuu a nxikodaja jee nkua\'adaja da datos nuu\'u</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Contenido de rastreo</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1430,10 +1510,16 @@
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Kuvi</string>
 
+    <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_title">Rastreadores de redes sociales</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Limita a las redes sociales su capacidad de rastreo daa a sá´ánu sa jikanu nu ka̱a̱ ya\'a.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cookies de rastreo entre sitios</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title_2">Cookies ji da sitios cruzados</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">Nakasɨ da cookies ni\'i da redes publicitarias jíí da empresas sá´á análisis da datos noo\'o nu da nuu ne\'yanu.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Criptomineros</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1446,6 +1532,8 @@
     <string name="etp_panel_on">Da a kumi noo´o iyo activo nu sito ya´a</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
     <string name="etp_panel_off">Da a kumi noo´o ntu iyo activo nu sito ya´a</string>
+    <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
+    <string name="enhanced_tracking_protection_exceptions">La protección de rastreo mejorada nna\'va nu sitio ya\'a</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">Niko yata</string>
@@ -1454,8 +1542,19 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliotecas OSS</string>
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Rastreadores de redirección</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Sá´á noo da cookies nsá\'á da redirecciones nu da nuu Web</string>
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Daa rastreadores ka íchi chuve han sido parcialmente desbloqueados nu página ya\'a porque interactuaste con ellos*.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Ka´vi kue´eka</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">Ícono de preferencia de excepción de protección contra el rastreo mejorada</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Chinei</string>
@@ -1530,12 +1629,16 @@
     <string name="preferences_passwords_sync_logins_2">Sync contraseñas</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices" moz:RemovedIn="125" tools:ignore="UnusedResources">Sincronizar daa nuu kaji\'e sesión jii daa ka̱a̱</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2">Sincronizar daa nuu kaji\'e sesión jii daa ka̱a̱</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins" moz:RemovedIn="125" tools:ignore="UnusedResources">Nuu kajie´e sesión nchuva´a</string>
     <!-- Preference to access list of saved passwords -->
     <string name="preferences_passwords_saved_logins_2">Da contraseñas nchuva\'a</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text" moz:RemovedIn="125" tools:ignore="UnusedResources">Daa nuu kaji\'e sesión chuva\'anu a xíín sa sincronizar noo´o jíí %s ya\'a kene</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2">Da contraseñas chuva\'anu a xíín sa sincronizar noo\'o jíí %s ya\'a kutuvi. Kuaiyo da contraseña chuva\'anu kino cifradas.</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link" moz:RemovedIn="125" tools:ignore="UnusedResources">Kuni kue´eka jiee Sync.</string>
     <!-- Clickable text for opening an external link for more information about Sync. -->
@@ -1600,10 +1703,15 @@
     <string name="logins_biometric_prompt_message_pin">Síne ka̱a̱ noo\'o</string>
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">Zoom ntaka da sitios</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">Habilitar para permitir pellizcar y hacer zoom, incluso en sitios web que previenen este gesto.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">Sivɨ (A-Z)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
     <string name="saved_logins_sort_strategy_last_used">Nni´i nuu nɨ´ɨ</string>
+
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2">Menú ordenar contraseñas</string>
 
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
@@ -1621,6 +1729,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_2">Chuva\'a jee sa completar naja chuna</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Daa datos íyo cifrados</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2">%s cifra jee chuva\'a kuaiyo da nuu chuna xu\'un</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Sincronizar daa tarjetas jíí daa ka̱a̱</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
@@ -1645,6 +1755,9 @@
 
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary" moz:RemovedIn="125" tools:ignore="UnusedResources">Chu\'un información kua tuni, correos a xíín da nuu envios</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2">Tee tunin ka̱a̱nu jíí daa nuu correo electrónico</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Tee tarjeta</string>
@@ -1979,14 +2092,70 @@
     <string name="review_quality_check_settings_title">Ke´i</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Ka´vi kue´eka</string>
+    <!-- Text for title of recommended product section. This is displayed above a product image, suggested as an alternative to the product reviewed. -->
+    <string name="review_quality_check_ad_title" tools:ignore="UnusedResources">Kue\'e a kuvi sa considerar</string>
+    <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Publicidad de %s</string>
+    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
+    <string name="review_quality_check_powered_by_2">Verificador reseñas satiñu jíí %s</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s de Mozilla</string>
+    <!-- Text for title of warning card informing the user that the current analysis is outdated. -->
+    <string name="review_quality_check_outdated_analysis_warning_title" tools:ignore="UnusedResources">A jíía información para comprobar</string>
+    <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
+    <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Kune\'ya ntañu\'u</string>
+    <!-- Title for warning card informing the user that the current product does not have enough reviews for a review analysis. -->
+    <string name="review_quality_check_no_reviews_warning_title">Ntu íyo kue\'e reseñas</string>
+    <!-- Text for body of warning card informing the user that the current product does not have enough reviews for a review analysis. -->
+    <string name="review_quality_check_no_reviews_warning_body">Dee nkajie\'e kumi producto ya\'a kue\'e reseñas, kajie\'edani kune\'yadani calidad.</string>
+    <!-- Title for warning card informing the user that the current product is currently not available. -->
+    <string name="review_quality_check_product_availability_warning_title">Ntu íyo producto</string>
+    <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
+    <string name="review_quality_check_product_availability_warning_body">Dee nnininu a producto ya\'a kajie\'e íyo disponible, kachi jee satiñudani saa kuvi saa verificar daa reseñas.</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2">Informar que el producto está en stock</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. The parameter is the percentage progress (0-100%) of the analysis process (e.g. 56%). -->
+    <string name="review_quality_check_analysis_in_progress_warning_title_2">Verificando la calidad de la revisión (%s)</string>
+    <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_body">Ya\'a kuvi ku kuee 60 segundos.</string>
+    <!-- Title for info card displayed after the user reports a product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_info_title">Kuta\'vidani a kachinu!</string>
+    <!-- Text for body of info card displayed after the user reports a product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_info_body">Nejika kumidani reseña producto ya\'a de nña\'a 24 horas. Kune\'ya tuku de nnini.</string>
+    <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
+    <string name="review_quality_check_not_analyzable_info_title">Ntu nkuvi sa comprobar da revisiones ya\'a</string>
+    <!-- Title for info card displayed when another user reported the displayed product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_other_user_info_title" tools:ignore="UnusedResources">La información llegará pronto</string>
+    <!-- Text for body of info card displayed when another user reported the displayed product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_other_user_info_body" tools:ignore="UnusedResources">Nejika kumidani reseña producto ya\'a de nña\'a 24 horas. Kune\'ya tuku de nnini.</string>
+    <!-- Title for info card displayed to the user when analysis finished updating. -->
+    <string name="review_quality_check_analysis_updated_confirmation_title" tools:ignore="UnusedResources">Análisis a íyo actualizado</string>
     <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
     <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">Kuka´nu inini</string>
+    <!-- Title for error card displayed to the user when an error occurred. -->
+    <string name="review_quality_check_generic_error_title">Ntu íyo información disponible ntañu\'u</string>
+    <!-- Text for body of error card displayed to the user when an error occurred. -->
+    <string name="review_quality_check_generic_error_body">Satiñudani sa kuvi nuvi tixin ya\'a. Kune\'ya tuku de nnini.</string>
     <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
     <string name="review_quality_check_no_connection_title">Na íyo ka̱a̱ nántu´un ne jíka</string>
+    <!-- Text for body of error card displayed to the user when the device is disconnected from the network. -->
+    <string name="review_quality_check_no_connection_body">Kune\'ya conexión red jee nachu\'un tuku nuu ya\'a.</string>
+    <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
+    <string name="review_quality_check_no_analysis_title">Ntu íyo información jíí da revisiones ya\'a</string>
+    <!-- Text for the body of card displayed to the user for products whose reviews were not analyzed yet. -->
+    <string name="review_quality_check_no_analysis_body">Sa kunidani a da revisiones ya\'a íto vatu, kune\'ya da calidad revisiones. Iin nu nu 60 segundos.</string>
+    <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
+    <string name="review_quality_check_no_analysis_link">Kune\'ya la calidad de la revisión</string>
+    <!-- Headline for review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_title">Ni\'i da guía da nuu\'u a iyo confiable da reseñas da productos</string>
+    <!-- Paragraph presenting review quality check feature. First parameter is the Fakespot product name. Second parameter is for clickable text defined in review_quality_check_contextual_onboarding_learn_more_link. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_contextual_onboarding_learn_more">Ya\'a ni\'i ka̱a̱ %1$s Mozilla, chineidani noo\'o nko reseñas sesgadas jíí da a ntu íyo vatu. Ka̱a̱ IA da nuu\'u ntaka íchi kajie\'e sá´á va\'a tiñu ya\'a jee kumiji noo\'o sa ke\'enu. %2$s</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Ka´vi kue´eka</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_3" moz:RemovedIn="124" tools:ignore="UnusedResources">Sa kajinu “Kuvi, ni\'inima”, jia\'nu %2$s jíí %1$s jíí da %4$s jíí %3$s.</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is Firefox app name, third parameter is the Fakespot product name. Second & fourth are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy_3 and review_quality_check_contextual_onboarding_terms_use. -->
+    <string name="review_quality_check_contextual_onboarding_caption_4">Sa kajinu “Kuvi, ni\'inima”, jia\'nu %2$s jíí %1$s jíí da %4$s jíí %3$s.</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy notice. -->
     <string name="review_quality_check_contextual_onboarding_privacy_policy_3">Tu´un xitu a kumiji noo´o</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
@@ -1995,6 +2164,12 @@
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Sí, probarlo</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_secondary_button_text">Nkuvi ntañu´u</string>
+    <!-- Text for the first CFR presenting the review quality check feature. -->
+    <string name="review_quality_check_first_cfr_message">Kune\'ya de kuvi kanijianu jííe da reseñas producto ya\'a — je sa kuvi ke\'enuma.</string>
+    <!-- Text displayed in the first CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_first_cfr_action" tools:ignore="UnusedResources">Ni\'i verificador da reseñas</string>
+    <!-- Text for the second CFR presenting the review quality check feature. -->
+    <string name="review_quality_check_second_cfr_message">¿A kanijianu da revisiones ya\'a? Kune\'ya ntañu\'u sa kuninu iin calificación ajustada.</string>
     <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
     <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">Síne verificador reseñas</string>
     <!-- Flag showing that the review quality check feature is work in progress. -->
@@ -2016,6 +2191,10 @@
 
     <!-- Text for highlights card shipping category header. Reviews shown under this header should refer the product's shipping. -->
     <string name="review_quality_check_highlights_type_shipping">A xíko</string>
+    <!-- Text for highlights card packaging and appearance category header. Reviews shown under this header should refer the product's packaging and appearance. -->
+    <string name="review_quality_check_highlights_type_packaging_appearance">Embalaje y apariencia</string>
+    <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
+    <string name="review_quality_check_highlights_type_competitiveness">Competitividad</string>
     <!-- Text that is surrounded by quotes. The parameter is the actual text that is in quotes. An example of that text could be: Excellent craftsmanship, and that is displayed as “Excellent craftsmanship”. The text comes from a buyer's review that the feature is highlighting"   -->
     <string name="surrounded_with_quotes">“%s”</string>
 
@@ -2050,6 +2229,8 @@
     <string name="translations_bottom_sheet_title">Sá´á traducir página ya´a</string>
     <!-- Text that links to additional information about the Firefox translations feature. -->
     <string name="translations_bottom_sheet_info_message_learn_more">Ka´vi kue´eka</string>
+    <!-- Label for the dropdown to select which language to translate from on the translations dialog. Usually the translate from language selected will be the same as the page language. -->
+    <string name="translations_bottom_sheet_translate_from">Traducir del</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">Nkuvi ntañu´u</string>
     <!-- Button text on the translations dialog to restore the translated website back to the original untranslated version. -->
@@ -2104,6 +2285,10 @@
     <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
     <string name="download_languages_item_content_description_selected_state">Nkaji</string>
 
+    <!-- Title for the dialog used by the translations feature to confirm deleting a language.
+    The dialog will be presented when the user requests deletion of a language.
+    The first parameter is the name of the language, for example, "Spanish" and the second parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_file_dialog_title">¿Sna %1$s (%2$s)?</string>
     <!-- Title for the dialog used by the translations feature to confirm deleting all languages file.
     The dialog will be presented when the user requests deletion of all languages file.
     The first parameter is the size in kilobytes or megabytes of the language file. -->

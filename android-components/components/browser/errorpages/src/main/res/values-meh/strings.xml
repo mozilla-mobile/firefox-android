@@ -6,6 +6,9 @@
     <!-- The document title and heading of an error page shown when a website cannot be loaded for an unknown reason. -->
     <string name="mozac_browser_errorpages_generic_title">Ntu nkuvi sá´á ya´a</string>
 
+    <!-- The error message shown when a website cannot be loaded for an unknown reason. -->
+    <string name="mozac_browser_errorpages_generic_message"><![CDATA[<p>Información jiee tixin ya\'a ntu íyo ntañu\'un.</p>]]></string>
+
     <!-- The document title and heading of the error page shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
     <string name="mozac_browser_errorpages_security_ssl_title">Ntu nkuvi sá´á conexión vatu</string>
 
@@ -26,6 +29,10 @@
 
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website has an invalid SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_advanced">Avanzado…</string>
+    <!-- The advanced certificate information shown when a website sends has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[<label>Sana kuvi kantu\'uda noo\'o jíí nuu ya\'a jee ntu nejika kɨ\'ɨnu. </label>
+        <br><br>
+        <label>Daa nuu web sa probar da identidad jíí daa certificados. %1$s a ntu kanijianu <b>%2$s</b> jiee emisor certificado kuviji desconocido, certificado íyo autofirmado a xíín ka̱a̱ servidor ntu kuvi chu\'un íchi daa certificados intermedios vatu.</label>]]></string>
     <!-- The text shown inside the advanced options button used to go back. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_cert_back">Niko (Recomendado)</string>
     <!-- The text shown inside the advanced options button used to bypass the invalid SSL certificate. It's only shown if the user has expanded the advanced options. -->
@@ -46,6 +53,15 @@
     <!-- The document title and heading of the error page shown when a website takes too long to load. -->
     <string name="mozac_browser_errorpages_net_timeout_title">Nnɨ´ɨ tiempo netu conexión</string>
 
+    <!-- The error message shown when a website took long to load. -->
+    <string name="mozac_browser_errorpages_net_timeout_message"><![CDATA[<p>Sitio jiniñu\'unu ntu kuvi síne jee ka̱a̱ nánuku nsiankuiñɨ</p>
+	<ul>
+		<li>¿Sana kue\'e ñivɨ kuvi kivɨ nu ka̱a̱ servidor a xíín nna\'va? Kunetu jee nakivɨ tuku</li>
+		<li>¿A ntu kuvi kakanu nu inka daa nuu? Kune\'ya conexión ka̱a̱</li>
+		<li>¿Red a xíín ka̱a̱nu íyo va\'a jii iin Firewall a xíín in Proxy?. Iin a nke\'i ntu vatu sanan sá´á a ntu kuvi jikanu nu Web</li>
+		<li>¿A ndea nuvi? Ka\'an jíí tee teniñu nu red a xíín ñivɨ xiko Internet sa kuvi chineida noo\'o.</li>
+	</ul>]]></string>
+
     <!-- The document title and heading of the error page shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_title">Ntu nkuvi kivɨ</string>
 
@@ -58,11 +74,21 @@
     <!-- The document title and heading of the error page shown when a website responds in an unexpected way and the browser cannot continue. -->
     <string name="mozac_browser_errorpages_unknown_socket_type_title">Ntu nnaka´a vatu servidor</string>
 
+    <!-- The error message shown when a website responds in an unexpected way and the browser cannot continue. -->
+    <string name="mozac_browser_errorpages_unknown_socket_type_message"><![CDATA[<p>Sitio ya\'a ntu nsíne vatu jee nkuvi kaka ka̱a̱ nánuku.</p>]]></string>
+
     <!-- The document title and heading of the error page shown when the browser gets stuck in an infinite loop when loading a website. -->
     <string name="mozac_browser_errorpages_redirect_loop_title">Ntu sá´á vatu redirección página ya´a</string>
 
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">Modo ntu conexión</string>
+
+    <!-- The error message shown when a website cannot be loaded because the browser is in offline mode. -->
+    <string name="mozac_browser_errorpages_offline_message"><![CDATA[<p>Ka̱a̱ satiñu jee ntu íyo conexión jee ntu kuviji kivɨ jíí elemento jiniñu\'unu</p>
+	<ul>
+		<li>¿A íyonu conectado noo\'o nu iin red activa?</li>
+		<li>Kuaxin "Nakivɨ tuku" sa kuvi sá\'á conexión jee nachu\'un tuku página.</li>
+	</ul>]]></string>
 
     <!-- The document title and heading of the error page shown when the browser prevents loading a website on a restricted port. -->
     <string name="mozac_browser_errorpages_port_blocked_title">Puerto nkuvi kivunu jííe razones de seguridad</string>
@@ -119,6 +145,7 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title">Ntu íyo vatu nuu</string>
 
+    <string name="mozac_browser_errorpages_malformed_uri_message"><![CDATA[<p>Nuu tajinu ntu kuvi iin tu\'un vatu. Kune\'ya de ntu nkumiji errores nu barra da nuu jee nachu\'un tuku</p>]]></string>
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title_alternative">Dirección ntu vatu</string>
 
@@ -172,6 +199,8 @@
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">Sitio va\'a ntu íyo tiñu</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[Has habilitado el modo solo HTTPS para mejorar la seguridad pero no está disponible una versión HTTPS de <em>%1$s</em>.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">Kaka nuu HTTP</string>
 </resources>

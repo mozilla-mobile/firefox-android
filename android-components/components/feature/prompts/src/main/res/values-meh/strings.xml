@@ -48,6 +48,9 @@
     <string name="mozac_feature_prompt_login_update_headline_2">Naxi\'ña contraseña?</string>
     <!-- Prompt message displayed when app detects a user has entered a username for an existing login without a username and user decides if app should update the login. -->
     <string name="mozac_feature_prompt_login_add_username_headline">¿Tee sivɨ ñivɨ nu contraseña nchuva\'a?</string>
+    <!-- Text for a label for the field when prompt requesting a text is shown. -->
+    <!-- For more info take a look here https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt -->
+    <string name="mozac_feature_prompts_content_description_input_label">Etiqueta sa chu\'unu iin campo de entrada de texto</string>
     <!-- Title of a color picker dialog, this text is shown above a color picker. -->
     <string name="mozac_feature_prompts_choose_a_color">Kají iin teku</string>
     <!-- Text of a confirm button in dialog requesting to open a new window. -->
@@ -108,6 +111,8 @@
     <!-- Header for the select password prompt to allow users to fill a form with a saved password -->
     <string name="mozac_feature_prompts_saved_logins_2">Da contraseñas nchuva\'a</string>
 
+    <!-- Content description for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_content_description">Sá\'á iin contraseña va\'a</string>
     <!-- Header for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
     <string name="mozac_feature_prompts_suggest_strong_password">Sá\'á iin contraseña va\'a</string>
 
@@ -145,12 +150,17 @@
     <!-- Text for the title of an update credit card dialog. -->
     <string name="mozac_feature_prompts_update_credit_card_prompt_title">¿Natee fecha nɨ\'ɨ tarjeta?</string>
 
+    <!-- Subtitle text displayed under the title of the save credit card dialog. -->
+    <string name="mozac_feature_prompts_save_credit_card_prompt_body" moz:removedIn="125" tools:ignore="UnusedResources">El número de tarjeta se encriptará. El código de seguridad no se guardará.</string>
+
     <!-- Address Autofill -->
     <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
     <string name="mozac_feature_prompts_select_address_2">Kaji dirección</string>
 
     <!-- Content description for expanding the select addresses options in the select address prompt. -->
     <string name="mozac_feature_prompts_expand_address_content_description" moz:removedIn="125" tools:ignore="UnusedResources">Expandir direcciones sugeridas</string>
+    <!-- Content description for expanding the saved addresses options in the select address prompt. -->
+    <string name="mozac_feature_prompts_expand_address_content_description_2">Sá\'á ka\'nu nu nchuva\'a daa nuu</string>
     <!-- Content description for collapsing the select address options in the select address prompt. -->
     <string name="mozac_feature_prompts_collapse_address_content_description" moz:removedIn="125" tools:ignore="UnusedResources">Chiyu\'u daa nuu sugeridas</string>
     <!-- Content description for collapsing the saved address options in the select address prompt. -->
@@ -167,6 +177,8 @@
     <string name="mozac_feature_prompts_identity_credentials_choose_account_for_provider">Kivɨ jii iin cuenta %1$s</string>
     <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
     <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">Ni\'i %1$s kua proveedor daa nuu kajie\'e sesión</string>
+    <!-- Title of the Identity Credential privacy policy dialog description. The %1$s will be replaced with the name of the provider, %2$s will be replaced with the account, %3$s will be replaced with the privacy policy url and  %4$s will be replaced with the terms of service. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_description"><![CDATA[De kajie\'enu sesión nu %1$s jíí iin cuenta %2$s naja satiñu ya\'a vaji <a href="%3$s">Tutu xitu nejika kumio</a> y <a href="%4$s">Tutu xitu nejika kumio</a>]]></string>
     <!-- Text for the positive button of the Identity Credential dialogs. -->
     <string name="mozac_feature_prompts_identity_credentials_continue">Kɨ´ɨ</string>
     <!-- Text for the cancel button of the Identity Credential dialogs. -->

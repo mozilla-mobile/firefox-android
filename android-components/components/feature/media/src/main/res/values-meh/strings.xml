@@ -11,6 +11,14 @@
     <string name="mozac_feature_media_sharing_camera_and_microphone">Ka̱a̱ nátava jii micrófono tɨɨ</string>
 
 
+    <!-- Text of notification shown when the device's camera is shared with a website (WebRTC) -->
+    <string name="mozac_feature_media_sharing_camera_text">Kuaxin sa síne pestaña a ni\'i cámara noo\'o.</string>
+    <!-- Text of notification shown when the device's microphone is shared with a website (WebRTC) -->
+    <string name="mozac_feature_media_sharing_microphone_text">Kauxin sa síne pestaña a ni\'i microfono noo\'o.</string>
+    <!-- Text of notification shown when the device's camera and microphone is shared with a website (WebRTC) -->
+    <string name="mozac_feature_media_sharing_camera_and_microphone_text">Kuaxin sa síne pestaña a ni\'i micrófono jíí ka̱a̱ nátava noo\'o.</string>
+
+
     <!--This is the title of the "play" action media shown in the media notification while web content is playing media. Clicking it will resume playing paused media. On most modern Android system only an icon is visible. But screen readers may read this title. -->
     <string name="mozac_feature_media_notification_action_play">Kajie´e</string>
 
