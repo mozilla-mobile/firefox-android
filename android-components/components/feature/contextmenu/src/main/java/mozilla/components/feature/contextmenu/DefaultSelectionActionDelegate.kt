@@ -26,7 +26,10 @@ internal const val EMAIL = "CUSTOM_CONTEXT_MENU_EMAIL"
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal const val CALL = "CUSTOM_CONTEXT_MENU_CALL"
 
-private val customActions = arrayOf(CALL, EMAIL, SEARCH, SEARCH_PRIVATELY, SHARE)
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal const val SUMMARIZE = "CUSTOM_CONTEXT_MENU_SUMMARIZE"
+
+private val customActions = arrayOf(SUMMARIZE, CALL, EMAIL, SEARCH, SEARCH_PRIVATELY, SHARE)
 
 /**
  * Adds normal and private search buttons to text selection context menus.
@@ -38,6 +41,7 @@ class DefaultSelectionActionDelegate(
     private val shareTextClicked: ((String) -> Unit)? = null,
     private val emailTextClicked: ((String) -> Unit)? = null,
     private val callTextClicked: ((String) -> Unit)? = null,
+    private val summarizeTextClicked: ((String) -> Unit)? = null,
     private val actionSorter: ((Array<String>) -> Array<String>)? = null,
 ) : SelectionActionDelegate {
 
@@ -48,6 +52,7 @@ class DefaultSelectionActionDelegate(
     private val shareText = resources.getString(R.string.mozac_selection_context_menu_share)
     private val emailText = resources.getString(R.string.mozac_selection_context_menu_email)
     private val callText = resources.getString(R.string.mozac_selection_context_menu_call)
+    private val summarizeText = resources.getString(R.string.mozac_selection_context_menu_summarize)
 
     override fun getAllActions(): Array<String> = customActions
 
@@ -64,7 +69,7 @@ class DefaultSelectionActionDelegate(
                     callTextClicked != null && Patterns.PHONE.matcher(selectedText.trim()).matches()
                 ) ||
             (id == SEARCH && !isPrivate) ||
-            (id == SEARCH_PRIVATELY && isPrivate)
+            (id == SEARCH_PRIVATELY && isPrivate) || (id == SUMMARIZE)
     }
 
     override fun getActionTitle(id: String): CharSequence? = when (id) {
@@ -73,6 +78,7 @@ class DefaultSelectionActionDelegate(
         SHARE -> shareText
         EMAIL -> emailText
         CALL -> callText
+        SUMMARIZE -> summarizeText
         else -> null
     }
 
@@ -97,6 +103,10 @@ class DefaultSelectionActionDelegate(
             }
             CALL -> {
                 callTextClicked?.invoke(selectedText.trim())
+                true
+            }
+            SUMMARIZE -> {
+                summarizeTextClicked?.invoke(selectedText.trim())
                 true
             }
             else -> {

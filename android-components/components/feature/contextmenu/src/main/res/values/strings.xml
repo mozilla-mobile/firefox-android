@@ -53,4 +53,6 @@
     <string name="mozac_selection_context_menu_email">Email</string>
     <!-- Action shown in a text selection context menu. This will prompt a new call from the selected text. -->
     <string name="mozac_selection_context_menu_call">Call</string>
+    <!-- Action shown in a text selection context menu. This will prompt summarization from the selected text. -->
+    <string name="mozac_selection_context_menu_summarize">Summarize</string>
 </resources>

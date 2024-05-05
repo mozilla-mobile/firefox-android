@@ -21,6 +21,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupObserver
 import org.mozilla.samples.browser.addons.WebExtensionActionPopupActivity
 import org.mozilla.samples.browser.ext.components
+import org.mozilla.samples.browser.summarize.SummaryFragment
 
 /**
  * Activity that holds the [BrowserFragment].
@@ -69,6 +70,10 @@ open class BrowserActivity : LocaleAwareAppCompatActivity(), ComponentCallbacks2
                 selectionActionDelegate = DefaultSelectionActionDelegate(
                     store = components.store,
                     context = context,
+                    summarizeTextClicked = { text ->
+                        val summaryFragment = SummaryFragment.newInstance(text)
+                        summaryFragment.show(supportFragmentManager, "summaryDialog")
+                    }
                 )
             }.asView()
             else -> super.onCreateView(parent, name, context, attrs)
