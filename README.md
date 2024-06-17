@@ -1,3 +1,16 @@
+# ⚠️ Update, June 2024: Migration to Mozilla Central Complete 
+
+As of Firefox 128, all future releases will be fully managed in Mozilla Central. We are archiving this Github repository as of June 17th. Please refer to our [Wiki announcement](https://github.com/mozilla-mobile/firefox-android/wiki#upcoming-migration-to-mozilla-central) for more context.
+
+The latest documentation for contributing to Firefox for Android will be maintained in the main Firefox Source Docs, [here](https://firefox-source-docs.mozilla.org/mobile/android/geckoview/contributor/mc-quick-start.html).
+
+As always, you can find our development team on [Matrix](https://wiki.mozilla.org/Matrix#Connect_to_Matrix), in the following channels:
+ * [#fenix:mozilla.org](https://chat.mozilla.org/#/room/#fenix:mozilla.org)
+ * [#focus-android:mozilla.org](https://chat.mozilla.org/#/room/#focus-android:mozilla.org)
+ * [#android-components:mozilla.org](https://chat.mozilla.org/#/room/#android-components:mozilla.org)
+ * [#geckoview:mozilla.org](https://chat.mozilla.org/#/room/#geckoview:mozilla.org)
+
+---
 
 This repository hosts the Firefox for Android (Fenix), Focus on Android, and Mozilla Android Components projects.
 
